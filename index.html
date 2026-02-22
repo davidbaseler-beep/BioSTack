@@ -28,10 +28,10 @@
         }
         
         html, body {
-    /* position: fixed; GELÖSCHT */
+    position: fixed;
     overflow: hidden;
     width: 100%;
-    height: 100dvh; /* NEU: dvh für korrekte mobile Höhe */
+    height: 100%;
     /* Verhindert das Ziehen der gesamten Seite auf iOS */
     overscroll-behavior: none; 
     background-color: #0f172a;
@@ -53,13 +53,13 @@ body {
 
 /* Erlaubt das Scrollen NUR innerhalb der Tabs, ohne die App zu verschieben */
 .page {
-    height: 100dvh; /* NEU: dvh statt vh */
+    height: 100vh;
     overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        padding: 80px 20px 200px 20px; /* Mehr Platz oben für die Nav-Bar und unten */
-        box-sizing:border-box;
-        scroll-padding-top: 100px; /* Verhindert, dass scrollIntoView zu weit nach oben geht */
-        }
+    -webkit-overflow-scrolling: touch;
+    padding: 20px;
+    padding-bottom: 180px !important; /* Deutlich mehr Platz am Ende der Seite */
+    box-sizing: border-box;
+}
 
         /* --- GYM TABS (NEW) --- */
         .gym-day-tabs { display: flex; overflow-x: auto; gap: 8px; padding-bottom: 5px; margin-bottom: 15px; scrollbar-width: none; }
@@ -481,9 +481,9 @@ body {
                 <option value="DATE">📅 Spezielles Datum...</option>
             </select>
             
-            <input type="date" id="gym-date-select" class="weight-input" style="display:none; max-width:250px; margin: 0 auto 15px auto; border-color:var(--accent);" onchange="renderGymPlaner()">
-            
-            <div id="gym-planer-list" style="margin-top: 15px; margin-bottom: 15px;"></div>
+                <input type="date" id="gym-date-select" class="weight-input" style="display:none; border-color:var(--accent); max-width: 250px; margin: 0 auto 10px auto; display:block;" onchange="renderGymPlaner()">
+            ...
+            <input type="date" id="set-cycle-start" class="weight-input" style="border-color:rgba(236, 72, 153, 0.4); max-width: 250px; margin: 0 auto; display:block;">
             
             <button class="btn-action" style="background:var(--accent)" onclick="addGymExercise()">+ ÜBUNG HINZUFÜGEN</button>
         </div>
@@ -603,17 +603,17 @@ body {
         <div class="collapse-content" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
             <div style="font-size:11px; color:#94a3b8; margin-bottom:5px; text-align:center; font-weight:700;">DATUM WÄHLEN</div>
             <input type="date" id="m-date" class="weight-input" style="margin-bottom: 15px;">
-            <div class="ana-grid">
-    <input type="number" id="m-brust" class="weight-input" placeholder="Brust (cm)" style="margin-bottom:0; font-size: 14px;">
-    <input type="number" id="m-schultern" class="weight-input" placeholder="Schultern (cm)" style="margin-bottom:0; font-size: 14px;">
-    <input type="number" id="m-bauch" class="weight-input" placeholder="Bauch (cm)" style="grid-column: span 2; margin-bottom:0; font-size: 14px;">
-    <input type="number" id="m-bizeps-l" class="weight-input" placeholder="L Bizeps (cm)" style="margin-bottom:0; font-size: 14px;">
-    <input type="number" id="m-bizeps-r" class="weight-input" placeholder="R Bizeps (cm)" style="margin-bottom:0; font-size: 14px;">
-    <input type="number" id="m-beine-l" class="weight-input" placeholder="L Bein (cm)" style="margin-bottom:0; font-size: 14px;">
-    <input type="number" id="m-beine-r" class="weight-input" placeholder="R Bein (cm)" style="margin-bottom:0; font-size: 14px;">
-    <input type="number" id="m-waden-l" class="weight-input" placeholder="L Wade (cm)" style="margin-bottom:0; font-size: 14px;">
-    <input type="number" id="m-waden-r" class="weight-input" placeholder="R Wade (cm)" style="margin-bottom:0; font-size: 14px;">
-</div>
+                <div class="ana-grid">
+        <input type="number" id="m-brust" class="weight-input" placeholder="Brust (cm)" style="margin-bottom:0; font-size: 14px;">
+        <input type="number" id="m-schultern" class="weight-input" placeholder="Schultern (cm)" style="margin-bottom:0; font-size: 14px;">
+        <input type="number" id="m-bauch" class="weight-input" placeholder="Bauch (cm)" style="grid-column: span 2; margin-bottom:0; font-size: 14px;">
+        <input type="number" id="m-bizeps-l" class="weight-input" placeholder="L Bizeps (cm)" style="margin-bottom:0; font-size: 14px;">
+        <input type="number" id="m-bizeps-r" class="weight-input" placeholder="R Bizeps (cm)" style="margin-bottom:0; font-size: 14px;">
+        <input type="number" id="m-beine-l" class="weight-input" placeholder="L Bein (cm)" style="margin-bottom:0; font-size: 14px;">
+        <input type="number" id="m-beine-r" class="weight-input" placeholder="R Bein (cm)" style="margin-bottom:0; font-size: 14px;">
+        <input type="number" id="m-waden-l" class="weight-input" placeholder="L Wade (cm)" style="margin-bottom:0; font-size: 14px;">
+        <input type="number" id="m-waden-r" class="weight-input" placeholder="R Wade (cm)" style="margin-bottom:0; font-size: 14px;">
+    </div>
             <button class="btn-action" style="background: var(--accent); margin-top: 15px;" onclick="saveMasse()">MAßE SPEICHERN</button>
             <div id="masse-msg" style="text-align:center; font-size:12px; color:#22c55e; height:15px; margin-top: 5px;"></div>
             
@@ -713,10 +713,10 @@ body {
     <div class="chart-container" style="margin-bottom: 20px;" id="sec-history"><div class="collapse-header" onclick="tglCollapse('sec-history')"><h3 style="margin:0">Verlauf</h3></div><div class="collapse-content"><div id="history-list"></div></div></div>
     
     <div class="chart-container">
-        <button class="btn-action" style="background: #334155; margin-top: 0;" onclick="openSettingsModal()">⚙️ EINSTELLUNGEN & PROFIL</button>
-    </div>
+        <button class="btn-action" style="background: #334155; margin-top: 0;" onclick="openSettingsModal()">⚙️ EINSTELLUNGEN & PROFIL</button>
+    </div>
 </div>
-
+</div>
 <div id="settings-modal" class="custom-modal-overlay">
     <div class="custom-modal-box" style="max-width: 90%; width: 350px; max-height: 85vh; overflow-y: auto; text-align: left; padding: 20px;">
         <div class="custom-modal-title" style="text-align: center; margin-bottom: 20px;">⚙ Profil & Einstellungen</div>
@@ -799,8 +799,8 @@ body {
             <div class="collapse-content" style="padding: 15px; background: rgba(236, 72, 153, 0.05); border-radius: 12px; margin-top: 5px;">
                 <label class="checkbox-row" style="margin-bottom:20px; font-size:13px; font-weight:bold;"><input type="checkbox" id="chk-show-cycle"> <span style="color:#ec4899;">Zyklus-Tracker anzeigen</span></label>
                 
-                <div style="font-size:11px; color:#ec4899; margin-bottom:5px; font-weight:bold; text-align:center;">START-DATUM (TAG 1)</div>
-                <input type="date" id="set-cycle-start" class="weight-input" style="max-width:250px; margin: 0 auto; display:block; border-color:rgba(236, 72, 153, 0.4);">
+                <div style="font-size:11px; color:#ec4899; margin-bottom:5px; font-weight:bold;">START-DATUM (TAG 1)</div>
+                <input type="date" id="set-cycle-start" class="weight-input" style="border-color:rgba(236, 72, 153, 0.4);">
                 
                 <div style="font-size:11px; color:#ec4899; margin-bottom:5px; margin-top:5px; font-weight:bold;">ZYKLUSLÄNGE (TAGE)</div>
                 <input type="number" id="set-cycle-length" class="weight-input" placeholder="z.B. 28" value="28" style="border-color:rgba(236, 72, 153, 0.4); margin-bottom:0;">
@@ -899,16 +899,20 @@ body {
         </div>
 
         <div class="chart-container" style="padding: 0; background: transparent; border: none; margin: 0 0 15px 0;" id="set-col-security">
-            <div class="collapse-header" onclick="tglCollapse('set-col-security')" style="background: var(--glass); padding: 12px 15px; border-radius: 12px; border: 1px solid var(--glass-border);">
-                <h3 style="color:var(--day-glow); font-size: 14px; margin: 0;">🔒 Sicherheit</h3>
-            </div>
-            <div class="collapse-content" style="padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; margin-top: 5px;">
-    <button id="btn-pin-setup" class="btn-action" style="background: rgba(255,255,255,0.05); border: 1px dashed var(--accent); color: var(--accent); margin-bottom: 0;" onclick="setupPinLock()">🔒 APP-SPERRE EINRICHTEN</button>
-</div>
-        </div>
+            <div class="collapse-header" onclick="tglCollapse('set-col-security')" style="background: var(--glass); padding: 12px 15px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                <h3 style="color:var(--day-glow); font-size: 14px; margin: 0;">🔒 Sicherheit</h3>
+            </div>
+            <div class="collapse-content" style="padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; margin-top: 5px;">
+                <button class="btn-action" style="background: rgba(255,255,255,0.05); border: 1px dashed var(--accent); color: var(--accent); margin-bottom: 0;" onclick="setupPinLock()">🔒 APP-SPERRE EINRICHTEN</button>
+            </div>
+        </div>
 
-        <button class="modal-btn btn-confirm" style="width:100%; margin-top:15px;" onclick="closeSettingsModal()">SCHLIEßEN & SPEICHERN</button>
-    </div>
+        <button class="modal-btn btn-confirm" style="width:100%; margin-top:15px;" onclick="closeSettingsModal()">SCHLIEßEN & SPEICHERN</button>
+    </div>
+</div>
+
+        <button class="modal-btn btn-confirm" style="width:100%; margin-top:15px;" onclick="closeSettingsModal()">SCHLIEßEN & SPEICHERN</button>
+    </div>
 </div>
 
 <div id="ranks-modal" class="custom-modal-overlay">
@@ -991,14 +995,11 @@ body {
     if(!db.labHistory) db.labHistory = [];
 
     function updateDashboardView() {
-        const fWidget = document.getElementById('fasting-widget-container');
-        if(fWidget) fWidget.style.display = db.analytics.showFasting ? 'flex' : 'none';
-
-        const wWidget = document.getElementById('body-col-tracking');
-        if(wWidget) wWidget.style.display = db.analytics.showGewicht ? 'block' : 'none';
-
-        const mWidget = document.getElementById('body-col-masse');
-        if(mWidget) mWidget.style.display = db.analytics.showMasse ? 'block' : 'none';
+        const fWidget = document.getElementById('fasting-widget-container');
+        if(fWidget) fWidget.style.display = db.analytics.showFasting ? 'flex' : 'none';
+        
+        const mWidget = document.getElementById('body-col-masse');
+        if(mWidget) mWidget.style.display = db.analytics.showMasse ? 'block' : 'none';
 
         const lWidget = document.getElementById('body-col-labor');
         if(lWidget) lWidget.style.display = db.analytics.showLabor ? 'block' : 'none';
@@ -1429,15 +1430,7 @@ body {
     }
     
     function tglAddForm() { const f = document.getElementById('add-supp-form'); f.style.display = (f.style.display === 'block') ? 'none' : 'block'; }
-    function tglCollapse(id) { 
-        const el = document.getElementById(id);
-        el.classList.toggle('collapse-active'); 
-        if (el.classList.contains('collapse-active')) {
-            setTimeout(() => {
-                el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }, 150);
-        }
-    }
+    function tglCollapse(id) { document.getElementById(id).classList.toggle('collapse-active'); }
     function updSl(type, val) { document.getElementById('val-'+type).innerText = val + '%'; document.getElementById('fill-'+type).style.width = val + '%'; }
     
     function saveFeedback() { 
@@ -2252,7 +2245,7 @@ function renameGymPlanEx(day, exIdx, oldName, dateStr) {
     renderMasseHistory();
 }
 
-function saveMasse() {
+    function saveMasse() {
     const dateStr = document.getElementById('m-date').value || getTodayDate(); 
     const dateDisplay = new Date(dateStr).toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'numeric'});
     
@@ -2281,8 +2274,20 @@ function saveMasse() {
     setTimeout(() => document.getElementById('masse-msg').innerText = "", 2000);
     renderMasseHistory();
 }
+    
+    function getTrendHtml(name, curStr, prevStr, invert=false) {
+        const cur = parseFloat(curStr);
+        const prev = parseFloat(prevStr);
+        if(!cur || !prev || cur === prev) return `<span style="color:#cbd5e1">±0 cm</span>`;
+        const diff = cur - prev;
+        const sign = diff > 0 ? '+' : '';
+        // Bei Bauch ist negativ grün, bei Muskeln positiv grün
+        const isGood = invert ? diff < 0 : diff > 0;
+        const color = isGood ? 'var(--success)' : 'var(--danger)';
+        return `<span style="color:${color}">${sign}${diff.toFixed(1)} cm</span>`;
+    }
 
-function renderMasseHistory() {
+    function renderMasseHistory() {
     const cont = document.getElementById('masse-history-list');
     if (!cont) return;
     cont.innerHTML = '';
@@ -2607,17 +2612,7 @@ function manualRefill(id, current) {
             hList.innerHTML += yearHtml;
         });
     }
-    function tglHist(date) { 
-        const e = document.getElementById('hist-det-'+date); 
-        if(e) {
-            e.style.display = e.style.display === 'block' ? 'none' : 'block'; 
-            if(e.style.display === 'block') {
-                setTimeout(() => {
-                    e.parentElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }, 100);
-            }
-        }
-    }
+    function tglHist(date) { const e = document.getElementById('hist-det-'+date); if(e) e.style.display = e.style.display==='block'?'none':'block'; }
     function initChart() { const ctx = document.getElementById('weightChart').getContext('2d'); if(weightChart) weightChart.destroy(); const sortedData = [...db.weightData].sort((a,b) => { const dateA = a.isoDate ? new Date(a.isoDate) : new Date(a.date.split('.').reverse().join('-')); const dateB = b.isoDate ? new Date(b.isoDate) : new Date(b.date.split('.').reverse().join('-')); return dateA - dateB; }); const labels = sortedData.map(d => d.date); const data = sortedData.map(d => d.val); const trend = data.map((val, i, arr) => { const start = Math.max(0, i - 6); const subset = arr.slice(start, i + 1); const sum = subset.reduce((a, b) => a + b, 0); return sum / subset.length; }); if(trend.length > 1) { const currentTrend = trend[trend.length - 1]; const prevTrend = trend[trend.length >= 8 ? trend.length - 8 : 0]; const diff = currentTrend - prevTrend; const arrow = diff > 0 ? '📈' : '📉'; const displayVal = Math.abs(diff) > 0.9 ? `${Math.abs(diff).toFixed(2)}kg` : `${(Math.abs(diff) * 1000).toFixed(0)}g`; const el = document.getElementById('trend-ui'); if(el) el.innerHTML = `<span style="color:${diff > 0 ? '#f87171' : '#4ade80'}">${arrow} Echter Trend: ${diff > 0 ? '+' : '-'}${displayVal} / Woche</span>`; } weightChart = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [ { label: 'kg', data: data, borderColor: '#FF8C00', tension: 0.4, fill: true, backgroundColor: 'rgba(255, 140, 0, 0.1)', pointRadius: 6, pointHitRadius: 30 }, { label: 'Trend (7d)', data: trend, borderColor: '#4facfe', borderDash: [5, 5], tension: 0.4, pointRadius: 0, fill: false } ] }, options: { plugins: { legend: { display: false } } } }); }
     
     function addWeight() { 
@@ -2838,24 +2833,8 @@ function manualRefill(id, current) {
     }
 
     function openSettingsModal() {
-    document.getElementById('set-name').value = db.userName || '';
-    
-    // --- NEU: PIN-Button dynamisch anpassen ---
-    const pinBtn = document.getElementById('btn-pin-setup');
-    if (pinBtn) {
-        if (db.appLockPin) {
-            pinBtn.innerText = "🔓 APP-SPERRE DEAKTIVIEREN";
-            pinBtn.style.color = "var(--danger)";
-            pinBtn.style.borderColor = "var(--danger)";
-        } else {
-            pinBtn.innerText = "🔒 APP-SPERRE EINRICHTEN";
-            pinBtn.style.color = "var(--accent)";
-            pinBtn.style.borderColor = "var(--accent)";
-        }
-    }
-    // ------------------------------------------
-
-    document.getElementById('set-gender').value = db.personal.gender || 'm';
+        document.getElementById('set-name').value = db.userName || '';
+        document.getElementById('set-gender').value = db.personal.gender || 'm';
         document.getElementById('set-age').value = db.personal.age || '';
         document.getElementById('set-height').value = db.personal.height || '';
         document.getElementById('set-weight').value = db.personal.weight || '';
@@ -3092,14 +3071,14 @@ function manualRefill(id, current) {
 
     function updateLevel() {
         let xp = 0; 
-// XP für Supplements
-for (let date in db.history) { xp += (db.history[date].length * 10); } 
-// XP für Gewicht
-if (db.weightData) { xp += (db.weightData.length * 50); }
-// XP für Gym (150 XP pro getracktem Trainingstag)
-if (db.gym && db.gym.logs) {
-    const gymDays = [...new Set(db.gym.logs.map(l => l.date))];
-    xp += (gymDays.length * 150);
+    // XP für Supplements
+    for (let date in db.history) { xp += (db.history[date].length * 10); } 
+    // XP für Gewicht
+    if (db.weightData) { xp += (db.weightData.length * 50); }
+    // XP für Gym (150 XP pro getracktem Trainingstag)
+    if (db.gym && db.gym.logs) {
+        const gymDays = [...new Set(db.gym.logs.map(l => l.date))];
+        xp += (gymDays.length * 150);
 }
         let currentRank = ranks[0], nextRank = ranks[1];
         for (let i = 0; i < ranks.length; i++) { if (xp >= ranks[i].xp) { currentRank = ranks[i]; nextRank = ranks[i + 1] || ranks[i]; } }
@@ -3158,9 +3137,8 @@ if (db.gym && db.gym.logs) {
 
     // --- APP LOCK LOGIK ---
     let currentPinInput = "";
-let isSettingPin = false;
-let isDeactivatingPin = false;
-let tempPin = "";
+    let isSettingPin = false;
+    let tempPin = "";
 
     // 1. Beim Start prüfen, ob eine PIN existiert
     if(db.appLockPin) {
@@ -3193,99 +3171,80 @@ let tempPin = "";
     }
 
     function checkPin() {
-        const msg = document.getElementById('pin-msg');
-        
-        if (isDeactivatingPin) {
-            if(currentPinInput === db.appLockPin) {
-                db.appLockPin = null;
-                save();
-                isDeactivatingPin = false;
-                document.getElementById('app-lock-screen').style.display = 'none';
-                document.getElementById('pin-close-btn').style.display = 'none';
-                showAlert("App-Sperre wurde erfolgreich deaktiviert.");
-            } else {
-                msg.innerText = "Falsche PIN!";
-                msg.style.color = "var(--danger)";
-                currentPinInput = "";
-                updatePinDots();
-                if(typeof vBuz === 'function') vBuz([50, 50, 50]);
-                setTimeout(() => { msg.innerText = "Aktuelle PIN eingeben"; msg.style.color = "var(--warning)"; }, 1500);
-            }
-        } else if(isSettingPin) {
-            if(!tempPin) {
-                tempPin = currentPinInput;
-                currentPinInput = "";
-                updatePinDots();
-                msg.innerText = "PIN wiederholen";
-                msg.style.color = "var(--day-glow)";
-            } else {
-                if(tempPin === currentPinInput) {
-                    db.appLockPin = tempPin;
-                    save();
-                    isSettingPin = false;
-                    tempPin = "";
-                    document.getElementById('app-lock-screen').style.display = 'none';
-                    document.getElementById('pin-close-btn').style.display = 'none';
-                    showAlert("PIN-Sperre erfolgreich aktiviert!");
-                } else {
-                    msg.innerText = "PINs stimmen nicht überein!";
-                    msg.style.color = "var(--danger)";
-                    tempPin = "";
-                    currentPinInput = "";
-                    updatePinDots();
-                    if(typeof vBuz === 'function') vBuz([50, 50, 50]);
-                    setTimeout(() => { msg.innerText = "Neue PIN eingeben"; msg.style.color = "var(--accent)"; }, 2000);
-                }
-            }
-        } else {
-            if(currentPinInput === db.appLockPin) {
-                document.getElementById('app-lock-screen').style.display = 'none';
-                currentPinInput = "";
-                updatePinDots();
-            } else {
-                msg.innerText = "Falsche PIN!";
-                msg.style.color = "var(--danger)";
-                currentPinInput = "";
-                updatePinDots();
-                if(typeof vBuz === 'function') vBuz([50, 50, 50]);
-                setTimeout(() => { msg.innerText = "PIN eingeben"; msg.style.color = "#94a3b8"; }, 1500);
-            }
-        }
-    }
+        const msg = document.getElementById('pin-msg');
+        
+        if(isSettingPin) {
+            if(!tempPin) {
+                tempPin = currentPinInput;
+                currentPinInput = "";
+                updatePinDots();
+                msg.innerText = "PIN wiederholen";
+                msg.style.color = "var(--day-glow)";
+            } else {
+                if(tempPin === currentPinInput) {
+                    db.appLockPin = tempPin;
+                    save();
+                    isSettingPin = false;
+                    tempPin = "";
+                    document.getElementById('app-lock-screen').style.display = 'none';
+                    document.getElementById('pin-close-btn').style.display = 'none';
+                    showAlert("PIN-Sperre erfolgreich aktiviert!");
+                } else {
+                    msg.innerText = "PINs stimmen nicht überein!";
+                    msg.style.color = "var(--danger)";
+                    tempPin = "";
+                    currentPinInput = "";
+                    updatePinDots();
+                    if(typeof vBuz === 'function') vBuz([50, 50, 50]);
+                    setTimeout(() => { msg.innerText = "Neue PIN eingeben"; msg.style.color = "var(--accent)"; }, 2000);
+                }
+            }
+        } else {
+            if(currentPinInput === db.appLockPin) {
+                document.getElementById('app-lock-screen').style.display = 'none';
+                currentPinInput = "";
+                updatePinDots();
+            } else {
+                msg.innerText = "Falsche PIN!";
+                msg.style.color = "var(--danger)";
+                currentPinInput = "";
+                updatePinDots();
+                if(typeof vBuz === 'function') vBuz([50, 50, 50]);
+                setTimeout(() => { msg.innerText = "PIN eingeben"; msg.style.color = "#94a3b8"; }, 1500);
+            }
+        }
+    }
 
-    function setupPinLock() {
-        if(db.appLockPin) {
-            isDeactivatingPin = true;
-            isSettingPin = false;
-            tempPin = "";
-            currentPinInput = "";
-            updatePinDots();
-            document.getElementById('pin-msg').innerText = "Aktuelle PIN eingeben";
-            document.getElementById('pin-msg').style.color = "var(--warning)";
-            document.getElementById('pin-close-btn').style.display = 'block';
-            document.getElementById('app-lock-screen').style.display = 'flex';
-        } else {
-            isSettingPin = true;
-            isDeactivatingPin = false;
-            tempPin = "";
-            currentPinInput = "";
-            updatePinDots();
-            document.getElementById('pin-msg').innerText = "Neue PIN festlegen";
-            document.getElementById('pin-msg').style.color = "var(--accent)";
-            document.getElementById('pin-close-btn').style.display = 'block';
-            document.getElementById('app-lock-screen').style.display = 'flex';
-        }
-    }
+    function setupPinLock() {
+        if(db.appLockPin) {
+            showConfirm("App-Sperre ist aktiv. Möchtest du sie DEAKTIVIEREN?", function(res) {
+                if(res) {
+                    db.appLockPin = null;
+                    save();
+                    showAlert("App-Sperre wurde deaktiviert.");
+                }
+            });
+        } else {
+            isSettingPin = true;
+            tempPin = "";
+            currentPinInput = "";
+            updatePinDots();
+            document.getElementById('pin-msg').innerText = "Neue PIN festlegen";
+            document.getElementById('pin-msg').style.color = "var(--accent)";
+            document.getElementById('pin-close-btn').style.display = 'block'; // X anzeigen
+            document.getElementById('app-lock-screen').style.display = 'flex';
+        }
+    }
 
-    function cancelPinSetup() {
-        isSettingPin = false;
-        isDeactivatingPin = false;
-        tempPin = "";
-        currentPinInput = "";
-        updatePinDots();
-        document.getElementById('pin-close-btn').style.display = 'none';
-        document.getElementById('app-lock-screen').style.display = 'none';
-    }
+    // NEU: Funktion zum Abbrechen der PIN-Einrichtung
+    function cancelPinSetup() {
+        isSettingPin = false;
+        tempPin = "";
+        currentPinInput = "";
+        updatePinDots();
+        document.getElementById('pin-close-btn').style.display = 'none';
+        document.getElementById('app-lock-screen').style.display = 'none';
+    }
 
     // --- APP-START INITIALISIERUNG ---
     setTimeout(() => {
