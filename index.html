@@ -481,9 +481,9 @@ body {
                 <option value="DATE">📅 Spezielles Datum...</option>
             </select>
             
-                <input type="date" id="gym-date-select" class="weight-input" style="display:none; border-color:var(--accent); max-width: 250px; margin: 0 auto 10px auto; display:block;" onchange="renderGymPlaner()">
-            ...
-            <input type="date" id="set-cycle-start" class="weight-input" style="border-color:rgba(236, 72, 153, 0.4); max-width: 250px; margin: 0 auto; display:block;">
+            <input type="date" id="gym-date-select" class="weight-input" style="display:none; border-color:var(--accent); max-width: 250px; margin: 0 auto 10px auto;" onchange="renderGymPlaner()">
+            
+            <div id="gym-planer-list"></div>
             
             <button class="btn-action" style="background:var(--accent)" onclick="addGymExercise()">+ ÜBUNG HINZUFÜGEN</button>
         </div>
@@ -1324,12 +1324,12 @@ body {
         if (touchStartY - endY > 50 || Math.abs(touchStartX - endX) > 50) { startScreen.classList.add('start-hidden'); }
     }, {passive: true});
 
-    let disablePageSwipe = false;
+        let disablePageSwipe = false;
     document.addEventListener('touchstart', e => { 
         touchStartX = e.changedTouches[0].screenX; 
         touchStartY = e.changedTouches[0].screenY; 
-        // Seitenwisch wird NUR blockiert, wenn die Karte im Plan-Tab berührt wird!
-        disablePageSwipe = !!e.target.closest('#page-plan .supp-card');
+        // Seitenwisch wird blockiert bei Supp-Karten ODER der Gym-Tagesauswahl
+        disablePageSwipe = !!e.target.closest('#page-plan .supp-card') || !!e.target.closest('.gym-day-tabs');
     }, {passive: true});
     
     document.addEventListener('touchend', e => {
