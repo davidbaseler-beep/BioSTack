@@ -28,10 +28,10 @@
         }
         
         html, body {
-    position: fixed;
+    /* position: fixed; GELÖSCHT */
     overflow: hidden;
     width: 100%;
-    height: 100%;
+    height: 100dvh; /* NEU: dvh für korrekte mobile Höhe */
     /* Verhindert das Ziehen der gesamten Seite auf iOS */
     overscroll-behavior: none; 
     background-color: #0f172a;
@@ -53,13 +53,13 @@ body {
 
 /* Erlaubt das Scrollen NUR innerhalb der Tabs, ohne die App zu verschieben */
 .page {
-    height: 100vh;
+    height: 100dvh; /* NEU: dvh statt vh */
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 20px;
-    padding-bottom: 180px !important; /* Deutlich mehr Platz am Ende der Seite */
-    box-sizing: border-box;
-}
+        -webkit-overflow-scrolling: touch;
+        padding: 80px 20px 200px 20px; /* Mehr Platz oben für die Nav-Bar und unten */
+        box-sizing:border-box;
+        scroll-padding-top: 100px; /* Verhindert, dass scrollIntoView zu weit nach oben geht */
+        }
 
         /* --- GYM TABS (NEW) --- */
         .gym-day-tabs { display: flex; overflow-x: auto; gap: 8px; padding-bottom: 5px; margin-bottom: 15px; scrollbar-width: none; }
@@ -903,8 +903,8 @@ body {
                 <h3 style="color:var(--day-glow); font-size: 14px; margin: 0;">🔒 Sicherheit</h3>
             </div>
             <div class="collapse-content" style="padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; margin-top: 5px;">
-                <button class="btn-action" style="background: rgba(255,255,255,0.05); border: 1px dashed var(--accent); color: var(--accent); margin-bottom: 0;" onclick="setupPinLock()">🔒 APP-SPERRE EINRICHTEN</button>
-            </div>
+    <button id="btn-pin-setup" class="btn-action" style="background: rgba(255,255,255,0.05); border: 1px dashed var(--accent); color: var(--accent); margin-bottom: 0;" onclick="setupPinLock()">🔒 APP-SPERRE EINRICHTEN</button>
+</div>
         </div>
 
         <button class="modal-btn btn-confirm" style="width:100%; margin-top:15px;" onclick="closeSettingsModal()">SCHLIEßEN & SPEICHERN</button>
@@ -2838,8 +2838,24 @@ function manualRefill(id, current) {
     }
 
     function openSettingsModal() {
-        document.getElementById('set-name').value = db.userName || '';
-        document.getElementById('set-gender').value = db.personal.gender || 'm';
+    document.getElementById('set-name').value = db.userName || '';
+    
+    // --- NEU: PIN-Button dynamisch anpassen ---
+    const pinBtn = document.getElementById('btn-pin-setup');
+    if (pinBtn) {
+        if (db.appLockPin) {
+            pinBtn.innerText = "🔓 APP-SPERRE DEAKTIVIEREN";
+            pinBtn.style.color = "var(--danger)";
+            pinBtn.style.borderColor = "var(--danger)";
+        } else {
+            pinBtn.innerText = "🔒 APP-SPERRE EINRICHTEN";
+            pinBtn.style.color = "var(--accent)";
+            pinBtn.style.borderColor = "var(--accent)";
+        }
+    }
+    // ------------------------------------------
+
+    document.getElementById('set-gender').value = db.personal.gender || 'm';
         document.getElementById('set-age').value = db.personal.age || '';
         document.getElementById('set-height').value = db.personal.height || '';
         document.getElementById('set-weight').value = db.personal.weight || '';
