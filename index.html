@@ -10,6 +10,7 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root { 
             --accent: #FF8C00;
@@ -407,11 +408,20 @@ input, textarea, select {
         border: 1px solid rgba(255,255,255,0.08) !important;
         transition: all 0.3s ease !important;
     }
-    .weight-input:focus, .custom-modal-input:focus {
-        border-color: var(--accent) !important;
-        box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15) !important;
-        outline: none !important;
-    }
+    /* --- 3D BODY MAP --- */
+    .bio-3d-scene { width: 100%; max-width: 350px; height: 480px; perspective: 1500px; margin: 0 auto 15px auto; }
+    .bio-3d-card { width: 100%; height: 100%; position: relative; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+    .bio-3d-card.is-flipped { transform: rotateY(180deg); }
+    .bio-3d-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; overflow: hidden; background: #000; border: 1px solid rgba(198, 147, 32, 0.3); }
+    .bio-3d-back { transform: rotateY(180deg); }
+    .bio-3d-img { width: 100%; height: 100%; object-fit: contain; }
+    .bio-3d-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; }
+    .bio-3d-muscle { fill: transparent; stroke: transparent; cursor: pointer; transition: 0.3s; }
+    .bio-3d-muscle:hover { fill: rgba(198, 147, 32, 0.2); }
+    .bio-3d-muscle.selected { fill: rgba(198, 147, 32, 0.4); stroke: #F3E5AB; stroke-width: 2; filter: drop-shadow(0 0 15px #C69320); }
+    .bio-3d-panel { background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 16px; padding: 15px; margin-top: 15px; text-align: left;}
+    .bio-3d-ex { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size:13px; }
+    .bio-3d-ex:last-child { border: none; }
     </style>
     </style>
 </head>
@@ -561,6 +571,41 @@ input, textarea, select {
     <div class="header-widget" style="justify-content: center;">
         <div style="font-weight: 800; color: var(--accent); font-size: 16px; letter-spacing: 1px; text-transform: uppercase;">
             🏋️ Gym Tracker
+        </div>
+    </div>
+
+    <div class="chart-container" id="gym-col-3d" style="margin-bottom: 15px; border: 1px solid rgba(198, 147, 32, 0.3);">
+        <div class="collapse-header" onclick="tglCollapse('gym-col-3d')">
+            <h3 style="margin:0; color:var(--accent); font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">🧍‍♂️ 3D Muskel-Map</h3>
+        </div>
+        <div class="collapse-content" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+            
+            <div class="bio-3d-scene">
+                <div class="bio-3d-card" id="main-3d-card">
+                    <div class="bio-3d-face">
+                        <img src="img/vorne.jpg" class="bio-3d-img" alt="Front">
+                        <svg class="bio-3d-svg" viewBox="0 0 400 600">
+                            <path class="bio-3d-muscle" data-name="Brustmuskulatur" data-ex="Bankdrücken Langhantel,Dips,Butterfly Maschine" d="M150,150 Q200,140 250,150 L240,210 Q200,220 160,210 Z" />
+                            <path class="bio-3d-muscle" data-name="Bauchmuskulatur" data-ex="Crunches,Beinheben hängend,Plank" d="M175,230 L225,230 L215,350 L185,350 Z" />
+                        </svg>
+                    </div>
+                    <div class="bio-3d-face bio-3d-back">
+                        <img src="img/hinten.jpg" class="bio-3d-img" alt="Back">
+                        <svg class="bio-3d-svg" viewBox="0 0 400 600">
+                            <path class="bio-3d-muscle" data-name="Rückenmuskulatur" data-ex="Klimmzüge breit,Rudern Langhantel,Kreuzheben" d="M140,150 Q200,140 260,150 L280,350 Q200,380 120,350 Z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-action" style="background: linear-gradient(135deg, #C69320 0%, #8A6514 100%); margin-bottom: 10px; box-shadow: 0 4px 15px rgba(198, 147, 32, 0.3);" onclick="document.getElementById('main-3d-card').classList.toggle('is-flipped'); document.querySelectorAll('.bio-3d-muscle').forEach(m => m.classList.remove('selected')); document.getElementById('bio-3d-info').innerHTML = '<div style=\'text-align:center; color:#94a3b8; font-size:12px;\'>Tippe auf einen Muskel, um Übungen zu laden.</div>';">
+                ↺ KÖRPER DREHEN
+            </button>
+
+            <div id="bio-3d-info" class="bio-3d-panel">
+                <div style="text-align:center; color:#94a3b8; font-size:12px;">Tippe auf einen Muskel, um Übungen zu laden.</div>
+            </div>
+
         </div>
     </div>
 
@@ -890,6 +935,7 @@ input, textarea, select {
                         <label class="checkbox-row"><input type="checkbox" id="chk-show-fasting"> Fasten-Tracker anzeigen</label>
                         <label class="checkbox-row"><input type="checkbox" id="chk-show-top-level"> Level-Badge oben dauerhaft anzeigen</label>
                         <label class="checkbox-row"><input type="checkbox" id="chk-haptic"> Haptisches Feedback (Vibration)</label>
+                        <label class="checkbox-row"><input type="checkbox" id="chk-show-confetti"> Konfetti bei Level-Up</label>
                     </div>
                 </details>
 
@@ -3065,6 +3111,7 @@ function manualRefill(id, current) {
         document.getElementById('chk-show-leistung').checked = db.analytics.showLeistung;
         document.getElementById('chk-show-gesamt').checked = db.analytics.showGesamt;
         document.getElementById('chk-show-top-level').checked = db.analytics.showTopLevel !== false;
+        document.getElementById('chk-show-confetti').checked = db.analytics.showConfetti !== false; // NEU: Standardmäßig true
         
         // Neu: Zyklus laden
         document.getElementById('chk-show-cycle').checked = db.analytics.showCycle || false;
@@ -3105,6 +3152,7 @@ function manualRefill(id, current) {
         db.analytics.showLeistung = document.getElementById('chk-show-leistung').checked;
         db.analytics.showGesamt = document.getElementById('chk-show-gesamt').checked;
         db.analytics.showTopLevel = document.getElementById('chk-show-top-level').checked;
+        db.analytics.showConfetti = document.getElementById('chk-show-confetti').checked; // NEU: Speichert die Auswahl
 
         // Neu: Zyklus speichern
         db.analytics.showCycle = document.getElementById('chk-show-cycle').checked;
@@ -3298,20 +3346,61 @@ function manualRefill(id, current) {
 
     const ranks = [ { id: 1, name: "Starter", xp: 0, icon: "🌱" }, { id: 5, name: "Novize", xp: 250, icon: "🥉" }, { id: 10, name: "Optimizer", xp: 500, icon: "🔋" }, { id: 15, name: "Tracker", xp: 1000, icon: "📋" }, { id: 20, name: "Bio-Hacker", xp: 2000, icon: "🧬" }, { id: 25, name: "System-Engineer", xp: 3500, icon: "🛠️" }, { id: 30, name: "Neuro-Hacker", xp: 5000, icon: "🧠" }, { id: 40, name: "Alchemist", xp: 7500, icon: "⚗️" }, { id: 50, name: "Limitless", xp: 10000, icon: "⚡" }, { id: 60, name: "Cyborg", xp: 13000, icon: "🦾" }, { id: 75, name: "Apex Human", xp: 17500, icon: "🦅" }, { id: 90, name: "Immortal", xp: 21000, icon: "🌌" }, { id: 100, name: "BioHacker Master", xp: 25000, icon: "👑" } ];
 
+    let previousLevelId = null; // Speichert das vorherige Level
+
+    // --- NEU: Konfetti-Animation ---
+    function fireConfetti() {
+        if (typeof confetti === 'function') {
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 999999 };
+
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) { return clearInterval(interval); }
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: ['#FF8C00', '#4facfe', '#a855f7', '#F3E5AB'] }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: ['#FF8C00', '#4facfe', '#a855f7', '#F3E5AB'] }));
+            }, 250);
+        }
+    }
+
     function updateLevel() {
         let xp = 0; 
-    // XP für Supplements
-    for (let date in db.history) { xp += (db.history[date].length * 10); } 
-    // XP für Gewicht
-    if (db.weightData) { xp += (db.weightData.length * 50); }
-    if (db.bpData) { xp += (db.bpData.length * 20); } // 20 XP für jede Blutdruckmessung
-    // XP für Gym (150 XP pro getracktem Trainingstag)
-    if (db.gym && db.gym.logs) {
-        const gymDays = [...new Set(db.gym.logs.map(l => l.date))];
-        xp += (gymDays.length * 150);
-}
+        // XP für Supplements
+        for (let date in db.history) { xp += (db.history[date].length * 10); } 
+        // XP für Gewicht
+        if (db.weightData) { xp += (db.weightData.length * 50); }
+        if (db.bpData) { xp += (db.bpData.length * 20); } 
+        // XP für Gym (150 XP pro getracktem Trainingstag)
+        if (db.gym && db.gym.logs) {
+            const gymDays = [...new Set(db.gym.logs.map(l => l.date))];
+            xp += (gymDays.length * 150);
+        }
+
         let currentRank = ranks[0], nextRank = ranks[1];
-        for (let i = 0; i < ranks.length; i++) { if (xp >= ranks[i].xp) { currentRank = ranks[i]; nextRank = ranks[i + 1] || ranks[i]; } }
+        for (let i = 0; i < ranks.length; i++) { 
+            if (xp >= ranks[i].xp) { 
+                currentRank = ranks[i]; 
+                nextRank = ranks[i + 1] || ranks[i]; 
+            } 
+        }
+
+        // --- LEVEL UP LOGIK ---
+        if (previousLevelId !== null && currentRank.id > previousLevelId) {
+            // Konfetti nur starten, wenn es in den Einstellungen NICHT deaktiviert wurde
+            if (db.analytics.showConfetti !== false) {
+                fireConfetti(); 
+            }
+            if(typeof vBuz === 'function') vBuz([100, 50, 100, 50, 300]); // Spezielle Triumph-Vibration
+            setTimeout(() => {
+                showAlert(`Glückwunsch! Du bist zu Level ${currentRank.id} ("${currentRank.name}") aufgestiegen! 🚀`, "LEVEL UP!");
+            }, 500);
+        }
+        previousLevelId = currentRank.id; // Aktuelles Level für den nächsten Check merken
+
         if(document.getElementById('lvl-name')){
             document.getElementById('lvl-name').innerText = `Level ${currentRank.id}: ${currentRank.name}`;
             document.getElementById('lvl-icon').innerText = currentRank.icon;
@@ -3327,35 +3416,11 @@ function manualRefill(id, current) {
             });
         }
         
-        // NEU: Update das globale Badge in der Navigationsleiste
         if(document.getElementById('glb-icon')) {
             document.getElementById('glb-icon').innerText = currentRank.icon;
             document.getElementById('glb-text').innerText = `Lvl ${currentRank.id}`;
         }
-        updateTopLevelBadge(); // Prüft direkt, ob es angezeigt werden soll
-    }
-
-    function openRanksModal() { document.getElementById('ranks-modal').style.display = 'flex'; }
-    function closeRanksModal() { document.getElementById('ranks-modal').style.display = 'none'; }
-
-    // NEU: Funktion zum Ein- und Ausblenden des Badges
-    function updateTopLevelBadge() {
-        const badge = document.getElementById('global-level-badge');
-        if(badge) {
-            badge.style.display = (db.analytics.showTopLevel !== false) ? 'flex' : 'none';
-        }
-    }
-
-    updateLevel(); 
-    updateFastingUI(); 
-    updateDashboardView();
-    showPage('plan');
-    // --- START-TAB LOGIK ---
-    function saveStartTab() {
-        const val = document.getElementById('setting-start-tab').value;
-        db.startTab = val;
-        save();
-        if(typeof showAlert === 'function') showAlert("Start-Tab auf " + val.toUpperCase() + " geändert!");
+        updateTopLevelBadge(); 
     }
 
     function loadStartTabSetting() {
@@ -3909,6 +3974,57 @@ if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
         }
     });
 }
+
+    // --- 3D MUSKEL MAP LOGIK ---
+    document.querySelectorAll('.bio-3d-muscle').forEach(muscle => {
+        muscle.addEventListener('click', function(e) {
+            e.stopPropagation(); // Verhindert Scroll-Konflikte
+            if(typeof vBuz === 'function') vBuz(15); // Haptisches Feedback
+            
+            // Alle anderen deselektieren, aktuellen hervorheben
+            document.querySelectorAll('.bio-3d-muscle').forEach(m => m.classList.remove('selected'));
+            this.classList.add('selected');
+
+            const name = this.getAttribute('data-name');
+            const exercises = this.getAttribute('data-ex').split(',');
+            
+            let html = `<div style="color:var(--accent); font-size:14px; font-weight:800; margin-bottom:10px;">⚡ ${name}</div>`;
+            exercises.forEach(ex => {
+                html += `
+                    <div class="bio-3d-ex">
+                        <span style="color:white; font-weight:bold;">${ex}</span>
+                        <button style="background:var(--accent); border:none; border-radius:8px; color:white; font-size:10px; font-weight:900; padding:6px 12px; cursor:pointer;" onclick="openAddFrom3D('${ex}')">+ PLAN</button>
+                    </div>
+                `;
+            });
+            document.getElementById('bio-3d-info').innerHTML = html;
+        });
+    });
+
+    // Brücken-Funktion: Überträgt den Übungsnamen direkt in dein Gym-Modal
+    window.openAddFrom3D = function(exName) {
+        if(typeof vBuz === 'function') vBuz(15);
+        addGymExercise(); // Dein vorhandenes Fenster öffnen
+        setTimeout(() => {
+            const input = document.getElementById('gym-mod-name');
+            if(input) {
+                input.value = exName;
+                input.dispatchEvent(new Event('input')); // Aktualisiert die UI
+                document.getElementById('gym-mod-autocomplete-list').style.display = 'none';
+            }
+        }, 150);
+    };
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('Service Worker registriert!', reg))
+                .catch(err => console.log('Service Worker Fehler:', err));
+        });
+    }
+</script>
+</body>
+</html>
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
