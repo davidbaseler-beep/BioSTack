@@ -92,12 +92,12 @@ input, textarea, select {
         /* --- START SCREEN STYLES --- */
         #start-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, #111111, #000000); /* Noch dunklerer Noir Hintergrund */
+            background: radial-gradient(circle at center, #111111, #000000);
             z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             text-align: center;
-            /* Transition angepasst für den Tastatur-Fix */
-            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); 
+            box-sizing: border-box; /* NEU: Hält das Layout stabil */
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), padding-bottom 0.3s ease; /* NEU: Weiche Animation für das Hochschieben */
         }
         .start-hidden { transform: translateY(-100%); }
         .logo-big { margin-bottom: 20px; animation: pulseGold 3s infinite; } 
@@ -414,7 +414,15 @@ input, textarea, select {
     .bio-3d-card.is-flipped { transform: rotateY(180deg); }
     .bio-3d-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; overflow: hidden; background: #000; border: 1px solid rgba(198, 147, 32, 0.3); }
     .bio-3d-back { transform: rotateY(180deg); }
-    .bio-3d-img { width: 100%; height: 100%; object-fit: contain; transform: scale(1) translateX(10px); transform-origin: center center; pointer-events: none; user-select: none; }
+    .bio-3d-img { 
+        width: calc(100% + 20px); /* Macht das Bild etwas breiter, um Platz fürs Verschieben zu haben */
+        height: 100%; 
+        object-fit: contain; 
+        transform: scale(1); 
+        margin-left: 10px; /* HIER verschiebst du es nach rechts (z.B. 10px, 15px, 20px) */
+        pointer-events: none; 
+        user-select: none; 
+    }
     .bio-3d-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; }
     .bio-3d-muscle { fill: transparent; stroke: transparent; cursor: pointer; transition: 0.3s; }
     .bio-3d-muscle:hover { fill: rgba(198, 147, 32, 0.2); }
@@ -1382,6 +1390,18 @@ input, textarea, select {
         }
     }
     initWelcome();
+
+    // --- NEU: iOS TASTATUR-FIX (STARTBILDSCHIRM) ---
+    const nameInputBox = document.getElementById('user-name-input');
+    const startScreenBox = document.getElementById('start-screen');
+    if(nameInputBox && startScreenBox) {
+        nameInputBox.addEventListener('focus', () => { 
+            startScreenBox.style.paddingBottom = '35vh'; // Schiebt das Logo und Feld über die Tastatur
+        });
+        nameInputBox.addEventListener('blur', () => { 
+            startScreenBox.style.paddingBottom = '0'; // Setzt es sanft wieder zurück
+        });
+    }
 
     function toggleFasting() {
         if(db.fasting.active) {
