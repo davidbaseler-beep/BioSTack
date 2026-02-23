@@ -3038,6 +3038,13 @@ function manualRefill(id, current) {
         db.analytics.haptic = document.getElementById('chk-haptic').checked;
 
         save(); 
+        
+        // NEU: Wenn ein Backup geladen wurde, App nach dem Speichern aktualisieren
+        if (needsReloadAfterSave) {
+            location.reload();
+            return;
+        }
+        
         initWelcome(); 
         updateBodySummary();
         updateDashboardView();
@@ -3055,18 +3062,33 @@ function manualRefill(id, current) {
 
     function importBackup(event) {
         const file = event.target.files[0]; if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try { JSON.parse(e.target.result); localStorage.setItem(STORAGE_KEY, e.target.result); showAlert("Backup geladen! Neustart...", "Erfolg"); setTimeout(() => location.reload(), 2000); } 
-            catch (err) { showAlert("Ungültige Datei.", "Fehler"); }
-        };
-        reader.readAsText(file);
+        
+        showConfirm(`Möchtest du das lokale Backup "${file.name}" wirklich laden? Deine aktuellen Daten werden überschrieben.`, function(res) {
+            if(res) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try { 
+                        db = JSON.parse(e.target.result); // In-Memory Update
+                        localStorage.setItem(STORAGE_KEY, e.target.result); 
+                        needsReloadAfterSave = true; // Reload für den Speichern-Button vormerken
+                        showAlert("Lokales Backup erfolgreich geladen!\n\nBitte klicke nun unten auf 'SCHLIEßEN & SPEICHERN', um den Vorgang abzuschließen.", "Erfolg");
+                        document.getElementById('fileInput').value = ''; // Input zurücksetzen
+                    } catch (err) { 
+                        showAlert("Ungültige Datei.", "Fehler"); 
+                    }
+                };
+                reader.readAsText(file);
+            } else {
+                document.getElementById('fileInput').value = ''; // Input bei Abbruch zurücksetzen
+            }
+        }, "Lokal Laden", "Ja, laden");
     }
 
     // --- GOOGLE DRIVE CLOUD SYNC ---
     let tokenClient;
     let gAccessToken = localStorage.getItem('gAccessToken') || null;
     let gUserInfo = JSON.parse(localStorage.getItem('gUserInfo')) || null;
+    let needsReloadAfterSave = false; // NEU: Steuert den App-Reload nach dem Backup
 
     // Initialisiert den Google Auth Client im Hintergrund
     window.addEventListener('load', () => {
@@ -3176,10 +3198,10 @@ function manualRefill(id, current) {
                         let fileText = await fileRes.text();
                         
                         try {
-                            JSON.parse(fileText); // Validierung, ob es gültiges JSON ist
+                            db = JSON.parse(fileText); // In-Memory Update
                             localStorage.setItem(STORAGE_KEY, fileText);
-                            showAlert("Daten erfolgreich aus der Cloud wiederhergestellt! App startet neu...", "Erfolg");
-                            setTimeout(() => location.reload(), 2000);
+                            needsReloadAfterSave = true; // Reload für den Speichern-Button vormerken
+                            showAlert("Daten erfolgreich aus der Cloud geladen!\n\nBitte klicke nun unten auf 'SCHLIEßEN & SPEICHERN', um den Vorgang abzuschließen.", "Erfolg");
                         } catch(e) {
                             showAlert("Fehler: Das Cloud-Backup ist beschädigt.", "Fehler");
                         }
