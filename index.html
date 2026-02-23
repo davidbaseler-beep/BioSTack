@@ -424,11 +424,13 @@ input, textarea, select {
 
     /* Das Bild selbst wird nur noch minimal nach rechts geschoben */
     .bio-3d-img { 
+        position: absolute;
+        top: -5%;      /* Zieht das Bild oben über den Rand hinaus (Zoom) */
+        bottom: -5%;   /* Zieht es unten über den Rand hinaus (Zoom) */
+        left: 5%;      /* Schiebt das gesamte Bild fest nach rechts */
         width: 100%; 
-        height: 100%; 
-        object-fit: contain; 
-        margin-left: 15px; /* Dein Rechts-Ruck */
-        transform: scale(1); /* HIER ZOOMS DU NÄHER RAN (1.1 = +10%, 1.2 = +20%) */
+        height: 110%;  /* Erzwingt eine 10%ige Vergrößerung */
+        object-fit: cover; 
         pointer-events: none; 
         user-select: none; 
     }
