@@ -47,7 +47,24 @@ body {
 
 /* Scrollbars global verstecken */
 ::-webkit-scrollbar { display: none; }
-* { scrollbar-width: none; -ms-overflow-style: none; }
+* { 
+    scrollbar-width: none; 
+    -ms-overflow-style: none; 
+    /* NEU: Verhindert Textmarkierung und das iOS-Lupe/Kopieren-Menü */
+    -webkit-touch-callout: none; 
+    -webkit-user-select: none; 
+    -moz-user-select: none; 
+    -ms-user-select: none; 
+    user-select: none; 
+}
+
+/* NEU: Eingabefelder MÜSSEN markierbar bleiben, sonst funktioniert die Tastatur nicht */
+input, textarea, select {
+    -webkit-user-select: auto !important;
+    -moz-user-select: auto !important;
+    -ms-user-select: auto !important;
+    user-select: auto !important;
+}
 
 /* Erlaubt das Scrollen NUR innerhalb der Tabs, ohne die App zu verschieben */
 
@@ -1024,6 +1041,21 @@ body {
             navigator.vibrate(pattern);
         }
     }
+
+    // NEU: Globaler Listener für alle Klicks auf interaktive Elemente
+    document.addEventListener('click', function(e) {
+        // .closest() fängt den Klick ab, selbst wenn ein Emoji IN einem Button geklickt wird
+        if (e.target.closest('button') || 
+            e.target.closest('.btn-action') || 
+            e.target.closest('.modal-btn') ||
+            e.target.closest('.gym-day-tab') ||
+            e.target.closest('.num-btn') ||
+            e.target.closest('.nav-arrow') ||
+            e.target.closest('.icon-box')) {
+            
+            vBuz(15); // Knackige 15ms Vibration für Tasten-Feedback
+        }
+    }, { passive: true });
 
     function getGermanDay() {
         const days = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
