@@ -582,6 +582,31 @@ body {
         <div id="body-summary-grid" class="ana-grid"></div>
     </div>
 
+    <div class="chart-container" id="body-col-bp" style="margin-bottom: 15px; border: 1px solid rgba(239, 68, 68, 0.3);">
+        <div class="collapse-header" onclick="tglCollapse('body-col-bp')">
+            <h3 style="margin:0; color:#ef4444; font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">🫀 Blutdruck & Puls</h3>
+        </div>
+        <div class="collapse-content" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+            <div style="font-size:11px; color:#94a3b8; margin-bottom:5px; text-align:center; font-weight:700;">DATUM WÄHLEN</div>
+            <input type="date" id="bp-date" class="weight-input" style="margin-bottom: 15px;">
+            
+            <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
+                <input type="number" id="bp-sys" class="weight-input" placeholder="SYS" style="margin-bottom:0; font-size:16px; font-weight:bold; color:#4facfe;">
+                <span style="color:#94a3b8; font-size:24px; font-weight:100;">/</span>
+                <input type="number" id="bp-dia" class="weight-input" placeholder="DIA" style="margin-bottom:0; font-size:16px; font-weight:bold; color:#f59e0b;">
+            </div>
+            <input type="number" id="bp-pulse" class="weight-input" placeholder="Puls (BPM) - optional" style="margin-bottom:15px; font-size:14px;">
+            
+            <button class="btn-action" style="background: #ef4444;" onclick="saveBp()">WERTE SPEICHERN</button>
+            <div id="bp-msg" style="text-align:center; font-size:12px; color:#22c55e; height:15px; margin-top:5px;"></div>
+            
+            <div id="bp-weekly-avg" style="text-align:center; font-size:11px; margin-top:15px; color: #cbd5e1; font-weight:800; letter-spacing:0.5px; display:none;"></div>
+            <div style="position: relative; height: 180px; width: 100%; margin-top: 10px;">
+                <canvas id="bpChart"></canvas>
+            </div>
+            <div id="bp-history-list" style="margin-top: 20px;"></div>
+        </div>
+    </div>
     <div class="chart-container" id="body-col-tracking" style="margin-bottom: 15px; border: 1px solid rgba(79, 172, 254, 0.3);">
         <div class="collapse-header" onclick="tglCollapse('body-col-tracking')">
             <h3 style="margin:0; color:var(--day-glow); font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">🦾 GEWICHT</h3>
@@ -750,6 +775,7 @@ body {
                 <details style="margin-bottom:10px; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
                     <summary style="font-size:12px; font-weight:bold; color:var(--accent); cursor:pointer; outline:none; list-style:none;">🦾 Body (Haupt-Widgets) ▾</summary>
                     <div style="margin-top:10px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:10px;">
+                        <label class="checkbox-row"><input type="checkbox" id="chk-show-bp"> Blutdruck anzeigen</label>
                         <label class="checkbox-row"><input type="checkbox" id="chk-show-gewicht"> Gewicht anzeigen</label>
                         <label class="checkbox-row"><input type="checkbox" id="chk-show-masse"> Körpermaße anzeigen</label>
                         <label class="checkbox-row"><input type="checkbox" id="chk-show-labor"> Laborwerte anzeigen</label>
@@ -942,7 +968,7 @@ body {
     }
 
     const STORAGE_KEY = 'biostack_infinite_v19_2_personal'; 
-    let pId = null, currentInput = "", weightChart = null, radarChartInstance = null, gymChartInstance = null, editingId = null, currentPauseId = null;
+    let pId = null, currentInput = "", weightChart = null, radarChartInstance = null, gymChartInstance = null, bpChartInstance = null, editingId = null, currentPauseId = null;
     let dayOffset = 0;
     let radarMode = '7d';
     
@@ -980,6 +1006,8 @@ body {
     if(db.analytics.showMasse === undefined) db.analytics.showMasse = true;
     if(!db.analytics.showLabor === undefined) db.analytics.showLabor = true;
     if(db.analytics.showRadar === undefined) db.analytics.showRadar = true;
+    if(!db.bpData) db.bpData = [];
+    if(db.analytics.showBp === undefined) db.analytics.showBp = true;
     if(db.analytics.haptic === undefined) db.analytics.haptic = true;
     if(!db.deletedSupps) db.deletedSupps = []; // NEU: Speichert gelöschte Base-Items
     
@@ -995,6 +1023,9 @@ body {
     if(!db.labHistory) db.labHistory = [];
 
     function updateDashboardView() {
+        const bpWidget = document.getElementById('body-col-bp');
+        if(bpWidget) bpWidget.style.display = db.analytics.showBp ? 'block' : 'none';
+
         const fWidget = document.getElementById('fasting-widget-container');
         if(fWidget) fWidget.style.display = db.analytics.showFasting ? 'flex' : 'none';
         
@@ -1204,8 +1235,6 @@ body {
             lblEl.innerText = "BEREIT";
         }
     }
-
-    setInterval(updateFastingUI, 1000);
 
     function checkAutoReactivation() {
         const now = new Date().getTime();
@@ -2740,6 +2769,9 @@ function manualRefill(id, current) {
             renderGymHistory();
         }
         if(p==='weight') { 
+            document.getElementById('bp-date').value = getTodayDate();
+            renderBpHistory();
+            initBpChart();
             document.getElementById('w-date').value = getTodayDate(); 
             initChart(); 
             updateFastingUI(); 
@@ -2833,6 +2865,7 @@ function manualRefill(id, current) {
     }
 
     function openSettingsModal() {
+        document.getElementById('chk-show-bp').checked = db.analytics.showBp;
         document.getElementById('set-name').value = db.userName || '';
         document.getElementById('set-gender').value = db.personal.gender || 'm';
         document.getElementById('set-age').value = db.personal.age || '';
@@ -2872,6 +2905,7 @@ function manualRefill(id, current) {
     }
 
     function closeSettingsModal() {
+        db.analytics.showBp = document.getElementById('chk-show-bp').checked;
         db.userName = document.getElementById('set-name').value.trim();
         db.personal.gender = document.getElementById('set-gender').value;
         db.personal.age = document.getElementById('set-age').value;
@@ -3075,6 +3109,7 @@ function manualRefill(id, current) {
     for (let date in db.history) { xp += (db.history[date].length * 10); } 
     // XP für Gewicht
     if (db.weightData) { xp += (db.weightData.length * 50); }
+    if (db.bpData) { xp += (db.bpData.length * 20); } // 20 XP für jede Blutdruckmessung
     // XP für Gym (150 XP pro getracktem Trainingstag)
     if (db.gym && db.gym.logs) {
         const gymDays = [...new Set(db.gym.logs.map(l => l.date))];
@@ -3432,9 +3467,276 @@ function updateCycleUI() {
     `;
 }
 
+      // --- BLUTDRUCK LOGIK (Multimessung & Averages) ---
+    function saveBp() {
+        const dateStr = document.getElementById('bp-date').value || getTodayDate();
+        const sys = parseInt(document.getElementById('bp-sys').value);
+        const dia = parseInt(document.getElementById('bp-dia').value);
+        const pulse = parseInt(document.getElementById('bp-pulse').value) || null;
+
+        if(!sys || !dia) { showAlert("Bitte SYS und DIA (z.B. 120 / 80) eintragen!"); return; }
+
+        const dateDisplay = new Date(dateStr).toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'numeric'});
+        const timeStr = new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
+
+        const entryId = 'bp_' + Date.now();
+
+        db.bpData.push({ id: entryId, date: dateDisplay, isoDate: dateStr, time: timeStr, sys, dia, pulse });
+        db.bpData.sort((a,b) => new Date(b.isoDate) - new Date(a.isoDate));
+
+        save();
+        vBuz([30, 50, 30]);
+        document.getElementById('bp-msg').innerText = "Messung gespeichert!";
+        setTimeout(() => document.getElementById('bp-msg').innerText = "", 2000);
         
+        document.getElementById('bp-sys').value = '';
+        document.getElementById('bp-dia').value = '';
+        document.getElementById('bp-pulse').value = '';
+
+        renderBpHistory();
+        initBpChart();
+        updateLevel(); 
+    }
+
+    let openBpDate = null; // Speichert das geöffnete Datum beim Löschen
+
+function deleteBp(id) {
+    const item = db.bpData.find(d => d.id === id);
+    if (!item) return;
+
+    showConfirm("Diese spezifische Messung wirklich löschen?", function(res) {
+        if(res) {
+            openBpDate = item.isoDate; // Datum vor dem Löschen sichern
+            db.bpData = db.bpData.filter(d => d.id !== id);
+            save(); renderBpHistory(); initBpChart();
+        }
+    });
+}
+
+function renderBpHistory() {
+    const cont = document.getElementById('bp-history-list');
+    if (!cont) return;
+    cont.innerHTML = '';
+    if (!db.bpData || db.bpData.length === 0) {
+        cont.innerHTML = '<div style="font-size:11px; opacity:0.5; text-align:center;">Noch keine Blutdruck-Historie.</div>';
+        return;
+    }
+
+    const daysMap = {};
+    db.bpData.forEach(m => {
+        if(!daysMap[m.isoDate]) daysMap[m.isoDate] = [];
+        daysMap[m.isoDate].push(m);
+    });
+
+    const yearGroups = {};
+    Object.keys(daysMap).sort().reverse().forEach(isoDate => {
+        const yKey = isoDate.substring(0, 4);
+        const mKey = isoDate.substring(5, 7);
+        if (!yearGroups[yKey]) yearGroups[yKey] = {};
+        if (!yearGroups[yKey][mKey]) yearGroups[yKey][mKey] = [];
+        yearGroups[yKey][mKey].push(isoDate);
+    });
+
+    Object.keys(yearGroups).sort().reverse().forEach(yKey => {
+        let isYearOpen = (typeof openBpDate !== 'undefined' && openBpDate && openBpDate.startsWith(yKey)) ? "open" : "";
+        let yearHtml = `<details ${isYearOpen} style="margin-bottom:15px; border:1px solid rgba(255,255,255,0.1); border-radius:12px; overflow:hidden;"><summary style="padding:15px; font-weight:900; color:white; font-size:14px; cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05);"><span>📅 JAHR ${yKey}</span><span style="font-size:10px; opacity:0.6;">Aufklappen ▾</span></summary><div style="padding:10px;">`;
+
+        Object.keys(yearGroups[yKey]).sort().reverse().forEach(mKey => {
+            const monthLabel = new Date(`${yKey}-${mKey}-01`).toLocaleDateString('de-DE', { month: 'long', year: 'numeric' });
+            let isMonthOpen = (typeof openBpDate !== 'undefined' && openBpDate && openBpDate.startsWith(`${yKey}-${mKey}`)) ? "open" : "";
+            yearHtml += `<details ${isMonthOpen} style="margin-bottom:10px; border:1px solid rgba(239, 68, 68, 0.2); border-radius:12px; overflow:hidden;"><summary style="padding:12px; font-weight:900; color:#ef4444; cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; background:rgba(239, 68, 68, 0.05);"><span>🫀 ${monthLabel.toUpperCase()}</span><span style="font-size:10px; opacity:0.6;">${yearGroups[yKey][mKey].length} Tage ▾</span></summary><div style="padding:10px;">`;
+            
+            yearGroups[yKey][mKey].forEach(isoDate => {
+                const measurements = daysMap[isoDate];
+                const dateDisplay = measurements[0].date;
+                
+                let sumSys = 0, sumDia = 0;
+                measurements.forEach(m => { sumSys += m.sys; sumDia += m.dia; });
+                const avgSys = Math.round(sumSys / measurements.length);
+                const avgDia = Math.round(sumDia / measurements.length);
+                
+                let statusColor = "#22c55e"; let statusText = "Normal";
+                if (avgSys >= 140 || avgDia >= 90) { statusColor = "#ef4444"; statusText = "Hoch"; }
+                else if (avgSys >= 130 || avgDia >= 85) { statusColor = "#f59e0b"; statusText = "Erhöht"; }
+                else if (avgSys < 90 || avgDia < 60) { statusColor = "#4facfe"; statusText = "Niedrig"; }
+
+                let isDayOpen = (typeof openBpDate !== 'undefined' && openBpDate === isoDate) ? "open" : "";
+                let dayHtml = `
+                <details ${isDayOpen} style="background:rgba(0,0,0,0.2); padding:10px; border-radius:10px; margin-bottom:8px; border:1px solid var(--glass-border);">
+                    <summary style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; list-style:none;">
+                        <div>
+                            <div style="font-size:11px; color:#cbd5e1; margin-bottom:3px;">🗓️ ${dateDisplay} ${measurements.length > 1 ? `(<b style="color:var(--accent)">${measurements.length}x</b>)` : ''}</div>
+                            <div style="font-size:16px; font-weight:900; color:white;">${avgSys} <span style="font-size:12px; color:#94a3b8; font-weight:normal;">/</span> ${avgDia} <span style="font-size:10px; color:#64748b; font-weight:bold;">Ø mmHg</span></div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="background:${statusColor}20; color:${statusColor}; border:1px solid ${statusColor}50; padding:4px 8px; border-radius:6px; font-size:10px; font-weight:bold; text-transform:uppercase;">${statusText}</span>
+                            <span style="font-size:12px; opacity:0.5; margin-left:8px;">▾</span>
+                        </div>
+                    </summary>
+                    <div style="margin-top:12px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:10px;">`;
+                
+                measurements.forEach(m => {
+                    let pText = m.pulse ? `${m.pulse} BPM` : '';
+                    let tText = m.time ? m.time + " Uhr" : 'Messung';
+                    dayHtml += `
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:12px; background: rgba(255,255,255,0.02); padding: 8px; border-radius: 6px;">
+                            <span style="color:#94a3b8; width:60px;">${tText}</span>
+                            <span style="color:white; font-weight:bold; flex:1; text-align:center;">${m.sys}/${m.dia}</span>
+                            <span style="color:#64748b; font-size:10px; width:40px; text-align:right;">${pText}</span>
+                            <div onclick="deleteBp('${m.id}')" style="color:var(--danger); font-size:14px; cursor:pointer; margin-left:15px; padding:0 5px;">✖</div>
+                        </div>`;
+                });
+                dayHtml += `</div></details>`;
+                yearHtml += dayHtml;
+            });
+            yearHtml += `</div></details>`;
+        });
+        yearHtml += `</div></details>`;
+        cont.innerHTML += yearHtml;
+    });
+}
+
+function initBpChart() {
+    const ctxEl = document.getElementById('bpChart');
+    const avgDiv = document.getElementById('bp-weekly-avg');
+    if(!ctxEl) return;
+    if(bpChartInstance) bpChartInstance.destroy();
+    
+    if(!db.bpData || db.bpData.length === 0) {
+        ctxEl.parentElement.style.display = 'none';
+        if(avgDiv) avgDiv.style.display = 'none';
+        return;
+    }
+    ctxEl.parentElement.style.display = 'block';
+
+    const dailyAverages = {};
+    db.bpData.forEach(m => {
+        if(!dailyAverages[m.isoDate]) dailyAverages[m.isoDate] = { sysSum:0, diaSum:0, pulseSum:0, count:0, pulseCount:0 };
+        dailyAverages[m.isoDate].sysSum += m.sys;
+        dailyAverages[m.isoDate].diaSum += m.dia;
+        dailyAverages[m.isoDate].count++;
+        if (m.pulse) { dailyAverages[m.isoDate].pulseSum += m.pulse; dailyAverages[m.isoDate].pulseCount++; }
+    });
+
+    const sortedDates = Object.keys(dailyAverages).sort();
+    const labels = []; const sysData = []; const diaData = []; const pulseData = [];
+
+    sortedDates.forEach(d => {
+        labels.push(d.split('-').slice(1).reverse().join('.'));
+        sysData.push(Math.round(dailyAverages[d].sysSum / dailyAverages[d].count));
+        diaData.push(Math.round(dailyAverages[d].diaSum / dailyAverages[d].count));
+        pulseData.push(dailyAverages[d].pulseCount > 0 ? Math.round(dailyAverages[d].pulseSum / dailyAverages[d].pulseCount) : null);
+    });
+
+    // NEU: Erstelle Daten für die Grenzlinien (immer 140 bzw. 90)
+    const limitSysData = new Array(labels.length).fill(140);
+    const limitDiaData = new Array(labels.length).fill(90);
+
+    if(avgDiv) {
+        const last7Dates = sortedDates.slice(-7);
+        let weekSys = 0, weekDia = 0;
+        last7Dates.forEach(d => {
+            weekSys += Math.round(dailyAverages[d].sysSum / dailyAverages[d].count);
+            weekDia += Math.round(dailyAverages[d].diaSum / dailyAverages[d].count);
+        });
+        avgDiv.innerHTML = `Wochentrend (${last7Dates.length} Tage): <span style="color:#4facfe">${Math.round(weekSys/last7Dates.length)}</span> / <span style="color:#f59e0b">${Math.round(weekDia/last7Dates.length)}</span> Ø`;
+        avgDiv.style.display = 'block';
+    }
+
+    bpChartInstance = new Chart(ctxEl.getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                { label: 'SYS (Ø)', data: sysData, borderColor: '#4facfe', backgroundColor: 'rgba(79, 172, 254, 0.1)', borderWidth: 2, tension: 0, fill: true, pointRadius: 4, yAxisID: 'y', order: 2 },
+                { label: 'DIA (Ø)', data: diaData, borderColor: '#f59e0b', backgroundColor: 'transparent', borderWidth: 2, tension: 0, fill: false, pointRadius: 4, yAxisID: 'y', order: 2 },
+                { label: 'Puls (Ø)', data: pulseData, borderColor: '#a855f7', borderDash: [5, 5], backgroundColor: 'transparent', borderWidth: 2, tension: 0, fill: false, pointRadius: 3, yAxisID: 'y1', spanGaps: true, order: 2 },
+                
+                // NEU: Die beiden Grenzlinien
+                {
+                    label: 'Limit SYS', data: limitSysData,
+                    borderColor: '#ef4444', borderWidth: 1, borderDash: [5, 5], // Rot, dünn, gestrichelt
+                    pointRadius: 0, fill: false, yAxisID: 'y', order: 1 // Keine Punkte, im Hintergrund
+                },
+                {
+                    label: 'Limit DIA', data: limitDiaData,
+                    borderColor: '#ef4444', borderWidth: 1, borderDash: [5, 5], // Rot, dünn, gestrichelt
+                    pointRadius: 0, fill: false, yAxisID: 'y', order: 1 // Keine Punkte, im Hintergrund
+                }
+            ]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { 
+                legend: { 
+                    display: true, labels: { color: '#cbd5e1', boxWidth: 10 },
+                    // NEU: Verstecke die Grenzlinien in der Legende
+                    filter: function(item, chart) { return !item.text.includes('Limit'); }
+                },
+                tooltip: {
+                    // NEU: Zeige keine Tooltips für die Grenzlinien an
+                    filter: function(tooltipItem) { return !tooltipItem.dataset.label.includes('Limit'); }
+                }
+            },
+            scales: { 
+                x: { ticks: {color: '#cbd5e1'}, grid: { color: 'rgba(255,255,255,0.05)' } },
+                y: { 
+                    type: 'linear', display: true, position: 'left', 
+                    ticks: {color: '#cbd5e1'}, grid: { color: 'rgba(255,255,255,0.05)' },
+                    title: { display: true, text: 'mmHg', color: '#cbd5e1', font: { size: 10 } }
+                },
+                y1: { 
+                    type: 'linear', display: true, position: 'right', 
+                    ticks: {color: '#a855f7'}, grid: { drawOnChartArea: false },
+                    title: { display: true, text: 'BPM', color: '#a855f7', font: { size: 10 } }
+                }
+            }
+        }
+    });
+}  
+
 </script>
 <script>
+
+// --- AUTO DAY-SWITCHER & BATTERY SAVER ---
+    let activeAppDate = getTodayDate();
+    
+    // 1. Timer startet ganz normal beim Laden der App
+    let fastingTimer = setInterval(updateFastingUI, 1000); 
+
+    function checkForNewDay() {
+        const realToday = getTodayDate();
+        if (realToday !== activeAppDate) {
+            activeAppDate = realToday;
+            
+            // Wenn der User gerade "Heute" ansieht, laden wir die UI neu
+            if (dayOffset === 0) {
+                renderPlan();
+                if (document.getElementById('page-gym').classList.contains('active')) {
+                    setFlexDay(getGermanDay());
+                }
+                if(typeof vBuz === 'function') vBuz([100, 50, 100]);
+                showAlert("Ein neuer Tag hat begonnen! Dein Plan wurde automatisch aktualisiert.", "Tageswechsel 🌅");
+            }
+        }
+    }
+
+    // 2. Der smarte Sichtbarkeits-Manager (0% Hintergrund-Verbrauch)
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            // APP IST SICHTBAR: Prüfe auf neuen Tag, update das Fasten-UI sofort und starte den Timer wieder.
+            checkForNewDay();
+            updateFastingUI(); 
+            fastingTimer = setInterval(updateFastingUI, 1000);
+        } else {
+            // APP IST IM HINTERGRUND: Töte den Timer restlos, um CPU und Batterie zu schonen.
+            clearInterval(fastingTimer);
+        }
+    });
+
+    // 3. Leiser Notfall-Check jede Minute, falls die App stundenlang entsperrt auf dem Tisch liegt
+    setInterval(checkForNewDay, 60000);
+
     // Verhindert das vertikale "Gummiband"-Ziehen der gesamten App
 document.addEventListener('touchmove', function (e) {
     // Scrollen in den Seiten UND Modals erlauben
