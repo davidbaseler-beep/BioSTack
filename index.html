@@ -908,10 +908,10 @@ body {
                     <div style="font-size:12px; color:var(--success); font-weight:800; margin-bottom:2px;">✓ Verbunden</div>
                     <div id="google-user-name" style="font-size:10px; color:#94a3b8; margin-bottom:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
                     <div style="display:flex; gap:8px;">
-                        <button class="btn-action" style="background: var(--day-glow); font-size: 10px; padding: 12px; margin:0;" onclick="syncToDrive()">☁️ ZU DRIVE SPEICHERN</button>
-                        <button class="btn-action" style="background: var(--warning); font-size: 10px; padding: 12px; margin:0; color:black;" onclick="restoreFromDrive()">⬇️ VON DRIVE LADEN</button>
-                    </div>
-                    <div id="drive-msg" style="text-align:center; font-size:12px; height:15px; margin-top:10px; font-weight:bold;"></div>
+    <button class="btn-action" style="background: var(--day-glow); font-size: 10px; padding: 12px; margin:0;" onclick="syncToDrive()">☁️ ZU DRIVE SPEICHERN</button>
+    <button class="btn-action" style="background: var(--warning); font-size: 10px; padding: 12px; margin:0; color:black;" onclick="restoreFromDriveConfirm()">⬇️ VON DRIVE LADEN</button>
+</div>
+<div id="drive-msg" style="text-align:center; font-size:12px; height:15px; margin-top:10px; font-weight:bold;"></div>
                 </div>
 
                 <hr style="border:0; border-top:1px dashed rgba(255,255,255,0.1); margin:15px 0;">
@@ -3064,59 +3064,72 @@ function manualRefill(id, current) {
     }
 }
 
-    async function restoreFromDrive() {
+    // 1. NEU: Diese Funktion öffnet nur den angepassten Dialog
+    function restoreFromDriveConfirm() {
         if(!gAccessToken) { handleAuthClick(); return; }
         
-        const msgDiv = document.getElementById('drive-msg'); // Das Textfeld greifen
+        // Nutzt die bestehende showConfirm Funktion, passt aber Titel und Button-Text an
+        document.getElementById('confirm-title').innerText = "Wiederherstellen";
+        document.getElementById('confirm-text').innerText = "Dies überschreibt deine lokalen Daten mit dem Google Drive Backup. Fortfahren?";
         
-        showConfirm("Dies überschreibt deine lokalen Daten mit dem Google Drive Backup. Fortfahren?", async function(res) {
+        // Wir färben den roten Button ausnahmsweise grün für diesen Vorgang
+        const okBtn = document.getElementById('confirm-ok-btn');
+        okBtn.innerText = "Laden";
+        okBtn.style.background = "var(--success)";
+        
+        confirmCallbackFn = function(res) {
+            // Button-Farbe wieder zurücksetzen für andere Lösch-Vorgänge
+            okBtn.style.background = "var(--danger)"; 
             if(res) {
-                // Inline Feedback: Ladevorgang starten
-                msgDiv.style.color = "var(--day-glow)";
-                msgDiv.innerText = "Lade aus Drive... ⏳";
+                restoreFromDriveAction(); // Startet den eigentlichen Download
+            }
+        };
+        document.getElementById('confirm-modal').style.display = 'flex';
+    }
+
+    // 2. NEU: Die eigentliche Download-Logik (ohne weiteren Dialog)
+    async function restoreFromDriveAction() {
+        const msgDiv = document.getElementById('drive-msg'); 
+        
+        // Sofortiges Feedback, NACHDEM der Dialog geschlossen wurde
+        msgDiv.style.color = "var(--day-glow)";
+        msgDiv.innerText = "Lade aus Drive... ⏳";
+        
+        try {
+            let searchRes = await fetch("https://www.googleapis.com/drive/v3/files?q=name='BioStack_Backup.json' and trashed=false", {
+                headers: { Authorization: `Bearer ${gAccessToken}` }
+            });
+            let searchData = await searchRes.json();
+            
+            if (searchData.files && searchData.files.length > 0) {
+                const fileId = searchData.files[0].id;
+                let fileRes = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+                    headers: { Authorization: `Bearer ${gAccessToken}` }
+                });
+                let fileText = await fileRes.text();
                 
                 try {
-                    let searchRes = await fetch("https://www.googleapis.com/drive/v3/files?q=name='BioStack_Backup.json' and trashed=false", {
-                        headers: { Authorization: `Bearer ${gAccessToken}` }
-                    });
-                    let searchData = await searchRes.json();
+                    JSON.parse(fileText); // Validierung
+                    localStorage.setItem(STORAGE_KEY, fileText);
                     
-                    if (searchData.files && searchData.files.length > 0) {
-                        const fileId = searchData.files[0].id;
-                        let fileRes = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
-                            headers: { Authorization: `Bearer ${gAccessToken}` }
-                        });
-                        let fileText = await fileRes.text();
-                        
-                        try {
-                            JSON.parse(fileText); // Validierung
-                            localStorage.setItem(STORAGE_KEY, fileText);
-                            
-                            // Inline Feedback: Erfolg
-                            msgDiv.style.color = "var(--success)";
-                            msgDiv.innerText = "✓ Erfolgreich geladen! App startet neu...";
-                            
-                            if(typeof vBuz === 'function') vBuz([50, 100, 50]);
-                            
-                            // WICHTIG: Warte kurz, damit der User die grüne Meldung lesen kann, bevor die Seite neu lädt
-                            setTimeout(() => location.reload(), 2000); 
-                        } catch(e) {
-                            // Inline Feedback: JSON Fehler
-                            msgDiv.style.color = "var(--danger)";
-                            msgDiv.innerText = "✖ Fehler: Backup-Datei ist beschädigt.";
-                        }
-                    } else {
-                        // Inline Feedback: Kein Backup gefunden
-                        msgDiv.style.color = "var(--danger)";
-                        msgDiv.innerText = "✖ Kein Backup in deinem Drive gefunden.";
-                    }
+                    // Erfolg melden
+                    msgDiv.style.color = "var(--success)";
+                    msgDiv.innerText = "✓ Erfolgreich geladen! App startet neu...";
+                    if(typeof vBuz === 'function') vBuz([50, 100, 50]);
+                    
+                    setTimeout(() => location.reload(), 2000); 
                 } catch(e) {
-                    // Inline Feedback: Netzwerkfehler
                     msgDiv.style.color = "var(--danger)";
-                    msgDiv.innerText = "✖ Netzwerkfehler beim Herunterladen.";
+                    msgDiv.innerText = "✖ Fehler: Backup-Datei ist beschädigt.";
                 }
+            } else {
+                msgDiv.style.color = "var(--danger)";
+                msgDiv.innerText = "✖ Kein Backup in deinem Drive gefunden.";
             }
-        }, "Cloud Restore", "Wiederherstellen");
+        } catch(e) {
+            msgDiv.style.color = "var(--danger)";
+            msgDiv.innerText = "✖ Netzwerkfehler beim Herunterladen.";
+        }
     }
 
     function openWiki() { document.getElementById('wiki-modal').style.display = 'flex'; }
