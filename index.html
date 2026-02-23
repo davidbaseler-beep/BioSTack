@@ -100,7 +100,7 @@ body {
         @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
 
         /* --- MODALS & REST --- */
-        .custom-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 2000; align-items: center; justify-content: center; }
+        .custom-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 10000; align-items: center; justify-content: center; }
         .custom-modal-box { background: var(--bg-dark); border: 1px solid var(--glass-border); padding: 25px; border-radius: 24px; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .custom-modal-title { font-weight: 800; font-size: 18px; margin-bottom: 10px; }
         .custom-modal-text { font-size: 14px; opacity: 0.8; margin-bottom: 20px; line-height: 1.4; }
@@ -3015,64 +3015,76 @@ function manualRefill(id, current) {
         }
     }
 
-    async function syncToDrive() {
+    // 1. Der Einstieg: Fenster öffnet sich (Punkt 1 & 2 deiner Liste)
+    function syncToDrive() {
         if(!gAccessToken) { handleAuthClick(); return; }
+        
+        const msgDiv = document.getElementById('drive-msg');
+        msgDiv.innerText = ""; // Feld leeren
+
+        showConfirm("In Cloud Speichern Sicher? Bestehende Backups werden überschrieben.", function(res) {
+            if(res) {
+                // 4. Wenn "Ja" geklickt wurde -> Startet den Prozess
+                startDriveSyncProcess();
+            }
+            // Wenn Abbrechen geklickt wird, passiert nichts (Punkt 3)
+        }, "Cloud Backup", "JA, SPEICHERN");
+    }
+
+    // Die eigentliche Arbeits-Logik (Punkt 4 & 5)
+    async function startDriveSyncProcess() {
         const msgDiv = document.getElementById('drive-msg');
         msgDiv.style.color = "var(--day-glow)";
-        msgDiv.innerText = "Prüfe Cloud-Backup... ⏳";
-        
+        msgDiv.innerText = "Prüfe Cloud-Bestand... ⏳"; // (Das steht jetzt da)
+
         try {
+            // Erst schauen, ob die Datei existiert
             let searchRes = await fetch("https://www.googleapis.com/drive/v3/files?q=name='BioStack_Backup.json' and trashed=false", {
                 headers: { Authorization: `Bearer ${gAccessToken}` }
             });
             let searchData = await searchRes.json();
             
-            // ÜBERSCHREIB-SCHUTZ: Fragt IMMER, wenn eine Datei existiert
+            let fileId = null;
+            let method = 'POST';
+            let url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
+
             if (searchData.files && searchData.files.length > 0) {
-                msgDiv.innerText = ""; // Text leeren für das Modal
-                showConfirm("ACHTUNG: Es existiert bereits ein Backup. Möchtest du die Cloud-Datei wirklich mit deinem aktuellen Stand ÜBERSCHREIBEN?", async function(res) {
-                    if(res) {
-                        await executeDriveUpload(searchData.files[0].id, 'PATCH');
-                    }
-                }, "Überschreiben bestätigen", "ÜBERSCHREIBEN");
+                fileId = searchData.files[0].id;
+                method = 'PATCH';
+                url = `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`;
+            }
+
+            // Jetzt wird gespeichert
+            msgDiv.innerText = "Backup wird gespeichert... ⏳";
+
+            const metadata = { name: 'BioStack_Backup.json', mimeType: 'application/json' };
+            const fileContent = localStorage.getItem(STORAGE_KEY);
+            const file = new Blob([fileContent], {type: 'application/json'});
+            const form = new FormData();
+            form.append('metadata', new Blob([JSON.stringify(metadata)], {type: 'application/json'}));
+            form.append('file', file);
+
+            let uploadRes = await fetch(url, { method: method, headers: { Authorization: `Bearer ${gAccessToken}` }, body: form });
+            
+            if(uploadRes.ok) {
+                // 5. Die Erfolgsmeldung (Punkt 5)
+                msgDiv.style.color = "var(--success)";
+                msgDiv.innerText = "✓ Backup gespeichert!";
+                if(typeof vBuz === 'function') vBuz([30, 50, 30]);
+                setTimeout(() => msgDiv.innerText = "", 5000); // Bleibt 5 Sek stehen
             } else {
-                await executeDriveUpload(null, 'POST');
+                throw new Error("Upload fehlgeschlagen");
             }
         } catch(e) {
             msgDiv.style.color = "var(--danger)";
-            msgDiv.innerText = "✖ Fehler beim Cloud-Check.";
+            msgDiv.innerText = "✖ Fehler beim Speichern.";
         }
     }
 
-    async function executeDriveUpload(fileId, method) {
-        const msgDiv = document.getElementById('drive-msg');
-        msgDiv.innerText = "Speichere... ⏳";
-        const metadata = { name: 'BioStack_Backup.json', mimeType: 'application/json' };
-        const fileContent = localStorage.getItem(STORAGE_KEY);
-        const file = new Blob([fileContent], {type: 'application/json'});
-        const form = new FormData();
-        form.append('metadata', new Blob([JSON.stringify(metadata)], {type: 'application/json'}));
-        form.append('file', file);
-        let url = method === 'PATCH' ? `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart` : 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
-        try {
-            let uploadRes = await fetch(url, { method: method, headers: { Authorization: `Bearer ${gAccessToken}` }, body: form });
-            if(uploadRes.ok) {
-                msgDiv.style.color = "var(--success)";
-                msgDiv.innerText = "✓ Backup in Cloud gesichert!";
-                if(typeof vBuz === 'function') vBuz([30, 50, 30]);
-                setTimeout(() => msgDiv.innerText = "", 3000);
-            } else { throw new Error(); }
-        } catch(e) {
-            msgDiv.style.color = "var(--danger)";
-            msgDiv.innerText = "✖ Fehler beim Upload.";
-        }
-    }
-
+    // Die Laden-Funktion (ohne Warnung für schnelles Arbeiten)
     async function restoreFromDrive() {
         if(!gAccessToken) { handleAuthClick(); return; }
         const msgDiv = document.getElementById('drive-msg');
-        
-        // SOFORTIGES FEEDBACK: Keine Bestätigungsbox mehr beim Laden für Speed!
         msgDiv.style.color = "var(--day-glow)";
         msgDiv.innerText = "Lade aus Cloud... ⏳";
         
@@ -3087,11 +3099,12 @@ function manualRefill(id, current) {
                     headers: { Authorization: `Bearer ${gAccessToken}` }
                 });
                 let fileText = await fileRes.text();
-                JSON.parse(fileText); // Validierung
-                localStorage.setItem(STORAGE_KEY, fileText);
+                JSON.parse(fileText); // Sicherheitsschritt
                 
+                localStorage.setItem(STORAGE_KEY, fileText);
                 msgDiv.style.color = "var(--success)";
-                msgDiv.innerText = "✓ Geladen! Neustart...";
+                msgDiv.innerText = "✓ Erfolgreich aus Cloud geladen!";
+                
                 if(typeof vBuz === 'function') vBuz([50, 100, 50]);
                 setTimeout(() => location.reload(), 1500);
             } else {
@@ -3100,7 +3113,7 @@ function manualRefill(id, current) {
             }
         } catch(e) {
             msgDiv.style.color = "var(--danger)";
-            msgDiv.innerText = "✖ Download-Fehler.";
+            msgDiv.innerText = "✖ Fehler beim Laden.";
         }
     }
 
