@@ -908,11 +908,11 @@ body {
                     <div style="font-size:12px; color:var(--success); font-weight:800; margin-bottom:2px;">✓ Verbunden</div>
                     <div id="google-user-name" style="font-size:10px; color:#94a3b8; margin-bottom:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
                     <div style="display:flex; gap:8px;">
-    <button class="btn-action" style="background: var(--day-glow); font-size: 10px; padding: 12px; margin:0;" onclick="syncToDrive()">☁️ ZU DRIVE SPEICHERN</button>
-    <button class="btn-action" style="background: var(--warning); font-size: 10px; padding: 12px; margin:0; color:black;" onclick="restoreFromDriveConfirm()">⬇️ VON DRIVE LADEN</button>
-</div>
-<div id="drive-msg" style="text-align:center; font-size:12px; height:15px; margin-top:10px; font-weight:bold;"></div>
+                        <button class="btn-action" style="background: var(--day-glow); font-size: 10px; padding: 12px; margin:0;" onclick="syncToDrive()">☁️ ZU DRIVE SPEICHERN</button>
+                        <button class="btn-action" style="background: var(--warning); font-size: 10px; padding: 12px; margin:0; color:black;" onclick="restoreFromDrive()">⬇️ VON DRIVE LADEN</button>
+                    </div>
                 </div>
+                <div id="drive-msg" style="text-align:center; font-size:12px; height:15px; margin-top:10px; font-weight:bold;"></div>
 
                 <hr style="border:0; border-top:1px dashed rgba(255,255,255,0.1); margin:15px 0;">
 
@@ -3017,52 +3017,121 @@ function manualRefill(id, current) {
     }
 
     async function syncToDrive() {
-    if(!gAccessToken) { handleAuthClick(); return; }
-    
-    const msgDiv = document.getElementById('drive-msg');
-    msgDiv.style.color = "var(--day-glow)";
-    msgDiv.innerText = "Speichere in Drive... ⏳";
-    
-    const metadata = { name: 'BioStack_Backup.json', mimeType: 'application/json' };
-    const fileContent = localStorage.getItem(STORAGE_KEY);
-    const file = new Blob([fileContent], {type: 'application/json'});
-    const form = new FormData();
-    form.append('metadata', new Blob([JSON.stringify(metadata)], {type: 'application/json'}));
-    form.append('file', file);
+        if(!gAccessToken) { handleAuthClick(); return; }
+        
+        const msgDiv = document.getElementById('drive-msg');
+        msgDiv.style.color = "var(--day-glow)";
+        msgDiv.innerText = "Prüfe Backup... ⏳";
+        
+        try {
+            // 1. Prüfen, ob schon ein Backup existiert
+            let searchRes = await fetch("https://www.googleapis.com/drive/v3/files?q=name='BioStack_Backup.json' and trashed=false", {
+                headers: { Authorization: `Bearer ${gAccessToken}` }
+            });
+            let searchData = await searchRes.json();
+            
+            // 2. Wenn ein Backup existiert, frage den User VOR dem Überschreiben
+            if (searchData.files && searchData.files.length > 0) {
+                msgDiv.innerText = ""; // Text leeren, da das Bestätigungsfenster kommt
+                showConfirm("Es existiert bereits ein Backup in der Cloud. Möchtest du es mit deinem aktuellen Stand ÜBERSCHREIBEN?", async function(res) {
+                    if(res) {
+                        // User hat bestätigt -> Führe den Upload aus
+                        await executeDriveUpload(searchData.files[0].id, 'PATCH');
+                    }
+                }, "Backup überschreiben?", "Überschreiben");
+            } else {
+                // Kein Backup vorhanden -> Direkt neu anlegen
+                await executeDriveUpload(null, 'POST');
+            }
+        } catch(e) {
+            msgDiv.style.color = "var(--danger)";
+            msgDiv.innerText = "✖ Netzwerkfehler bei Google Drive.";
+        }
+    }
 
-    try {
-        let searchRes = await fetch("https://www.googleapis.com/drive/v3/files?q=name='BioStack_Backup.json' and trashed=false", {
-            headers: { Authorization: `Bearer ${gAccessToken}` }
-        });
-        let searchData = await searchRes.json();
+    // Hilfsfunktion, die den eigentlichen Upload macht (wird von syncToDrive gerufen)
+    async function executeDriveUpload(fileId, method) {
+        const msgDiv = document.getElementById('drive-msg');
+        msgDiv.style.color = "var(--day-glow)";
+        msgDiv.innerText = "Speichere in Drive... ⏳";
         
-        let fetchMethod = 'POST';
+        const metadata = { name: 'BioStack_Backup.json', mimeType: 'application/json' };
+        const fileContent = localStorage.getItem(STORAGE_KEY);
+        const file = new Blob([fileContent], {type: 'application/json'});
+        const form = new FormData();
+        form.append('metadata', new Blob([JSON.stringify(metadata)], {type: 'application/json'}));
+        form.append('file', file);
+
         let url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
-        
-        if (searchData.files && searchData.files.length > 0) {
-            const fileId = searchData.files[0].id;
-            fetchMethod = 'PATCH';
+        if (method === 'PATCH' && fileId) {
             url = `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`;
         }
 
-        let uploadRes = await fetch(url, { method: fetchMethod, headers: { Authorization: `Bearer ${gAccessToken}` }, body: form });
-        
-        if(uploadRes.ok) {
-            msgDiv.style.color = "var(--success)";
-            msgDiv.innerText = "✓ Backup erfolgreich gespeichert!";
-            if(typeof vBuz === 'function') vBuz([30, 50, 30]);
-            setTimeout(() => msgDiv.innerText = "", 3000); // Verschwindet nach 3 Sekunden wieder
-        } else {
-            gAccessToken = null; localStorage.removeItem('gAccessToken');
+        try {
+            let uploadRes = await fetch(url, { method: method, headers: { Authorization: `Bearer ${gAccessToken}` }, body: form });
+            if(uploadRes.ok) {
+                msgDiv.style.color = "var(--success)";
+                msgDiv.innerText = "✓ Backup erfolgreich in der Cloud gespeichert!";
+                if(typeof vBuz === 'function') vBuz([30, 50, 30]);
+                setTimeout(() => msgDiv.innerText = "", 4000); 
+            } else {
+                gAccessToken = null; localStorage.removeItem('gAccessToken');
+                msgDiv.style.color = "var(--danger)";
+                msgDiv.innerText = "✖ Token abgelaufen. Bitte neu anmelden.";
+                setTimeout(() => handleAuthClick(), 1500);
+            }
+        } catch(e) {
             msgDiv.style.color = "var(--danger)";
-            msgDiv.innerText = "✖ Token abgelaufen. Bitte neu anmelden.";
-            setTimeout(() => handleAuthClick(), 1500);
+            msgDiv.innerText = "✖ Fehler beim Upload.";
         }
-    } catch(e) {
-        msgDiv.style.color = "var(--danger)";
-        msgDiv.innerText = "✖ Netzwerkfehler beim Synchronisieren.";
     }
-}
+
+    // 3. SOFORT-DOWNLOAD OHNE POPUP
+    async function restoreFromDrive() {
+        if(!gAccessToken) { handleAuthClick(); return; }
+        
+        const msgDiv = document.getElementById('drive-msg');
+        
+        // 1. Sofortiges Feedback beim Klick, OHNE lästiges Bestätigungsfenster
+        msgDiv.style.color = "var(--day-glow)";
+        msgDiv.innerText = "Lade aus Drive... ⏳";
+        
+        try {
+            let searchRes = await fetch("https://www.googleapis.com/drive/v3/files?q=name='BioStack_Backup.json' and trashed=false", {
+                headers: { Authorization: `Bearer ${gAccessToken}` }
+            });
+            let searchData = await searchRes.json();
+            
+            if (searchData.files && searchData.files.length > 0) {
+                const fileId = searchData.files[0].id;
+                let fileRes = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+                    headers: { Authorization: `Bearer ${gAccessToken}` }
+                });
+                let fileText = await fileRes.text();
+                
+                try {
+                    const loadedDb = JSON.parse(fileText); 
+                    db = loadedDb; 
+                    localStorage.setItem(STORAGE_KEY, fileText);
+                    
+                    msgDiv.style.color = "var(--success)";
+                    msgDiv.innerText = "✓ Erfolgreich aus Cloud geladen!";
+                    if(typeof vBuz === 'function') vBuz([50, 100, 50]); 
+                    
+                    setTimeout(() => location.reload(), 1500); 
+                } catch(e) {
+                    msgDiv.style.color = "var(--danger)";
+                    msgDiv.innerText = "✖ Fehler: Backup-Datei ist beschädigt.";
+                }
+            } else {
+                msgDiv.style.color = "var(--danger)";
+                msgDiv.innerText = "✖ Kein Backup in deinem Drive gefunden.";
+            }
+        } catch(e) {
+            msgDiv.style.color = "var(--danger)";
+            msgDiv.innerText = "✖ Netzwerkfehler beim Herunterladen.";
+        }
+    }
 
     // 1. NEU: Diese Funktion öffnet nur den angepassten Dialog
     function restoreFromDriveConfirm() {
