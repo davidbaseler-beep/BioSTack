@@ -35,6 +35,10 @@
     /* Verhindert das Ziehen der gesamten Seite auf iOS */
     overscroll-behavior: none; 
     background-color: #0f172a;
+    /* NEU: Killt die Textmarkierung und Lupe auf iOS absolut zuverlässig */
+    -webkit-touch-callout: none !important; 
+    -webkit-user-select: none !important; 
+    user-select: none !important; 
 }
 
 body { 
@@ -87,15 +91,27 @@ input, textarea, select {
         /* --- START SCREEN STYLES --- */
         #start-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, #121212, #000000); /* Noir Hintergrund */
+            background: radial-gradient(circle at center, #111111, #000000); /* Noch dunklerer Noir Hintergrund */
             z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             text-align: center;
-            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            /* Transition angepasst für den Tastatur-Fix */
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); 
         }
         .start-hidden { transform: translateY(-100%); }
-        .logo-big { font-size: 80px; margin-bottom: 20px; animation: pulseGold 3s infinite; } /* Neue Gold-Animation */
-        .app-title { font-size: 32px; font-weight: 900; background: linear-gradient(to right, #FFD700, #FDB931); -webkit-background-clip: text; color: transparent; margin: 0; text-shadow: 0 0 15px rgba(255, 215, 0, 0.2); } /* Goldener Titel */
+        .logo-big { margin-bottom: 20px; animation: pulseGold 3s infinite; } 
+        
+        .app-title { 
+            font-size: 38px; 
+            font-weight: 900; 
+            /* Echtes Premium Metallic-Gold */
+            background: linear-gradient(to right, #C69320 0%, #F3E5AB 50%, #C69320 100%); 
+            -webkit-background-clip: text; 
+            color: transparent; 
+            margin: 0; 
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.9); 
+            letter-spacing: 1px;
+        }
         .app-ver { font-size: 14px; color: #c0c0c0; font-weight: 600; margin-bottom: 30px; letter-spacing: 2px; text-transform: uppercase; } /* Silber-Grau */
         .app-desc { font-size: 14px; color: #94a3b8; max-width: 80%; line-height: 1.6; margin-bottom: 30px; }
         
@@ -428,7 +444,21 @@ input, textarea, select {
 </div>
 
 <div id="start-screen">
-    <div class="logo-big">🧬</div>
+    <div class="logo-big">
+        <svg width="90" height="100" viewBox="0 0 50 100" style="filter: drop-shadow(0px 0px 15px rgba(255, 215, 0, 0.4));">
+            <defs>
+                <linearGradient id="purpleGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#d8b4fe"/><stop offset="100%" stop-color="#7e22ce"/></linearGradient>
+                <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F3E5AB"/><stop offset="100%" stop-color="#C69320"/></linearGradient>
+            </defs>
+            <path d="M10,10 Q40,50 10,90" fill="none" stroke="url(#purpleGrad)" stroke-width="5" stroke-linecap="round"/>
+            <path d="M40,10 Q10,50 40,90" fill="none" stroke="url(#goldGrad)" stroke-width="5" stroke-linecap="round"/>
+            <line x1="16" y1="20" x2="34" y2="20" stroke="url(#goldGrad)" stroke-width="2.5"/>
+            <line x1="22" y1="35" x2="28" y2="35" stroke="url(#purpleGrad)" stroke-width="2.5"/>
+            <line x1="25" y1="50" x2="25" y2="50" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+            <line x1="22" y1="65" x2="28" y2="65" stroke="url(#goldGrad)" stroke-width="2.5"/>
+            <line x1="16" y1="80" x2="34" y2="80" stroke="url(#purpleGrad)" stroke-width="2.5"/>
+        </svg>
+    </div>
     <h1 class="app-title">BioStack</h1>
     <div class="app-ver">Infinite Edition</div>
     
@@ -3859,15 +3889,26 @@ document.addEventListener('touchmove', function (e) {
     e.preventDefault(); // Alles andere (Hintergrund ziehen) verbieten
 }, { passive: false });
 
-// NEU: iOS Tastatur-Fix (scrollt das Eingabefeld in den sichtbaren Bereich)
+// =========================================
+// NEU V3: Absoluter iOS Tastatur-Fix (Transformation)
+// =========================================
 if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-    document.addEventListener('focusin', function(e) {
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-            setTimeout(function() {
-                e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 300);
+    setTimeout(() => {
+        // Jetzt mit der KORREKTEN ID aus deinem HTML
+        const nameInput = document.getElementById('user-name-input');
+        const startScreenEl = document.getElementById('start-screen');
+        
+        if (nameInput && startScreenEl) {
+            nameInput.addEventListener('focus', function() {
+                // Schiebt den gesamten schwarzen Screen physisch nach oben
+                startScreenEl.style.transform = 'translateY(-20vh)';
+            });
+            nameInput.addEventListener('blur', function() {
+                // Setzt ihn wieder zurück in die Mitte, wenn die Tastatur zugeht
+                startScreenEl.style.transform = 'translateY(0)';
+            });
         }
-    });
+    }, 500); 
 }
 
     if ('serviceWorker' in navigator) {
