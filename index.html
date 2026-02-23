@@ -87,16 +87,16 @@ input, textarea, select {
         /* --- START SCREEN STYLES --- */
         #start-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, #1e293b, #000000);
+            background: radial-gradient(circle at center, #121212, #000000); /* Noir Hintergrund */
             z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             text-align: center;
             transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         .start-hidden { transform: translateY(-100%); }
-        .logo-big { font-size: 80px; margin-bottom: 20px; animation: pulse 3s infinite; }
-        .app-title { font-size: 32px; font-weight: 900; background: linear-gradient(to right, var(--accent), var(--morning-glow)); -webkit-background-clip: text; color: transparent; margin: 0; }
-        .app-ver { font-size: 14px; color: #64748b; font-weight: 600; margin-bottom: 30px; letter-spacing: 2px; text-transform: uppercase; }
+        .logo-big { font-size: 80px; margin-bottom: 20px; animation: pulseGold 3s infinite; } /* Neue Gold-Animation */
+        .app-title { font-size: 32px; font-weight: 900; background: linear-gradient(to right, #FFD700, #FDB931); -webkit-background-clip: text; color: transparent; margin: 0; text-shadow: 0 0 15px rgba(255, 215, 0, 0.2); } /* Goldener Titel */
+        .app-ver { font-size: 14px; color: #c0c0c0; font-weight: 600; margin-bottom: 30px; letter-spacing: 2px; text-transform: uppercase; } /* Silber-Grau */
         .app-desc { font-size: 14px; color: #94a3b8; max-width: 80%; line-height: 1.6; margin-bottom: 30px; }
         
         .welcome-input {
@@ -114,6 +114,7 @@ input, textarea, select {
         .swipe-hint { position: absolute; bottom: 40px; font-size: 12px; color: var(--accent); font-weight: 800; text-transform: uppercase; letter-spacing: 2px; animation: bounce 2s infinite; display: none; }
         
         @keyframes pulse { 0% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(255,140,0,0)); } 50% { transform: scale(1.1); filter: drop-shadow(0 0 20px rgba(255,140,0,0.4)); } 100% { transform: scale(1); } }
+        @keyframes pulseGold { 0% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(255, 215, 0, 0)); } 50% { transform: scale(1.1); filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.6)); } 100% { transform: scale(1); } } /* NEU: Goldener Glow für die DNA */
         @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
 
         /* --- MODALS & REST --- */
@@ -668,7 +669,7 @@ input, textarea, select {
         </div>
         <div class="collapse-content" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
             <div style="font-size:11px; color:#94a3b8; margin-bottom:5px; text-align:center; font-weight:700;">DATUM WÄHLEN</div>
-            <input type="date" id="bp-date" class="weight-input" style="margin-bottom: 15px;">
+            <input type="date" id="bp-date" class="weight-input" style="margin-bottom: 15px; width: 200px; display: block; margin-left: auto; margin-right: auto;">
             
             <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
                 <input type="number" id="bp-sys" class="weight-input" placeholder="SYS" style="margin-bottom:0; font-size:16px; font-weight:bold; color:#4facfe;">
@@ -3857,6 +3858,18 @@ document.addEventListener('touchmove', function (e) {
     if (e.target.closest('.page') || e.target.closest('.custom-modal-box')) return; 
     e.preventDefault(); // Alles andere (Hintergrund ziehen) verbieten
 }, { passive: false });
+
+// NEU: iOS Tastatur-Fix (scrollt das Eingabefeld in den sichtbaren Bereich)
+if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    document.addEventListener('focusin', function(e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+            setTimeout(function() {
+                e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+    });
+}
+
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./sw.js')
