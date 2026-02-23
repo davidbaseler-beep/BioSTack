@@ -99,20 +99,36 @@ input, textarea, select {
             transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); 
         }
         .start-hidden { transform: translateY(-100%); }
-        .logo-big { margin-bottom: 20px; animation: pulseGold 3s infinite; } 
-        
-        .app-title { 
-            font-size: 38px; 
-            font-weight: 900; 
-            /* Echtes Premium Metallic-Gold */
-            background: linear-gradient(to right, #C69320 0%, #F3E5AB 50%, #C69320 100%); 
-            -webkit-background-clip: text; 
-            color: transparent; 
-            margin: 0; 
-            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.9); 
-            letter-spacing: 1px;
+
+        /* --- START SCREEN STYLES --- */
+        #start-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #111111, #000000); 
+            z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center;
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); 
         }
-        .app-ver { font-size: 14px; color: #c0c0c0; font-weight: 600; margin-bottom: 30px; letter-spacing: 2px; text-transform: uppercase; } /* Silber-Grau */
+        .start-hidden { transform: translateY(-100%); }
+
+        /* --- NEUES SPLASH IMAGE --- */
+        .splash-hero-img {
+            width: 100%;
+            max-width: 450px; 
+            height: auto;
+            margin-bottom: 20px;
+            animation: pulseGold 4s ease-in-out infinite alternate;
+            
+            mix-blend-mode: screen; 
+            -webkit-user-drag: none; 
+            user-select: none;
+            
+            /* Verhindert Grafik-Glitches (weiße Ecken) auf iOS beim Blenden */
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+        }
+
         .app-desc { font-size: 14px; color: #94a3b8; max-width: 80%; line-height: 1.6; margin-bottom: 30px; }
         
         .welcome-input {
@@ -444,30 +460,15 @@ input, textarea, select {
 </div>
 
 <div id="start-screen">
-    <div class="logo-big">
-        <svg width="90" height="100" viewBox="0 0 50 100" style="filter: drop-shadow(0px 0px 15px rgba(255, 215, 0, 0.4));">
-            <defs>
-                <linearGradient id="purpleGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#d8b4fe"/><stop offset="100%" stop-color="#7e22ce"/></linearGradient>
-                <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F3E5AB"/><stop offset="100%" stop-color="#C69320"/></linearGradient>
-            </defs>
-            <path d="M10,10 Q40,50 10,90" fill="none" stroke="url(#purpleGrad)" stroke-width="5" stroke-linecap="round"/>
-            <path d="M40,10 Q10,50 40,90" fill="none" stroke="url(#goldGrad)" stroke-width="5" stroke-linecap="round"/>
-            <line x1="16" y1="20" x2="34" y2="20" stroke="url(#goldGrad)" stroke-width="2.5"/>
-            <line x1="22" y1="35" x2="28" y2="35" stroke="url(#purpleGrad)" stroke-width="2.5"/>
-            <line x1="25" y1="50" x2="25" y2="50" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-            <line x1="22" y1="65" x2="28" y2="65" stroke="url(#goldGrad)" stroke-width="2.5"/>
-            <line x1="16" y1="80" x2="34" y2="80" stroke="url(#purpleGrad)" stroke-width="2.5"/>
-        </svg>
-    </div>
-    <h1 class="app-title">BioStack</h1>
-    <div class="app-ver">Infinite Edition</div>
     
-    <div class="app-desc" id="start-text">
+    <img src="https://i.imgur.com/2RUKod9.png" alt="BioStack" class="splash-hero-img">
+    
+    <div class="app-desc" id="start-text" style="margin-top: -20px; z-index: 2; position: relative;">
         Lade Daten...
     </div>
 
-    <input type="text" id="user-name-input" class="welcome-input" placeholder="Wie ist dein Name?">
-    <button id="user-name-btn" class="welcome-btn" onclick="saveUserName()">LOS GEHT'S</button>
+    <input type="text" id="user-name-input" class="welcome-input" placeholder="Wie ist dein Name?" style="z-index: 2; position: relative;">
+    <button id="user-name-btn" class="welcome-btn" onclick="saveUserName()" style="z-index: 2; position: relative;">LOS GEHT'S</button>
     
     <div class="swipe-hint" id="swipe-hint">⬆ WEGSWIPEN ZUM STARTEN</div>
 </div>
