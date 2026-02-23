@@ -39,7 +39,7 @@
 
 body { 
     font-family: 'Inter', -apple-system, sans-serif; 
-    background: radial-gradient(circle at top right, #1e293b, #0f172a);
+    background: #09090b;
     color: #f8fafc; 
     margin: 0; 
     -webkit-tap-highlight-color: transparent;
@@ -120,7 +120,7 @@ body {
         .btn-danger { background: var(--danger); color: white; }
 
         /* --- APP STYLES --- */
-        .nav { display: flex; justify-content: space-around; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); padding: 18px 5px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--glass-border); transition: transform 0.3s; }
+        .nav { display: flex; justify-content: space-around; background: rgba(9, 9, 11, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); padding: 15px 5px 25px 5px; position: fixed; bottom: 0; left: 0; width: 100%; z-index: 100; border-top: 1px solid rgba(255,255,255,0.05); transition: transform 0.3s; box-shadow: 0 -10px 30px rgba(0,0,0,0.6); }
         .nav button { border: none; background: none; font-weight: 600; color: #64748b; font-size: 11px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; padding: 0 5px;}
         .nav button.active { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
 
@@ -156,8 +156,8 @@ body {
         .swipe-icon { font-size: 16px; margin-bottom: 2px; font-weight: normal; }
         
         .supp-card { 
-            background: var(--glass); border: 1px solid var(--glass-border);
-            border-radius: 20px; padding: 16px; display: flex; 
+            background: rgba(24, 24, 27, 0.5); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 10px 24px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 24px; padding: 16px; display: flex; 
             margin-bottom: 15px;
             transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
             z-index: 1; flex-wrap: wrap; position: relative;
@@ -196,7 +196,7 @@ body {
         .gear-icon:active { transform: scale(0.9); background: var(--accent); color: black; opacity: 1; }
         .stock-badge { font-size: 9px; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 6px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); white-space: nowrap; margin-right: 5px; flex-shrink: 0; }
         .stock-text-ok { color: var(--success); } .stock-text-warn { color: var(--warning); border-color: var(--warning); } .stock-text-low { color: var(--danger); border-color: var(--danger); font-weight: bold; }
-        .chart-container { background: var(--glass); border-radius: 24px; padding: 20px; border: 1px solid var(--glass-border); margin-top: 20px; box-sizing: border-box; }
+        .chart-container { background: rgba(24, 24, 27, 0.5); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 12px 32px rgba(0,0,0,0.5); border-radius: 24px; padding: 20px; border: 1px solid rgba(255,255,255,0.05); margin-top: 20px; box-sizing: border-box; }
         
         .fasting-ring { position: relative; width: 45px; height: 45px; margin: 0; border-radius: 50%; background: conic-gradient(rgba(255,255,255,0.05) 100%, rgba(255,255,255,0.05) 100%); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0,0,0,0.2); transition: background 1s ease; flex-shrink: 0; }
         .fasting-inner { width: 37px; height: 37px; background: var(--bg-dark); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
@@ -227,7 +227,8 @@ body {
         .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
         .num-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 15px; border-radius: 12px; color: white; font-size: 20px; font-weight: 700; cursor: pointer; }
 
-        .btn-action { width: 100%; padding: 16px; border: none; border-radius: 16px; color: white; font-weight: 700; cursor: pointer; margin-bottom: 10px; transition: 0.2s; }
+        .btn-action { width: 100%; padding: 16px; border: none; border-radius: 16px; color: white; font-weight: 700; cursor: pointer; margin-bottom: 10px; transition: all 0.15s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: 0 4px 0px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.1); transform: translateY(0); }
+        .btn-action:active { transform: translateY(4px); box-shadow: 0 0px 0px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.1); }
         .btn-add-katalog { background: #2d3748; color: #ffffff; border: 1px solid var(--accent); text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
 
         .nutri-dropdown { width: 100%; margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); display: none; }
@@ -315,7 +316,19 @@ body {
     .pin-dot.filled { background:var(--accent); box-shadow: 0 0 10px var(--accent); }
     .pin-numpad { display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; max-width:280px; margin:0 auto; justify-items:center; }
     .pin-num-btn { width:70px; height:70px; border-radius:50%; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); color:white; font-size:28px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:600; transition:0.1s; user-select:none; }
-    .pin-num-btn:active { background:var(--accent); color:black; transform:scale(0.95); }
+    .pin-num-btn:active { background:var(--accent); color:black; transform:scale(0.95); }
+
+    /* --- BODY ANALYTICS REDESIGN --- */
+    .analytics-list-wrapper { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+    .analytics-list-item { display: flex; flex-direction: column; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 16px; padding: 15px; }
+    .analytics-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
+    .analytics-label { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 800; color: #f8fafc; letter-spacing: 0.5px; }
+    .analytics-value-wrap { text-align: right; }
+    .analytics-value { font-size: 18px; font-weight: 900; color: white; display: block; line-height: 1.1; }
+    .analytics-subtext { font-size: 11px; color: #94a3b8; font-weight: 600; margin-top: 4px; display: block; text-transform: uppercase; }
+    .analytics-bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); }
+    .analytics-bar-fill { height: 100%; border-radius: 10px; transition: width 0.5s ease-out; }
+    </style>
     </style>
 </head>
 <body>
@@ -425,7 +438,7 @@ body {
 </div>
 
 <div class="nav">
-    <div id="global-level-badge" style="position:absolute; bottom:-14px; left:50%; transform:translateX(-50%); background:var(--bg-dark); border:1px solid var(--accent); padding:4px 14px; border-radius:12px; font-size:10px; font-weight:900; color:white; z-index:102; box-shadow:0 4px 15px rgba(0,0,0,0.6); cursor:pointer; display:flex; align-items:center; gap:6px; white-space:nowrap; transition:0.3s;" onclick="showPage('profile')">
+    <div id="global-level-badge" style="position:absolute; top:-16px; left:50%; transform:translateX(-50%); background:var(--bg-dark); border:1px solid var(--accent); padding:4px 14px; border-radius:12px; font-size:10px; font-weight:900; color:white; z-index:102; box-shadow:0 4px 15px rgba(0,0,0,0.6); cursor:pointer; display:flex; align-items:center; gap:6px; white-space:nowrap; transition:0.3s;" onclick="showPage('profile')">
         <span id="glb-icon">🌱</span> <span id="glb-text" style="color:var(--accent);">Lvl 1</span>
     </div>
 
@@ -1046,35 +1059,70 @@ body {
         const grid = document.getElementById('body-summary-grid');
         if(!grid) return;
         
+        // Ändert das Grid-Layout programmatisch in unser neues Listen-Layout
+        grid.className = "analytics-list-wrapper";
+
         let html = "";
         let hasData = false;
         
-        if(db.personal.weight && db.analytics.showGewicht) {
-            html += `<div class="ana-item"><span class="ana-label">Gewicht</span><span class="ana-val">${db.personal.weight} kg</span></div>`;
-            hasData = true;
-        }
-        if(db.analytics.bmi && db.analytics.showBmi) {
-            html += `<div class="ana-item"><span class="ana-label">BMI</span><span class="ana-val">${db.analytics.bmi}</span></div>`;
-            hasData = true;
-        }
-        if(db.analytics.whtr && db.analytics.showWhtr) {
-            html += `<div class="ana-item"><span class="ana-label">WHtR (Bauch)</span><span class="ana-val">${db.analytics.whtr}</span></div>`;
-            hasData = true;
-        }
-        if(db.analytics.whr && db.analytics.showWhr) {
-            html += `<div class="ana-item"><span class="ana-label">WHR (Hüfte)</span><span class="ana-val">${db.analytics.whr}</span></div>`;
-            hasData = true;
-        }
+        // Basis-Wert für die Fortschrittsbalken (100% = Gesamtumsatz, falls vorhanden, sonst 3000 als Dummy)
+        const maxKcal = db.analytics.gesamtumsatz ? db.analytics.gesamtumsatz : 3000;
+
         if(db.analytics.grundumsatz && db.analytics.showGrund) {
-            html += `<div class="ana-item"><span class="ana-label">Grundumsatz</span><span class="ana-val">${db.analytics.grundumsatz} kcal</span></div>`;
+            let pct = Math.min((db.analytics.grundumsatz / maxKcal) * 100, 100);
+            html += `
+            <div class="analytics-list-item">
+                <div class="analytics-header">
+                    <div class="analytics-label"><span style="color:var(--accent); font-size:18px;">🔥</span> Grundumsatz</div>
+                    <div class="analytics-value-wrap">
+                        <span class="analytics-value">${db.analytics.grundumsatz}</span>
+                        <span class="analytics-subtext">kcal / Tag</span>
+                    </div>
+                </div>
+                <div class="analytics-bar-bg"><div class="analytics-bar-fill" style="width: ${pct}%; background: var(--accent); box-shadow: 0 0 10px rgba(255,140,0,0.5);"></div></div>
+            </div>`;
             hasData = true;
         }
+
         if(db.analytics.leistungsumsatz && db.analytics.showLeistung) {
-            html += `<div class="ana-item"><span class="ana-label">Leistungsumsatz</span><span class="ana-val">${db.analytics.leistungsumsatz} kcal</span></div>`;
+            let pct = Math.min((db.analytics.leistungsumsatz / maxKcal) * 100, 100);
+            html += `
+            <div class="analytics-list-item">
+                <div class="analytics-header">
+                    <div class="analytics-label"><span style="color:var(--day-glow); font-size:18px;">⚡</span> Leistungsumsatz</div>
+                    <div class="analytics-value-wrap">
+                        <span class="analytics-value">${db.analytics.leistungsumsatz}</span>
+                        <span class="analytics-subtext">kcal / Tag</span>
+                    </div>
+                </div>
+                <div class="analytics-bar-bg"><div class="analytics-bar-fill" style="width: ${pct}%; background: var(--day-glow); box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);"></div></div>
+            </div>`;
             hasData = true;
         }
+
         if(db.analytics.gesamtumsatz && db.analytics.showGesamt) {
-            html += `<div class="ana-item" style="grid-column: span 2; border-left-color: var(--success);"><span class="ana-label">Gesamtumsatz (Tagesbedarf)</span><span class="ana-val" style="color:var(--success); font-size:16px;">${db.analytics.gesamtumsatz} kcal</span></div>`;
+            html += `
+            <div class="analytics-list-item">
+                <div class="analytics-header">
+                    <div class="analytics-label"><span style="color:var(--success); font-size:18px;">🎯</span> Gesamtumsatz</div>
+                    <div class="analytics-value-wrap">
+                        <span class="analytics-value" style="color:var(--success);">${db.analytics.gesamtumsatz}</span>
+                        <span class="analytics-subtext">kcal / Tag</span>
+                    </div>
+                </div>
+                <div class="analytics-bar-bg"><div class="analytics-bar-fill" style="width: 100%; background: var(--success); box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);"></div></div>
+            </div>`;
+            hasData = true;
+        }
+
+        // Weitere Parameter als schmale Liste anhängen, falls aktiv
+        if((db.personal.weight && db.analytics.showGewicht) || (db.analytics.bmi && db.analytics.showBmi) || (db.analytics.whtr && db.analytics.showWhtr) || (db.analytics.whr && db.analytics.showWhr)) {
+            html += `<div class="analytics-list-item" style="padding: 10px 15px;">`;
+            if(db.personal.weight && db.analytics.showGewicht) html += `<div style="display:flex; justify-content:space-between; margin: 4px 0;"><span style="color:#94a3b8; font-size:12px; font-weight:700;">Aktuelles Gewicht</span><span style="color:white; font-weight:800; font-size:13px;">${db.personal.weight} kg</span></div>`;
+            if(db.analytics.bmi && db.analytics.showBmi) html += `<div style="display:flex; justify-content:space-between; margin: 4px 0;"><span style="color:#94a3b8; font-size:12px; font-weight:700;">BMI (Body Mass Index)</span><span style="color:white; font-weight:800; font-size:13px;">${db.analytics.bmi}</span></div>`;
+            if(db.analytics.whtr && db.analytics.showWhtr) html += `<div style="display:flex; justify-content:space-between; margin: 4px 0;"><span style="color:#94a3b8; font-size:12px; font-weight:700;">WHtR (Bauchfett-Index)</span><span style="color:white; font-weight:800; font-size:13px;">${db.analytics.whtr}</span></div>`;
+            if(db.analytics.whr && db.analytics.showWhr) html += `<div style="display:flex; justify-content:space-between; margin: 4px 0;"><span style="color:#94a3b8; font-size:12px; font-weight:700;">WHR (Taille-Hüfte)</span><span style="color:white; font-weight:800; font-size:13px;">${db.analytics.whr}</span></div>`;
+            html += `</div>`;
             hasData = true;
         }
 
