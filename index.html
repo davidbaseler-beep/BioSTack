@@ -273,9 +273,9 @@ input, textarea, select {
         
         .collapse-header { cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .collapse-header::after { content: '▾'; font-size: 18px; color: var(--accent); transition: 0.3s; }
-        .collapse-active .collapse-header::after { transform: rotate(180deg); }
+        .collapse-active > .collapse-header::after { transform: rotate(180deg); }
         .collapse-content { display: none; margin-top: 10px; }
-        .collapse-active .collapse-content { display: block; }
+        .collapse-active > .collapse-content { display: block; }
 
         .history-item { background: rgba(255,255,255,0.03); border-radius: 20px; padding: 18px; margin-bottom: 15px; border: 1px solid var(--glass-border); cursor: pointer; }
         .history-header { display: flex; justify-content: space-between; align-items: center; }
@@ -657,7 +657,7 @@ input, textarea, select {
             </div>
 
             <div id="bio-3d-info-wrapper" class="bio-3d-panel collapse-active" style="padding: 0; overflow: hidden;">
-                <div class="collapse-header" onclick="this.parentElement.classList.toggle('collapse-active')" style="padding: 15px; background: rgba(0,0,0,0.2);">
+                <div class="collapse-header" onclick="tglCollapse('bio-3d-info-wrapper')" style="padding: 15px; background: rgba(0,0,0,0.2);">
                     <span id="bio-3d-info-title" style="color:var(--accent); font-size:14px; font-weight:800; text-transform:uppercase; letter-spacing:1px; margin:0;">⚡ Übungsauswahl</span>
                 </div>
                 <div class="collapse-content" style="margin-top: 0; padding: 0 15px 15px 15px; border-top: 1px solid rgba(255,255,255,0.05);">
