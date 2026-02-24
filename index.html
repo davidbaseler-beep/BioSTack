@@ -3144,8 +3144,20 @@ function manualRefill(id, current) {
         <div><strong style="color:var(--success); font-size:14px;">Gesamtumsatz: ${db.analytics.gesamtumsatz} kcal</strong><br><span style="font-size:10px; color:#94a3b8;">Berechnet bei ${w}kg und Ø PAL ${avgPal.toFixed(2)}</span></div>`;
         resDiv.style.display = 'block'; save();
     }
+    // --- NEU: Hier fügst du den Ränge-Modal Code ein ---
+        function openRanksModal() { document.getElementById('ranks-modal').style.display = 'flex'; }
+        function closeRanksModal() { document.getElementById('ranks-modal').style.display = 'none'; }
 
-    function openSettingsModal() {
+        // --- NEU: Hier fügst du die Speicherfunktion für den Start-Tab ein ---
+        function saveStartTab() {
+            const el = document.getElementById('setting-start-tab');
+            if(el) {
+                db.startTab = el.value;
+                save();
+            }
+        }
+
+        function openSettingsModal() {
         document.getElementById('chk-show-bp').checked = db.analytics.showBp;
         document.getElementById('set-name').value = db.userName || '';
         document.getElementById('set-gender').value = db.personal.gender || 'm';
@@ -3187,6 +3199,9 @@ function manualRefill(id, current) {
     }
 
     function closeSettingsModal() {
+        // NEU: Start-Tab beim Schließen speichern
+        db.startTab = document.getElementById('setting-start-tab').value;
+
         db.analytics.showBp = document.getElementById('chk-show-bp').checked;
         db.userName = document.getElementById('set-name').value.trim();
         db.personal.gender = document.getElementById('set-gender').value;
@@ -3484,7 +3499,21 @@ function manualRefill(id, current) {
         }
         updateTopLevelBadge(); 
     }
+        // NEU: Speichert den Start-Tab sofort bei Auswahl
+            function saveStartTab() {
+                const el = document.getElementById('setting-start-tab');
+                if(el) {
+                    db.startTab = el.value;
+                    save();
+                }
+            }
 
+            function loadStartTabSetting() {
+                const el = document.getElementById('setting-start-tab');
+                if(el && db.startTab) {
+                    el.value = db.startTab;
+                }
+            }
     function loadStartTabSetting() {
         const el = document.getElementById('setting-start-tab');
         if(el && db.startTab) {
