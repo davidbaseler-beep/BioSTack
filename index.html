@@ -563,7 +563,17 @@ input, textarea, select {
         </div>
     </div>
 </div>
+<div id="gym-templates-modal" class="custom-modal-overlay">
+    <div class="custom-modal-box" style="max-width: 90%; width: 360px; max-height: 85vh; padding: 20px; display: flex; flex-direction: column;">
+        <div class="custom-modal-title">Master-Pläne 📚</div>
+        <div class="custom-modal-text" style="margin-bottom: 15px;">Wähle ein Template. Dein aktueller Wochenplan wird dabei überschrieben!</div>
+        
+        <div id="gym-templates-list" style="overflow-y: auto; flex: 1; text-align: left; padding-right: 5px; scrollbar-width: thin; scrollbar-color: var(--accent) transparent;">
+            </div>
 
+        <button class="modal-btn btn-cancel" style="margin-top: 15px; width: 100%;" onclick="closeGymTemplates()">Abbrechen</button>
+    </div>
+</div>
 <div id="time-modal"><div class="modal-body"><span class="close-modal-x" onclick="closeModal()">✕</span><h3 id="modal-title">Menge wählen</h3><div id="num-display" style="font-size: 32px; font-weight: 800; color: var(--accent); margin-bottom: 15px;">0</div><div class="numpad" id="numpad-grid"><div class="num-btn" onclick="pressNum('1')">1</div><div class="num-btn" onclick="pressNum('2')">2</div><div class="num-btn" onclick="pressNum('3')">3</div><div class="num-btn" onclick="pressNum('4')">4</div><div class="num-btn" onclick="pressNum('5')">5</div><div class="num-btn" onclick="pressNum('6')">6</div><div class="num-btn" onclick="pressNum('7')">7</div><div class="num-btn" onclick="pressNum('8')">8</div><div class="num-btn" onclick="pressNum('9')">9</div><div class="num-btn" onclick="pressNum('C')" style="color:#ef4444">C</div><div class="num-btn" onclick="pressNum('0')">0</div><div class="num-btn" onclick="pressNum('OK')" style="color:#22c55e">OK</div></div><div id="time-select" style="display:none"><button class="btn-action" style="background: var(--morning-glow)" onclick="confirmAdd('morning')">Morgens</button><button class="btn-action" style="background: var(--day-glow)" onclick="confirmAdd('day')">Mittags</button><button class="btn-action" style="background: var(--evening-glow)" onclick="confirmAdd('evening')">Abends</button></div></div></div>
 <div id="wiki-modal" class="custom-modal-overlay">
     <div class="custom-modal-box" style="max-width: 90%; width: 350px;">
@@ -733,6 +743,7 @@ input, textarea, select {
             
             <div id="gym-planer-list"></div>
             
+            <button class="btn-action" style="background: #1e293b; border: 1px solid var(--day-glow); color: var(--day-glow); margin-bottom: 10px;" onclick="openGymTemplates()">📚 VORGEFERTIGTE PLÄNE LADEN</button>
             <button class="btn-action" style="background:var(--accent)" onclick="addGymExercise()">+ ÜBUNG HINZUFÜGEN</button>
         </div>
     </div>
@@ -4459,6 +4470,233 @@ function search3DExercise(query) {
             }
         }, 150);
     };
+
+// --- GYM TEMPLATES DATENBANK & LOGIK ---
+    const gymTemplatesDB = [
+        {
+            name: "Science-Based PPL (6x)", tags: "Hypertrophie | 6 Tage | Profi", desc: "Optimales Volumen & Frequenz. Push, Pull, Legs, Push, Pull, Legs, Rest.",
+            plan: {
+                "Montag": [{name:"Bankdrücken (Langhantel)",sets:3,reps:"5-8"},{name:"Schulterdrücken (Military Press)",sets:3,reps:"8-10"},{name:"Schrägbankdrücken (Kurzhantel)",sets:3,reps:"8-12"},{name:"Seitheben am Kabelzug (Einarmig)",sets:4,reps:"12-15"},{name:"Trizepsdrücken (Kabelzug)",sets:3,reps:"10-12"}],
+                "Dienstag": [{name:"Klimmzüge (Obergriff)",sets:3,reps:"6-8"},{name:"Langhantelrudern (Vorgebeugt)",sets:3,reps:"8-10"},{name:"Latzug (Enger Griff)",sets:3,reps:"10-12"},{name:"Face Pulls",sets:3,reps:"12-15"},{name:"Bizepscurls (SZ-Stange)",sets:3,reps:"10-12"}],
+                "Mittwoch": [{name:"Kniebeuge (Langhantel)",sets:3,reps:"5-8"},{name:"Rumänisches Kreuzheben",sets:3,reps:"8-10"},{name:"Beinpresse (45 Grad)",sets:3,reps:"10-12"},{name:"Leg Curls (Beinbeuger)",sets:3,reps:"10-15"},{name:"Wadenheben (Stehend)",sets:4,reps:"12-15"}],
+                "Donnerstag": [{name:"Kurzhantel-Bankdrücken",sets:3,reps:"8-10"},{name:"Arnold Press",sets:3,reps:"8-12"},{name:"Butterfly (Maschine)",sets:3,reps:"12-15"},{name:"Seitheben (Kurzhantel)",sets:4,reps:"15-20"},{name:"French Press (Skullcrusher)",sets:3,reps:"10-12"}],
+                "Freitag": [{name:"Latzug (Breit zur Brust)",sets:3,reps:"8-10"},{name:"Kurzhantelrudern (Einarmig)",sets:3,reps:"8-12"},{name:"Rudern an der Maschine (Brustgestützt)",sets:3,reps:"10-12"},{name:"Reverse Butterfly (Maschine)",sets:3,reps:"12-15"},{name:"Hammercurls",sets:3,reps:"10-12"}],
+                "Samstag": [{name:"Hackenschmidt-Kniebeuge",sets:3,reps:"8-10"},{name:"Leg Extensions (Beinstrecker)",sets:3,reps:"12-15"},{name:"Leg Curls (Beinbeuger)",sets:3,reps:"10-12"},{name:"Ausfallschritte (Gehend)",sets:3,reps:"10-12"},{name:"Wadenheben (Sitzend)",sets:4,reps:"12-15"}],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Arnold Split (6x)", tags: "Hypertrophie | 6 Tage | Legende", desc: "Golden Era Classic: Brust/Rücken, Schultern/Arme, Beine. Extremer Pump.",
+            plan: {
+                "Montag": [{name:"Bankdrücken (Langhantel)",sets:4,reps:"8-10"},{name:"Klimmzüge (Obergriff)",sets:4,reps:"8-10"},{name:"Schrägbankdrücken (Kurzhantel)",sets:4,reps:"10-12"},{name:"T-Bar Rudern",sets:4,reps:"10-12"},{name:"Überzüge (Kurzhantel)",sets:3,reps:"12-15"}],
+                "Dienstag": [{name:"Schulterdrücken (Military Press)",sets:4,reps:"8-10"},{name:"Seitheben (Kurzhantel)",sets:4,reps:"10-12"},{name:"Langhantel Curls",sets:4,reps:"8-10"},{name:"French Press (Skullcrusher)",sets:4,reps:"8-10"},{name:"Konzentrationscurls",sets:3,reps:"12"}],
+                "Mittwoch": [{name:"Kniebeuge (Langhantel)",sets:4,reps:"8-10"},{name:"Beinpresse (45 Grad)",sets:4,reps:"10-12"},{name:"Leg Extensions (Beinstrecker)",sets:4,reps:"12-15"},{name:"Rumänisches Kreuzheben",sets:4,reps:"10-12"},{name:"Wadenheben (Stehend)",sets:5,reps:"15-20"}],
+                "Donnerstag": [{name:"Bankdrücken Langhantel",sets:4,reps:"8-10"},{name:"Klimmzüge (Untergriff / Chin-Ups)",sets:4,reps:"8-10"},{name:"Fliegende (Kurzhantel)",sets:4,reps:"10-12"},{name:"Kurzhantelrudern (Einarmig)",sets:4,reps:"10-12"},{name:"Überzüge (Kurzhantel)",sets:3,reps:"12"}],
+                "Freitag": [{name:"Arnold Press",sets:4,reps:"8-10"},{name:"Seitheben am Kabelzug (Einarmig)",sets:4,reps:"12-15"},{name:"Bizepscurls (Kurzhantel)",sets:4,reps:"8-10"},{name:"Trizepsdrücken (Kabelzug)",sets:4,reps:"10-12"},{name:"Hammercurls",sets:3,reps:"12"}],
+                "Samstag": [{name:"Frontkniebeuge",sets:4,reps:"8-10"},{name:"Ausfallschritte (Gehend)",sets:4,reps:"10-12"},{name:"Leg Curls (Beinbeuger)",sets:4,reps:"10-12"},{name:"Wadenheben (Sitzend)",sets:5,reps:"15-20"}],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "OK / UK Split - Science (4x)", tags: "Hybrid | 4 Tage | Fortgeschritten", desc: "Perfekte Balance aus Kraft & Hypertrophie für Leute mit weniger Zeit.",
+            plan: {
+                "Montag": [{name:"Bankdrücken (Langhantel)",sets:3,reps:"5-8"},{name:"Klimmzüge (Obergriff)",sets:3,reps:"6-8"},{name:"Schulterdrücken Kurzhantel",sets:3,reps:"8-12"},{name:"Kabelrudern (Sitzend)",sets:3,reps:"10-12"},{name:"Bizepscurls (Kurzhantel)",sets:2,reps:"12-15"},{name:"Trizepsdrücken (Kabelzug)",sets:2,reps:"12-15"}],
+                "Dienstag": [{name:"Kniebeuge (Langhantel)",sets:3,reps:"5-8"},{name:"Rumänisches Kreuzheben",sets:3,reps:"8-10"},{name:"Beinpresse (45 Grad)",sets:3,reps:"10-12"},{name:"Wadenheben (Stehend)",sets:4,reps:"12-15"},{name:"Crunches",sets:3,reps:"15-20"}],
+                "Mittwoch": [],
+                "Donnerstag": [{name:"Schrägbankdrücken (Kurzhantel)",sets:3,reps:"8-10"},{name:"Latzug (Breit zur Brust)",sets:3,reps:"8-10"},{name:"Brustpresse (Maschine)",sets:3,reps:"10-12"},{name:"Rudern an der Maschine (Brustgestützt)",sets:3,reps:"10-12"},{name:"Seitheben (Kurzhantel)",sets:4,reps:"15"}],
+                "Freitag": [{name:"Kreuzheben (Klassisch)",sets:3,reps:"5"},{name:"Hackenschmidt-Kniebeuge",sets:3,reps:"8-10"},{name:"Leg Curls (Beinbeuger)",sets:3,reps:"10-12"},{name:"Wadenheben (Sitzend)",sets:4,reps:"12-15"},{name:"Beinheben (Hängend)",sets:3,reps:"15"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Ganzkörper Classic (3x)", tags: "Foundation | 3 Tage | Anfänger & Pros", desc: "Der absolute Goldstandard. Trainiert den gesamten Körper 3x die Woche.",
+            plan: {
+                "Montag": [{name:"Kniebeuge (Langhantel)",sets:3,reps:"8-10"},{name:"Bankdrücken (Langhantel)",sets:3,reps:"8-10"},{name:"Langhantelrudern (Vorgebeugt)",sets:3,reps:"8-10"},{name:"Seitheben (Kurzhantel)",sets:3,reps:"12-15"},{name:"Langhantel Curls",sets:2,reps:"10-12"},{name:"Trizepsdrücken (Kabelzug)",sets:2,reps:"10-12"}],
+                "Dienstag": [],
+                "Mittwoch": [{name:"Kreuzheben (Klassisch)",sets:3,reps:"5-8"},{name:"Schulterdrücken (Military Press)",sets:3,reps:"8-10"},{name:"Klimmzüge (Obergriff)",sets:3,reps:"8-10"},{name:"Beinpresse (45 Grad)",sets:3,reps:"10-12"},{name:"Wadenheben (Stehend)",sets:3,reps:"15"}],
+                "Donnerstag": [],
+                "Freitag": [{name:"Frontkniebeuge",sets:3,reps:"8-10"},{name:"Schrägbankdrücken (Kurzhantel)",sets:3,reps:"8-12"},{name:"Kabelrudern (Sitzend)",sets:3,reps:"10-12"},{name:"Face Pulls",sets:3,reps:"12-15"},{name:"Hammercurls",sets:2,reps:"12"},{name:"French Press (Skullcrusher)",sets:2,reps:"12"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Oldschool Bro-Split (5x)", tags: "Bodybuilding | 5 Tage | Pump-Fokus", desc: "Jeden Tag ein Muskel komplett zerstört. Mo: Brust, Di: Rücken, Mi: Beine...",
+            plan: {
+                "Montag": [{name:"Bankdrücken (Langhantel)",sets:4,reps:"8-10"},{name:"Schrägbankdrücken (Kurzhantel)",sets:4,reps:"10"},{name:"Fliegende (Kurzhantel)",sets:3,reps:"12"},{name:"Butterfly (Maschine)",sets:3,reps:"15"},{name:"Cable Crossover (Oben nach Unten)",sets:3,reps:"15"}],
+                "Dienstag": [{name:"Klimmzüge breit",sets:4,reps:"8-10"},{name:"Langhantelrudern (Vorgebeugt)",sets:4,reps:"10"},{name:"Latzug (Enger Griff)",sets:3,reps:"12"},{name:"Kurzhantelrudern (Einarmig)",sets:3,reps:"12"},{name:"Hyperextensions (Rückenstrecker)",sets:3,reps:"15"}],
+                "Mittwoch": [{name:"Kniebeuge (Langhantel)",sets:4,reps:"8-10"},{name:"Beinpresse (45 Grad)",sets:4,reps:"10-12"},{name:"Leg Extensions (Beinstrecker)",sets:4,reps:"15"},{name:"Leg Curls (Beinbeuger)",sets:4,reps:"12"},{name:"Wadenheben (Stehend)",sets:5,reps:"20"}],
+                "Donnerstag": [{name:"Schulterdrücken (Military Press)",sets:4,reps:"8-10"},{name:"Seitheben (Kurzhantel)",sets:4,reps:"12-15"},{name:"Frontheben (Kurzhantel)",sets:3,reps:"12"},{name:"Reverse Butterfly (Maschine)",sets:4,reps:"15"},{name:"Shrugs (Nackenheben)",sets:4,reps:"12"}],
+                "Freitag": [{name:"Langhantel Curls",sets:4,reps:"10"},{name:"French Press (Skullcrusher)",sets:4,reps:"10"},{name:"Hammercurls",sets:3,reps:"12"},{name:"Trizepsdrücken (Seil)",sets:3,reps:"12"},{name:"Konzentrationscurls",sets:3,reps:"15"},{name:"Trizeps-Dips (An der Bank)",sets:3,reps:"Max"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Powerbuilding Push/Pull (4x)", tags: "Kraft & Optik | 4 Tage | Fortgeschritten", desc: "Zwei Push- und zwei Pull-Tage. Schwere Grundübungen + Hypertrophie Zubehör.",
+            plan: {
+                "Montag": [{name:"Bankdrücken (Langhantel)",sets:4,reps:"5"},{name:"Kniebeuge (Langhantel)",sets:4,reps:"5"},{name:"Schulterdrücken Kurzhantel",sets:3,reps:"8-10"},{name:"Beinpresse (45 Grad)",sets:3,reps:"10"},{name:"Trizepsdrücken (Kabelzug)",sets:3,reps:"12"}],
+                "Dienstag": [{name:"Kreuzheben (Klassisch)",sets:4,reps:"5"},{name:"Klimmzüge (Obergriff)",sets:4,reps:"6-8"},{name:"Langhantelrudern (Vorgebeugt)",sets:3,reps:"8-10"},{name:"Leg Curls (Beinbeuger)",sets:3,reps:"10"},{name:"Bizepscurls (SZ-Stange)",sets:3,reps:"12"}],
+                "Mittwoch": [],
+                "Donnerstag": [{name:"Frontkniebeuge",sets:4,reps:"8"},{name:"Schrägbankdrücken (Kurzhantel)",sets:4,reps:"8-10"},{name:"Dips (Barren)",sets:3,reps:"10-12"},{name:"Leg Extensions (Beinstrecker)",sets:3,reps:"12"},{name:"Seitheben (Kurzhantel)",sets:4,reps:"15"}],
+                "Freitag": [{name:"Rumänisches Kreuzheben",sets:4,reps:"8"},{name:"Latzug (Breit zur Brust)",sets:4,reps:"10"},{name:"Kurzhantelrudern (Einarmig)",sets:3,reps:"10-12"},{name:"Face Pulls",sets:3,reps:"15"},{name:"Hammercurls",sets:3,reps:"12"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Minimalist / Time Saver (2x)", tags: "Zeitsparend | 2 Tage | Effizient", desc: "Perfekt bei Stress. Nur die wichtigsten Multi-Gelenk-Übungen für den ganzen Körper.",
+            plan: {
+                "Montag": [{name:"Kniebeuge (Langhantel)",sets:3,reps:"8"},{name:"Bankdrücken (Langhantel)",sets:3,reps:"8"},{name:"Klimmzüge (Obergriff)",sets:3,reps:"8"},{name:"Seitheben (Kurzhantel)",sets:2,reps:"12"}],
+                "Dienstag": [],
+                "Mittwoch": [],
+                "Donnerstag": [{name:"Kreuzheben (Klassisch)",sets:3,reps:"5"},{name:"Schulterdrücken (Military Press)",sets:3,reps:"8"},{name:"Langhantelrudern (Vorgebeugt)",sets:3,reps:"8"},{name:"Ausfallschritte (Gehend)",sets:2,reps:"10"}],
+                "Freitag": [],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Kurzhantel Only (Home-Workout) (3x)", tags: "Home Gym | 3 Tage | Flexibel", desc: "Ein kompletter Ganzkörperplan, für den du nur ein Paar Kurzhanteln benötigst.",
+            plan: {
+                "Montag": [{name:"Goblet Squats",sets:3,reps:"12-15"},{name:"Kurzhantel-Bankdrücken",sets:3,reps:"10-12"},{name:"Kurzhantelrudern (Einarmig)",sets:3,reps:"10-12"},{name:"Schulterdrücken Kurzhantel",sets:3,reps:"10-12"},{name:"Bizepscurls (Kurzhantel)",sets:3,reps:"12"}],
+                "Dienstag": [],
+                "Mittwoch": [{name:"Ausfallschritte (Gehend)",sets:3,reps:"12/Bein"},{name:"Floor Press (Kurzhantel)",sets:3,reps:"12-15"},{name:"Überzüge (Kurzhantel)",sets:3,reps:"12"},{name:"Seitheben (Kurzhantel)",sets:4,reps:"15"},{name:"Trizeps-Kickbacks",sets:3,reps:"12"}],
+                "Donnerstag": [],
+                "Freitag": [{name:"Bulgarian Split Squats",sets:3,reps:"10/Bein"},{name:"Fliegende (Kurzhantel)",sets:3,reps:"12"},{name:"Aufrechtes Rudern (Langhantel)",sets:3,reps:"12"},{name:"Shrugs (Kurzhantel)",sets:3,reps:"15"},{name:"Hammercurls",sets:3,reps:"12"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Calisthenics Basic (3x)", tags: "Bodyweight | 3 Tage | Athletisch", desc: "Nur dein Körpergewicht. Perfekt für Parks oder zuhause mit einer Klimmzugstange.",
+            plan: {
+                "Montag": [{name:"Klimmzüge (Obergriff)",sets:4,reps:"Max"},{name:"Liegestütze (Klassisch)",sets:4,reps:"Max"},{name:"Pistol Squats",sets:3,reps:"5-8"},{name:"Pike Push-Ups",sets:3,reps:"10"},{name:"Beinheben (Hängend)",sets:3,reps:"12"}],
+                "Dienstag": [],
+                "Mittwoch": [{name:"Klimmzüge (Untergriff / Chin-Ups)",sets:4,reps:"Max"},{name:"Dips (Barren)",sets:4,reps:"Max"},{name:"Jump Squats",sets:4,reps:"15"},{name:"Australian Pull-Ups (Körpergewichts-Rudern)",sets:3,reps:"12"},{name:"Plank (Unterarmstütz)",sets:3,reps:"1 Min"}],
+                "Donnerstag": [],
+                "Freitag": [{name:"Breite Klimmzüge",sets:3,reps:"Max"},{name:"Diamant-Liegestütze",sets:3,reps:"Max"},{name:"Ausfallschritte mit Eigengewicht",sets:4,reps:"20"},{name:"Handstand Push-Ups (An der Wand)",sets:3,reps:"Max"},{name:"V-Ups (Klappmesser)",sets:3,reps:"15"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "PHAT (Power Hypertrophy Adaptive) (5x)", tags: "Hybrid | 5 Tage | Hardcore", desc: "Layne Norton Style. 2 Tage Power (Schwer), 3 Tage Hypertrophie (Pump).",
+            plan: {
+                "Montag": [{name:"Bankdrücken (Langhantel)",sets:3,reps:"3-5"},{name:"Langhantelrudern (Vorgebeugt)",sets:3,reps:"3-5"},{name:"Schulterdrücken (Military Press)",sets:3,reps:"5-8"},{name:"Klimmzüge (Obergriff)",sets:2,reps:"6-10"},{name:"Langhantel Curls",sets:2,reps:"6-10"}],
+                "Dienstag": [{name:"Kniebeuge (Langhantel)",sets:3,reps:"3-5"},{name:"Kreuzheben (Klassisch)",sets:2,reps:"3-5"},{name:"Beinpresse (45 Grad)",sets:2,reps:"6-10"},{name:"Leg Curls (Beinbeuger)",sets:2,reps:"6-10"},{name:"Wadenheben (Stehend)",sets:3,reps:"6-10"}],
+                "Mittwoch": [],
+                "Donnerstag": [{name:"Schrägbankdrücken (Kurzhantel)",sets:4,reps:"10-12"},{name:"Latzug (Breit zur Brust)",sets:4,reps:"10-12"},{name:"Seitheben (Kurzhantel)",sets:4,reps:"12-15"},{name:"Trizepsdrücken (Kabelzug)",sets:3,reps:"12-15"},{name:"Hammercurls",sets:3,reps:"12-15"}],
+                "Freitag": [{name:"Frontkniebeuge",sets:4,reps:"10-12"},{name:"Rumänisches Kreuzheben",sets:4,reps:"10-12"},{name:"Leg Extensions (Beinstrecker)",sets:3,reps:"15-20"},{name:"Leg Curls (Beinbeuger)",sets:3,reps:"15-20"},{name:"Wadenheben (Sitzend)",sets:4,reps:"15-20"}],
+                "Samstag": [{name:"Kurzhantel-Bankdrücken",sets:4,reps:"10-12"},{name:"Kabelrudern (Sitzend)",sets:4,reps:"10-12"},{name:"Arnold Press",sets:3,reps:"10-12"},{name:"Bizepscurls (SZ-Stange)",sets:3,reps:"12-15"},{name:"French Press (Skullcrusher)",sets:3,reps:"12-15"}],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Reg Park Golden Era (3x)", tags: "Oldschool | 3 Tage | Heavy", desc: "Der Plan, mit dem Arnold Schwarzenegger angefangen hat. Starker Fokus auf 5x5.",
+            plan: {
+                "Montag": [{name:"Kniebeuge (Langhantel)",sets:5,reps:"5"},{name:"Bankdrücken (Langhantel)",sets:5,reps:"5"},{name:"Kreuzheben (Klassisch)",sets:5,reps:"5"},{name:"Schulterdrücken (Military Press)",sets:5,reps:"5"},{name:"Wadenheben (Stehend)",sets:5,reps:"15"}],
+                "Dienstag": [],
+                "Mittwoch": [{name:"Frontkniebeuge",sets:5,reps:"5"},{name:"Klimmzüge (Obergriff)",sets:5,reps:"5"},{name:"Dips (Barren)",sets:5,reps:"5"},{name:"Langhantelrudern (Vorgebeugt)",sets:5,reps:"5"},{name:"Langhantel Curls",sets:3,reps:"10"}],
+                "Donnerstag": [],
+                "Freitag": [{name:"Kniebeuge (Langhantel)",sets:5,reps:"5"},{name:"Bankdrücken (Langhantel)",sets:5,reps:"5"},{name:"Kreuzheben (Klassisch)",sets:5,reps:"5"},{name:"Schulterdrücken (Military Press)",sets:5,reps:"5"},{name:"Wadenheben (Stehend)",sets:5,reps:"15"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Mentzer Heavy Duty (3x)", tags: "High Intensity | 3 Tage | Brutal", desc: "Nur 1-2 Sätze bis zum absoluten Muskelversagen. Extrem hohe Intensität.",
+            plan: {
+                "Montag": [{name:"Brustpresse (Maschine)",sets:2,reps:"6-8 (Versagen)"},{name:"Butterfly (Maschine)",sets:1,reps:"8-10 (Versagen)"},{name:"Latzug (Enger Griff)",sets:2,reps:"6-8 (Versagen)"},{name:"Kreuzheben",sets:1,reps:"5-8 (Versagen)"}],
+                "Dienstag": [],
+                "Mittwoch": [{name:"Beinpresse (45 Grad)",sets:2,reps:"8-10 (Versagen)"},{name:"Leg Extensions (Beinstrecker)",sets:1,reps:"10-12 (Versagen)"},{name:"Leg Curls (Beinbeuger)",sets:2,reps:"8-10 (Versagen)"},{name:"Wadenheben (Stehend)",sets:2,reps:"12-15 (Versagen)"}],
+                "Donnerstag": [],
+                "Freitag": [{name:"Schulterpresse (Maschine)",sets:2,reps:"6-8 (Versagen)"},{name:"Seitheben (Kurzhantel)",sets:1,reps:"10-12 (Versagen)"},{name:"Bizeps-Maschine",sets:1,reps:"6-8 (Versagen)"},{name:"Trizepsdrücken (Kabelzug)",sets:1,reps:"6-8 (Versagen)"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Pure Kraft (5x5 Power) (3x)", tags: "Powerlifting | 3 Tage | Kraft", desc: "Klassisches 5x5 System. Fokus auf Kraftsteigerung in den Big 3 (Kniebeuge, Bank, Kreuzheben).",
+            plan: {
+                "Montag": [{name:"Kniebeuge (Langhantel)",sets:5,reps:"5"},{name:"Bankdrücken (Langhantel)",sets:5,reps:"5"},{name:"Langhantelrudern (Vorgebeugt)",sets:5,reps:"5"}],
+                "Dienstag": [],
+                "Mittwoch": [{name:"Kniebeuge (Langhantel)",sets:5,reps:"5"},{name:"Schulterdrücken (Military Press)",sets:5,reps:"5"},{name:"Kreuzheben (Klassisch)",sets:1,reps:"5"}],
+                "Donnerstag": [],
+                "Freitag": [{name:"Kniebeuge (Langhantel)",sets:5,reps:"5"},{name:"Bankdrücken (Langhantel)",sets:5,reps:"5"},{name:"Langhantelrudern (Vorgebeugt)",sets:5,reps:"5"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "PPL Anfänger (3x)", tags: "Einstieg | 3 Tage | Balance", desc: "Push/Pull/Legs auf 3 Tage komprimiert. Perfekt für Einsteiger.",
+            plan: {
+                "Montag": [{name:"Bankdrücken (Langhantel)",sets:3,reps:"8-10"},{name:"Schulterdrücken Kurzhantel",sets:3,reps:"8-10"},{name:"Trizepsdrücken (Kabelzug)",sets:3,reps:"10-12"}],
+                "Dienstag": [],
+                "Mittwoch": [{name:"Latzug (Breit zur Brust)",sets:3,reps:"8-10"},{name:"Kabelrudern (Sitzend)",sets:3,reps:"8-10"},{name:"Langhantel Curls",sets:3,reps:"10-12"}],
+                "Donnerstag": [],
+                "Freitag": [{name:"Beinpresse (45 Grad)",sets:3,reps:"10-12"},{name:"Leg Curls (Beinbeuger)",sets:3,reps:"10-12"},{name:"Wadenheben (Stehend)",sets:3,reps:"15-20"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Bauch & Core Speziale (Ergänzung)", tags: "Add-On | Flexibel | Sixpack", desc: "Ein dediziertes Core-Workout, das du an restlichen Tagen einschieben kannst.",
+            plan: {
+                "Montag": [],
+                "Dienstag": [{name:"Crunches",sets:3,reps:"20"},{name:"Beinheben (Hängend)",sets:3,reps:"12-15"},{name:"Plank (Unterarmstütz)",sets:3,reps:"1 Min"},{name:"Russian Twists",sets:3,reps:"20"}],
+                "Mittwoch": [],
+                "Donnerstag": [{name:"Kabel-Crunches",sets:3,reps:"15"},{name:"Ab-Wheel Rollouts",sets:3,reps:"10-12"},{name:"Side Plank (Seitstütz)",sets:3,reps:"45 Sek"},{name:"Mountain Climbers",sets:3,reps:"30"}],
+                "Freitag": [],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        }
+    ];
+
+    function openGymTemplates() {
+        const list = document.getElementById('gym-templates-list');
+        list.innerHTML = '';
+        
+        gymTemplatesDB.forEach((tpl, idx) => {
+            list.innerHTML += `
+                <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 16px; padding: 15px; margin-bottom: 15px; position: relative;">
+                    <div style="font-size: 15px; font-weight: 900; color: white; margin-bottom: 4px;">${tpl.name}</div>
+                    <div style="font-size: 10px; font-weight: 800; color: var(--accent); text-transform: uppercase; margin-bottom: 8px;">${tpl.tags}</div>
+                    <div style="font-size: 12px; color: #cbd5e1; line-height: 1.4; margin-bottom: 15px;">${tpl.desc}</div>
+                    <button class="btn-action" style="background: var(--day-glow); margin: 0; padding: 10px; font-size: 12px;" onclick="applyGymTemplate(${idx})">⬇️ DIESEN PLAN LADEN</button>
+                </div>
+            `;
+        });
+
+        document.getElementById('gym-templates-modal').style.display = 'flex';
+    }
+
+    function closeGymTemplates() {
+        document.getElementById('gym-templates-modal').style.display = 'none';
+    }
+
+    function applyGymTemplate(index) {
+        showConfirm("Achtung: Dein kompletter aktueller Wochentag-Plan wird überschrieben (spezifische Datums-Einträge bleiben erhalten). Fortfahren?", function(res) {
+            if(res) {
+                const tpl = gymTemplatesDB[index];
+                const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+                
+                // Überschreibe nur die Wochentage, um Kalender-Overrides nicht zu löschen
+                days.forEach(d => {
+                    db.gym.plans[d] = tpl.plan[d] ? JSON.parse(JSON.stringify(tpl.plan[d])) : [];
+                });
+                
+                save();
+                closeGymTemplates();
+                renderGymPlaner();
+                renderGymToday();
+                if(typeof vBuz === 'function') vBuz([100, 50, 100, 50, 300]); // Erfolgs-Vibration
+                showAlert(`"${tpl.name}" wurde erfolgreich als dein neuer Trainingsplan geladen!`, "Plan geladen 🚀");
+            }
+        }, "Plan überschreiben?", "JA, PLAN LADEN");
+    }
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
