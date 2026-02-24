@@ -4023,5 +4023,47 @@ if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
         });
     }
 </script>
+
+<div id="dev-svg-tool" style="position:fixed; bottom:0; left:0; width:100%; background:rgba(0,0,0,0.9); border-top:2px solid #FF8C00; color:white; padding:15px; z-index:999999; font-family:monospace; font-size:12px;">
+    <div style="font-weight:bold; color:#FF8C00; margin-bottom:5px;">SVG Path Generator (Klicke auf das 3D Modell)</div>
+    <input type="text" id="dev-path-output" style="width:100%; background:#111; color:#0f0; border:1px solid #333; padding:10px; margin-bottom:10px; font-size:14px;" readonly placeholder="Pfad erscheint hier...">
+    <button onclick="resetDevPath()" style="background:#ef4444; color:white; border:none; padding:8px 15px; font-weight:bold; cursor:pointer; border-radius:5px;">Reset</button>
+    <button onclick="copyDevPath()" style="background:#22c55e; color:white; border:none; padding:8px 15px; font-weight:bold; cursor:pointer; border-radius:5px; margin-left:10px;">Kopieren</button>
+</div>
+
+<script>
+    let devPoints = []; let devSvgElement = null; let devCurrentPolygon = null;
+    document.querySelectorAll('.bio-3d-svg').forEach(svg => {
+        svg.addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            devSvgElement = this;
+            const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+            const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
+            devPoints.push({x: Math.round(svgP.x), y: Math.round(svgP.y)});
+            
+            let pathString = "M" + devPoints[0].x + "," + devPoints[0].y;
+            for(let i = 1; i < devPoints.length; i++) { pathString += " L" + devPoints[i].x + "," + devPoints[i].y; }
+            pathString += " Z";
+            
+            document.getElementById('dev-path-output').value = pathString;
+            if(!devCurrentPolygon) {
+                devCurrentPolygon = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                devCurrentPolygon.setAttribute("fill", "rgba(255, 140, 0, 0.5)");
+                devCurrentPolygon.setAttribute("stroke", "#FF8C00");
+                svg.appendChild(devCurrentPolygon);
+            }
+            devCurrentPolygon.setAttribute("d", pathString);
+        });
+    });
+    function resetDevPath() {
+        devPoints = [];
+        if(devCurrentPolygon && devSvgElement) { devSvgElement.removeChild(devCurrentPolygon); devCurrentPolygon = null; }
+        document.getElementById('dev-path-output').value = "";
+    }
+    function copyDevPath() {
+        const out = document.getElementById('dev-path-output'); out.select(); document.execCommand("copy"); alert("Kopiert!");
+    }
+</script>
+
 </body>
 </html>
