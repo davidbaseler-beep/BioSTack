@@ -524,6 +524,16 @@ input, textarea, select {
         <div class="custom-modal-title">Neue Übung 🏋️</div>
         <div class="custom-modal-text">Trage die Details für dein Training ein.</div>
 
+        <select id="gym-mod-day" class="custom-modal-input" style="margin-bottom: 15px; font-size: 14px; padding: 10px; font-weight: bold; color: var(--day-glow);">
+            <option value="Montag">Montag</option>
+            <option value="Dienstag">Dienstag</option>
+            <option value="Mittwoch">Mittwoch</option>
+            <option value="Donnerstag">Donnerstag</option>
+            <option value="Freitag">Freitag</option>
+            <option value="Samstag">Samstag</option>
+            <option value="Sonntag">Sonntag</option>
+        </select>
+
         <div class="autocomplete-wrapper">
             <input type="text" id="gym-mod-name" class="custom-modal-input" placeholder="Übungsname (z.B. Bankdrücken)" autocomplete="off">
             <div id="gym-mod-autocomplete-list" class="autocomplete-items"></div>
@@ -653,21 +663,21 @@ input, textarea, select {
             </button>
 
                         <div id="gym-inner-dropdown" style="background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); border-radius: 12px; margin-top: 10px;">
-                <div onclick="tglInnerDropdown()" style="padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
-                    <div style="margin: 0; color: var(--accent); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; display: flex; align-items: center; gap: 6px;">
-                        📋 Übungs-Auswahl
-                    </div>
-                    <span id="inner-dropdown-arrow" style="color:var(--accent); font-size:16px; transition:0.3s; transform:rotate(0deg); line-height: 1;">▾</span>
-                </div>
-                <div id="inner-dropdown-content" style="display: none; padding: 0 15px 12px 15px;">
-                    <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
-                        <input type="text" id="gym-3d-search" class="weight-input" placeholder="🔍 Übung suchen..." oninput="search3DExercise(this.value)" style="margin-bottom: 10px; font-size: 14px; background: rgba(255,255,255,0.05) !important;">
-                        <div id="bio-3d-info" class="bio-3d-panel" style="margin-top: 0; background: transparent; border: none; padding: 0;">
-                            <div style="text-align:center; color:#94a3b8; font-size:12px;">Tippe auf einen Muskel oder suche eine Übung.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                <div onclick="tglInnerDropdown()" style="padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                    <div style="margin: 0; color: var(--accent); font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap;">
+                        🔍 Übung suchen
+                    </div>
+                    <span id="inner-dropdown-arrow" style="color:var(--accent); font-size:16px; transition:0.3s; transform:rotate(0deg); line-height: 1;">▾</span>
+                </div>
+                <div id="inner-dropdown-content" style="display: none; padding: 0 15px 12px 15px;">
+                    <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
+                        <input type="text" id="gym-3d-search" class="weight-input" placeholder="Name eingeben..." oninput="search3DExercise(this.value)" style="margin-bottom: 10px; font-size: 14px; background: rgba(255,255,255,0.05) !important;">
+                        <div id="bio-3d-info" class="bio-3d-panel" style="margin-top: 0; background: transparent; border: none; padding: 0;">
+                            <div style="text-align:center; color:#94a3b8; font-size:12px;">Tippe auf einen Muskel oder suche eine Übung.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
     </div>
@@ -2088,6 +2098,12 @@ input, textarea, select {
         document.getElementById('gym-mod-reps').value = '8-12';
         document.getElementById('gym-mod-weight').value = '';
         
+        // NEU: Wochentag intelligent vorauswählen (Nimmt den Tag, der gerade im "Heute Tracken" Tab offen ist)
+        const daySelect = document.getElementById('gym-mod-day');
+        if (daySelect && currentFlexDay) {
+            daySelect.value = currentFlexDay; 
+        }
+
         const autoList = document.getElementById('gym-mod-autocomplete-list');
         if(autoList) autoList.style.display = 'none';
 
@@ -2133,13 +2149,15 @@ input, textarea, select {
         const sets = document.getElementById('gym-mod-sets').value;
         const reps = document.getElementById('gym-mod-reps').value.trim();
         const weight = document.getElementById('gym-mod-weight').value;
+        
+        // NEU: Liest nun den Ziel-Tag direkt aus dem neuen Dropdown im Modal aus!
+        const target = document.getElementById('gym-mod-day').value;
 
         if(!name || !sets || !reps) {
             showAlert("Bitte fülle Übungsname, Sätze und Wiederholungen aus.");
             return;
         }
 
-        const target = getGymPlannerTarget();
         if(!db.gym.plans[target]) db.gym.plans[target] = [];
         
         db.gym.plans[target].push({
