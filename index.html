@@ -4046,11 +4046,13 @@ if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
             pathString += " Z";
             
             document.getElementById('dev-path-output').value = pathString;
-                    if(!devCurrentPolygon) {
+                            if(!devCurrentPolygon) {
             devCurrentPolygon = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            devCurrentPolygon.setAttribute("fill", "rgba(255, 140, 0, 0.5)");
+            // 'none' entfernt die gelbe Fläche komplett
+            devCurrentPolygon.setAttribute("fill", "none"); 
             devCurrentPolygon.setAttribute("stroke", "#FF8C00");
-            // NEU: Klicks gehen durch das gelbe Feld hindurch
+            devCurrentPolygon.setAttribute("stroke-width", "2"); 
+            // Stellt sicher, dass Klicks niemals am Pfad hängen bleiben
             devCurrentPolygon.style.pointerEvents = "none"; 
             svg.appendChild(devCurrentPolygon);
         }
