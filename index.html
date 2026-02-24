@@ -339,14 +339,23 @@ input, textarea, select {
         .info-table b { color: var(--accent); }
         .checkbox-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #cbd5e1; margin-bottom: 8px; cursor: pointer; }
 
-        /* --- GYM STYLES --- */
-        .gym-ex-card { background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); border-radius: 16px; padding: 15px; margin-bottom: 15px; }
-        .gym-set-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
-        .gym-set-input { flex: 1; min-width: 0; box-sizing: border-box; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; padding: 10px 5px; border-radius: 8px; text-align: center; font-size: 14px; font-family: inherit;}
-        .gym-set-input:disabled { opacity: 0.5; color: #cbd5e1; }
-        .gym-set-btn { width: 45px; height: 40px; border-radius: 8px; border: none; font-weight: 900; cursor: pointer; transition: 0.2s; font-size: 14px;}
-        .gym-set-btn.done { background: var(--success); color: white; box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);}
-        .gym-set-btn.open { background: var(--warning); color: black; }
+        /* --- GYM STYLES (GOLD/GRÜN TRACKING UI) --- */
+        .track-block { background: rgba(20, 20, 20, 0.95); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; margin-bottom: 15px; margin-top: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); border-left: 3px solid var(--accent); }
+        .track-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .track-title { color: white; font-size: 15px; font-weight: 800; margin: 0; }
+        .track-history { font-size: 10px; color: #94a3b8; background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 6px; display: flex; align-items: center; gap: 4px; }
+        .track-labels { display: flex; text-align: center; font-size: 10px; color: #64748b; font-weight: bold; margin-bottom: 8px; padding-right:10px; letter-spacing: 1px; text-transform: uppercase; }
+        .set-row { display: flex; align-items: center; text-align: center; background: rgba(255,255,255,0.02); border-radius: 8px; padding: 6px 5px; margin-bottom: 6px; transition: 0.3s; padding-right: 10px;}
+        .set-row.done { background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.3); }
+        .track-input { width: 90%; background: rgba(0,0,0,0.3); color: white; border: 1px solid #333; border-radius: 6px; padding: 8px 4px; text-align: center; font-size: 15px; font-weight: bold; transition: 0.2s; -moz-appearance: textfield; }
+        .track-input::-webkit-outer-spin-button, .track-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .track-input:focus { border-color: var(--accent); outline: none; }
+        .set-row.done .track-input { background: transparent; border-color: transparent; color: #4ade80; }
+        .btn-check { background: #1e293b; color: #94a3b8; border: 1px solid #333; border-radius: 6px; padding: 6px 0; font-size: 14px; font-weight: 900; cursor: pointer; transition: 0.2s; width: 100%; height: 36px; display:flex; align-items:center; justify-content:center;}
+        .set-row.done .btn-check { background: #22c55e; color: black; border-color: #16a34a; text-shadow: 0 1px 2px rgba(255,255,255,0.3); }
+        .btn-add-set { width: 100%; background: transparent; border: 1px dashed rgba(198, 147, 32, 0.5); color: var(--accent); padding: 12px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; margin-top: 10px; transition:0.2s; letter-spacing: 1px;}
+        .btn-add-set:active { background: rgba(198, 147, 32, 0.1); }
+
         /* --- APP LOCK STYLES --- */
     #app-lock-screen { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.95); backdrop-filter:blur(15px); z-index:99999; flex-direction:column; align-items:center; justify-content:center; }
     .pin-dots { display:flex; gap:20px; margin-bottom:40px; justify-content:center; }
@@ -413,9 +422,9 @@ input, textarea, select {
     .bio-3d-card { width: 100%; height: 100%; position: relative; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
     .bio-3d-card.is-flipped { transform: rotateY(180deg); }
     
-    /* NEU: Verhindert, dass die Rückseite durch die Vorderseite hindurch geklickt wird */
-    .bio-3d-card.is-flipped .bio-3d-face:not(.bio-3d-back) { pointer-events: none !important; }
-    .bio-3d-card:not(.is-flipped) .bio-3d-back { pointer-events: none !important; }
+    /* NEU: Verhindert, dass die Rückseite durch die Vorderseite hindurch geklickt wird UND blendet sie auf iOS aus (opacity: 0) */
+    .bio-3d-card.is-flipped .bio-3d-face:not(.bio-3d-back) { pointer-events: none !important; opacity: 0; transition: opacity 0.3s; }
+    .bio-3d-card:not(.is-flipped) .bio-3d-back { pointer-events: none !important; opacity: 0; transition: opacity 0.3s; }
 
     .bio-3d-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; overflow: hidden; background: #000; border: 1px solid rgba(198, 147, 32, 0.3); }
     /* ... restliches 3D CSS bleibt gleich ... */
@@ -1606,18 +1615,22 @@ input, textarea, select {
     document.addEventListener('touchstart', e => { 
         touchStartX = e.changedTouches[0].screenX; 
         touchStartY = e.changedTouches[0].screenY; 
-        // Seitenwisch wird blockiert bei Supp-Karten ODER der Gym-Tagesauswahl
-        disablePageSwipe = !!e.target.closest('#page-plan .supp-card') || !!e.target.closest('.gym-day-tabs');
+        // Swipe blockieren bei: Supplement-Karten, Gym-Tagesauswahl, 3D-Modell oder Tracking-Boxen
+        disablePageSwipe = !!e.target.closest('#page-plan .supp-card') || 
+                           !!e.target.closest('.gym-day-tabs') || 
+                           !!e.target.closest('.bio-3d-scene') || 
+                           !!e.target.closest('.track-block');
     }, {passive: true});
     
     document.addEventListener('touchend', e => {
         if (e.target.type === 'range') return; 
         
-        // Prüft dynamisch, ob IRGENDEIN Overlay (z.B. Löschen, Info, Settings) gerade sichtbar ist
-        const isAnyModalOpen = Array.from(document.querySelectorAll('.custom-modal-overlay')).some(m => m.style.display === 'flex');
-        if (isAnyModalOpen || document.getElementById('time-modal').style.display === 'flex' || document.getElementById('start-screen').getBoundingClientRect().top === 0) return;
+        // BUGFIX: Sichere Überprüfung, ob ein Fenster offen ist oder der Startscreen noch da ist
+        const isAnyModalOpen = Array.from(document.querySelectorAll('.custom-modal-overlay')).some(m => window.getComputedStyle(m).display === 'flex');
+        const startScreenActive = !document.getElementById('start-screen').classList.contains('start-hidden');
+        if (isAnyModalOpen || document.getElementById('time-modal').style.display === 'flex' || startScreenActive) return;
         
-        if (window.isCardSwiping || disablePageSwipe) return; // Seiten-Wechsel blockieren, wenn auf Karte gewischt wird
+        if (window.isCardSwiping || disablePageSwipe) return; 
         
         let touchEndX = e.changedTouches[0].screenX; let touchEndY = e.changedTouches[0].screenY;
         let diffX = touchStartX - touchEndX; let diffY = touchStartY - touchEndY;
@@ -3420,6 +3433,8 @@ function manualRefill(id, current) {
     function openWiki() { document.getElementById('wiki-modal').style.display = 'flex'; }
     function closeWiki() { document.getElementById('wiki-modal').style.display = 'none'; }
     function tglWiki(element) { element.classList.toggle('active'); }
+    function openRanksModal() { document.getElementById('ranks-modal').style.display = 'flex'; }
+    function closeRanksModal() { document.getElementById('ranks-modal').style.display = 'none'; }
 
     const ranks = [ { id: 1, name: "Starter", xp: 0, icon: "🌱" }, { id: 5, name: "Novize", xp: 250, icon: "🥉" }, { id: 10, name: "Optimizer", xp: 500, icon: "🔋" }, { id: 15, name: "Tracker", xp: 1000, icon: "📋" }, { id: 20, name: "Bio-Hacker", xp: 2000, icon: "🧬" }, { id: 25, name: "System-Engineer", xp: 3500, icon: "🛠️" }, { id: 30, name: "Neuro-Hacker", xp: 5000, icon: "🧠" }, { id: 40, name: "Alchemist", xp: 7500, icon: "⚗️" }, { id: 50, name: "Limitless", xp: 10000, icon: "⚡" }, { id: 60, name: "Cyborg", xp: 13000, icon: "🦾" }, { id: 75, name: "Apex Human", xp: 17500, icon: "🦅" }, { id: 90, name: "Immortal", xp: 21000, icon: "🌌" }, { id: 100, name: "BioHacker Master", xp: 25000, icon: "👑" } ];
 
@@ -4313,9 +4328,14 @@ function highlightMuscles(exName) {
     });
 }
 
-// Funktion: Übungsliste im Panel anzeigen (V2 - Scrollbar & Badges)
+// Funktion: Übungsliste im Panel anzeigen (V3 - Mit Schließen-Funktion)
 function render3DExerciseList(title, exercises) {
-    let html = `<div style="color:var(--accent); font-size:14px; font-weight:800; margin-bottom:10px; text-transform:uppercase; letter-spacing:1px;">⚡ ${title}</div>`;
+    // NEU: Klickbarer Header zum Schließen der Liste
+    let html = `
+    <div onclick="document.getElementById('bio-3d-info').innerHTML='<div style=\\'text-align:center; color:#94a3b8; font-size:12px;\\'>Tippe auf einen Muskel oder suche eine Übung.</div>'" style="cursor:pointer; color:var(--accent); font-size:14px; font-weight:800; margin-bottom:10px; text-transform:uppercase; letter-spacing:1px; display:flex; justify-content:space-between; align-items:center; background: rgba(255,140,0,0.1); padding: 10px; border-radius: 8px;">
+        <span>⚡ ${title}</span>
+        <span style="font-size:10px; opacity:0.7; border: 1px solid var(--accent); padding: 3px 6px; border-radius: 6px; color: white;">✖ Schließen</span>
+    </div>`;
     
     if(exercises.length === 0) {
         html += `<div style="color:#64748b; font-size:12px;">Keine Übungen gefunden.</div>`;
