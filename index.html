@@ -652,16 +652,23 @@ input, textarea, select {
                 ↺ KÖRPER DREHEN
             </button>
 
-                        <div style="padding: 0 5px; margin-bottom: 10px;">
-                <input type="text" id="gym-3d-search" class="weight-input" placeholder="🔍 Übung suchen..." oninput="search3DExercise(this.value)" style="margin-bottom: 5px; font-size: 14px; background: rgba(255,255,255,0.05) !important;">
-            </div>
+                        <div id="gym-inner-dropdown" style="background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); border-radius: 16px; margin-top: 15px;">
+                <div onclick="tglInnerDropdown()" style="padding: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                    <h4 style="margin:0; color:var(--accent); font-size: 13px; font-weight: 800; text-transform: uppercase;">📋 Übungs-Auswahl</h4>
+                    <span id="inner-dropdown-arrow" style="color:var(--accent); font-size:18px; transition:0.3s; transform:rotate(0deg);">▾</span>
+                </div>
+                <div id="inner-dropdown-content" style="display: none; padding: 0 15px 15px 15px;">
+                    <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
+                        <input type="text" id="gym-3d-search" class="weight-input" placeholder="🔍 Übung suchen..." oninput="search3DExercise(this.value)" style="margin-bottom: 10px; font-size: 14px; background: rgba(255,255,255,0.05) !important;">
+                        <div id="bio-3d-info" class="bio-3d-panel" style="margin-top: 0; background: transparent; border: none; padding: 0;">
+                            <div style="text-align:center; color:#94a3b8; font-size:12px;">Tippe auf einen Muskel oder suche eine Übung.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            <div id="bio-3d-info" class="bio-3d-panel">
-                <div style="text-align:center; color:#94a3b8; font-size:12px;">Tippe auf einen Muskel oder suche eine Übung.</div>
-            </div>
-
-        </div>
-    </div>
+        </div>
+    </div>
 
     <div class="chart-container" id="gym-col-heute" style="margin-bottom: 15px; border: 1px solid rgba(255, 179, 71, 0.3);">
         <div class="collapse-header" onclick="tglCollapse('gym-col-heute')">
@@ -1734,6 +1741,17 @@ input, textarea, select {
     
     function tglAddForm() { const f = document.getElementById('add-supp-form'); f.style.display = (f.style.display === 'block') ? 'none' : 'block'; }
     function tglCollapse(id) { document.getElementById(id).classList.toggle('collapse-active'); }
+    function tglInnerDropdown() {
+        const content = document.getElementById('inner-dropdown-content');
+        const arrow = document.getElementById('inner-dropdown-arrow');
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+            arrow.style.transform = 'rotate(180deg)';
+        } else {
+            content.style.display = 'none';
+            arrow.style.transform = 'rotate(0deg)';
+        }
+    }
     function updSl(type, val) { document.getElementById('val-'+type).innerText = val + '%'; document.getElementById('fill-'+type).style.width = val + '%'; }
     
     function saveFeedback() { 
@@ -4355,13 +4373,17 @@ document.querySelectorAll('.bio-3d-muscle').forEach(muscle => {
         });
 
         // Backup: Falls im Mapping noch nichts steht, nimm die alten statischen Daten
-        if(filtered.length === 0) {
-            const staticEx = this.getAttribute('data-ex').split(',').filter(x => x !== "");
-            filtered = staticEx;
-        }
+        if(filtered.length === 0) {
+            const staticEx = this.getAttribute('data-ex').split(',').filter(x => x !== "");
+            filtered = staticEx;
+        }
 
-        render3DExerciseList(name, filtered);
-    });
+        render3DExerciseList(name, filtered);
+        
+        // NEU: Klappt das innere Menü automatisch auf, wenn ein Muskel getippt wird
+        document.getElementById('inner-dropdown-content').style.display = 'block';
+        document.getElementById('inner-dropdown-arrow').style.transform = 'rotate(180deg)';
+    });
 });
 
 // Suchfunktion für das Textfeld
