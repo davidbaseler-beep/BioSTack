@@ -420,9 +420,9 @@ input, textarea, select {
     .bio-3d-card:not(.is-flipped) .bio-3d-back { pointer-events: none !important; opacity: 0; }
     .bio-3d-card.is-flipped .bio-3d-back { opacity: 1; }
 
-    .bio-3d-face { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 24px; overflow: hidden; background: #000; border: 1px solid rgba(198, 147, 32, 0.3); transition: opacity 0.4s; }
-    /* ... restliches 3D CSS bleibt gleich ... */
-    .bio-3d-back { transform: rotateY(180deg); }
+    .bio-3d-face { position: absolute; top: 0; left: 0; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 24px; overflow: hidden; background: #000; border: 1px solid rgba(198, 147, 32, 0.3); transition: opacity 0.4s; }
+    /* ... restliches 3D CSS bleibt gleich ... */
+    .bio-3d-back { transform: rotateY(180deg); }
     .bio-3d-img { width: 100%; height: 100%; object-fit: contain; }
     .bio-3d-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; }
     .bio-3d-muscle { fill: transparent; stroke: transparent; cursor: pointer; transition: 0.3s; }
@@ -1652,11 +1652,11 @@ input, textarea, select {
     document.addEventListener('touchstart', e => { 
         touchStartX = e.changedTouches[0].screenX; 
         touchStartY = e.changedTouches[0].screenY; 
-        // Seitenwisch blockieren bei Karten, Tagesauswahl, 3D-Modell und der Such-Liste!
-        disablePageSwipe = !!e.target.closest('#page-plan .supp-card') || 
-                           !!e.target.closest('.gym-day-tabs') || 
-                           !!e.target.closest('.bio-3d-scene') || 
-                           !!e.target.closest('#inner-dropdown-content');
+        // Seitenwisch rigoros blockieren für den gesamten Kasten!
+        disablePageSwipe = !!e.target.closest('#page-plan .supp-card') || 
+                           !!e.target.closest('.gym-day-tabs') || 
+                           !!e.target.closest('.bio-3d-scene') || 
+                           !!e.target.closest('#gym-inner-dropdown');
     }, {passive: true});
     
     document.addEventListener('touchend', e => {
