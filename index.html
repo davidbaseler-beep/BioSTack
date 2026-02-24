@@ -344,14 +344,18 @@ input, textarea, select {
         .track-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .track-title { color: white; font-size: 15px; font-weight: 800; margin: 0; }
         .track-history { font-size: 10px; color: #94a3b8; background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 6px; display: flex; align-items: center; gap: 4px; }
-        .track-labels { display: flex; text-align: center; font-size: 10px; color: #64748b; font-weight: bold; margin-bottom: 8px; padding-right:10px; letter-spacing: 1px; text-transform: uppercase; }
-        .set-row { display: flex; align-items: center; text-align: center; background: rgba(255,255,255,0.02); border-radius: 8px; padding: 6px 5px; margin-bottom: 6px; transition: 0.3s; padding-right: 10px;}
+        
+        /* NEU: Grid-Layout für absolute Perfektion */
+        .track-labels { display: grid; grid-template-columns: 1fr 2fr 2fr 1.5fr 0.5fr; gap: 8px; align-items: center; text-align: center; font-size: 10px; color: #64748b; font-weight: bold; margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; }
+        .set-row { display: grid; grid-template-columns: 1fr 2fr 2fr 1.5fr 0.5fr; gap: 8px; align-items: center; text-align: center; background: rgba(255,255,255,0.02); border-radius: 8px; padding: 6px; margin-bottom: 6px; transition: 0.3s; border: 1px solid transparent; }
+        
         .set-row.done { background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.3); }
-        .track-input { width: 90%; background: rgba(0,0,0,0.3); color: white; border: 1px solid #333; border-radius: 6px; padding: 8px 4px; text-align: center; font-size: 15px; font-weight: bold; transition: 0.2s; -moz-appearance: textfield; }
+        .track-input { width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.3); color: white; border: 1px solid #333; border-radius: 6px; padding: 8px 0; text-align: center; font-size: 15px; font-weight: bold; transition: 0.2s; -moz-appearance: textfield; }
         .track-input::-webkit-outer-spin-button, .track-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         .track-input:focus { border-color: var(--accent); outline: none; }
         .set-row.done .track-input { background: transparent; border-color: transparent; color: #4ade80; }
-        .btn-check { background: #1e293b; color: #94a3b8; border: 1px solid #333; border-radius: 6px; padding: 6px 0; font-size: 14px; font-weight: 900; cursor: pointer; transition: 0.2s; width: 100%; height: 36px; display:flex; align-items:center; justify-content:center;}
+        
+        .btn-check { width: 100%; background: #1e293b; color: #94a3b8; border: 1px solid #333; border-radius: 6px; padding: 6px 0; font-size: 14px; font-weight: 900; cursor: pointer; transition: 0.2s; height: 36px; display:flex; align-items:center; justify-content:center;}
         .set-row.done .btn-check { background: #22c55e; color: black; border-color: #16a34a; text-shadow: 0 1px 2px rgba(255,255,255,0.3); }
         .btn-add-set { width: 100%; background: transparent; border: 1px dashed rgba(198, 147, 32, 0.5); color: var(--accent); padding: 12px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; margin-top: 10px; transition:0.2s; letter-spacing: 1px;}
         .btn-add-set:active { background: rgba(198, 147, 32, 0.1); }
@@ -1615,17 +1619,15 @@ input, textarea, select {
     document.addEventListener('touchstart', e => { 
         touchStartX = e.changedTouches[0].screenX; 
         touchStartY = e.changedTouches[0].screenY; 
-        // Swipe blockieren bei: Supplement-Karten, Gym-Tagesauswahl, 3D-Modell oder Tracking-Boxen
+        // NEU: Tracker blockieren das Wischen nicht mehr!
         disablePageSwipe = !!e.target.closest('#page-plan .supp-card') || 
                            !!e.target.closest('.gym-day-tabs') || 
-                           !!e.target.closest('.bio-3d-scene') || 
-                           !!e.target.closest('.track-block');
+                           !!e.target.closest('.bio-3d-scene');
     }, {passive: true});
     
     document.addEventListener('touchend', e => {
         if (e.target.type === 'range') return; 
         
-        // BUGFIX: Sichere Überprüfung, ob ein Fenster offen ist oder der Startscreen noch da ist
         const isAnyModalOpen = Array.from(document.querySelectorAll('.custom-modal-overlay')).some(m => window.getComputedStyle(m).display === 'flex');
         const startScreenActive = !document.getElementById('start-screen').classList.contains('start-hidden');
         if (isAnyModalOpen || document.getElementById('time-modal').style.display === 'flex' || startScreenActive) return;
@@ -1634,7 +1636,8 @@ input, textarea, select {
         
         let touchEndX = e.changedTouches[0].screenX; let touchEndY = e.changedTouches[0].screenY;
         let diffX = touchStartX - touchEndX; let diffY = touchStartY - touchEndY;
-        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 60) {
+        // Wischen reagiert jetzt zuverlässiger
+        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
             const currentId = document.querySelector('.page.active').id.replace('page-', '');
             const currIdx = pageOrder.indexOf(currentId);
             if (diffX > 0) { if (currIdx < pageOrder.length - 1) showPage(pageOrder[currIdx + 1]); } 
@@ -2143,7 +2146,7 @@ input, textarea, select {
         }
     }
 
-    // --- DAS NEUE TRACKING UI ---
+    // --- DAS NEUE TRACKING UI (MIT PERFEKTEM AUTO-CLOSE) ---
     function renderGymToday() {
         const day = currentFlexDay;
         const dateStr = getTodayDate();
@@ -2163,7 +2166,6 @@ input, textarea, select {
         }
 
         todayPlan.forEach((ex, exIdx) => {
-            // "Letztes Mal" Logik
             const pastLogs = db.gym.logs.filter(l => l.ex === ex.name && l.date !== dateStr && !l.emptyExtra);
             let lastTimeStr = "Erstes Mal!";
             if (pastLogs.length > 0) {
@@ -2172,12 +2174,12 @@ input, textarea, select {
             }
 
             let setsHtml = `
-                <div class="track-labels" style="justify-content: space-between; padding-right: 10px;">
-                    <div style="width: 15%;">SATZ</div>
-                    <div style="width: 25%;">KG</div>
-                    <div style="width: 25%;">WDH</div>
-                    <div style="width: 20%;">✔</div>
-                    <div style="width: 10%;"></div>
+                <div class="track-labels">
+                    <div>SATZ</div>
+                    <div>KG</div>
+                    <div>WDH</div>
+                    <div>✔</div>
+                    <div></div>
                 </div>
             `;
 
@@ -2187,29 +2189,21 @@ input, textarea, select {
 
             for(let s = 1; s <= totalSetsToRender; s++) {
                 const log = loggedSetsToday.find(l => l.set === s);
-                // Wenn es ein Log ist, aber 'emptyExtra' hat, ist es noch nicht erledigt
                 const isDone = log && !log.emptyExtra; 
                 
-                if(!isDone && s <= ex.sets) allDone = false; 
+                // FIX: allDone prüft nun JEDEN Satz (auch die Extras)
+                if(!isDone) allDone = false; 
 
                 const weightVal = isDone ? log.w : '';
                 const repsVal = isDone ? log.r : '';
                 
                 setsHtml += `
-                <div class="set-row ${isDone ? 'done' : ''}" style="justify-content: space-between; padding-right: 10px;">
-                    <div style="width: 15%; color:#C69320; font-weight:bold; font-size: 14px;">${s}</div>
-                    <div style="width: 25%;">
-                        <input type="number" step="0.5" id="g-w-${exIdx}-${s}" class="track-input" placeholder="kg" value="${weightVal}" ${isDone ? 'disabled' : ''} style="width:100%;">
-                    </div>
-                    <div style="width: 25%;">
-                        <input type="number" id="g-r-${exIdx}-${s}" class="track-input" placeholder="Wdh" value="${repsVal}" ${isDone ? 'disabled' : ''} style="width:100%;">
-                    </div>
-                    <div style="width: 20%;">
-                        <button class="btn-check" style="width:100%; padding: 6px 0;" onclick="toggleGymSet('${ex.name.replace(/'/g, "\\'")}', ${s}, ${exIdx}, this)">${isDone ? 'OK' : '✔'}</button>
-                    </div>
-                    <div style="width: 10%; text-align: right;">
-                        <span onclick="deleteGymSetRow('${ex.name.replace(/'/g, "\\'")}', ${s})" style="color: var(--danger); font-size: 14px; cursor:pointer; font-weight:900;">✖</span>
-                    </div>
+                <div class="set-row ${isDone ? 'done' : ''}">
+                    <div style="color:#C69320; font-weight:bold; font-size: 14px;">${s}</div>
+                    <div><input type="number" step="0.5" id="g-w-${exIdx}-${s}" class="track-input" placeholder="kg" value="${weightVal}" ${isDone ? 'disabled' : ''}></div>
+                    <div><input type="number" id="g-r-${exIdx}-${s}" class="track-input" placeholder="Wdh" value="${repsVal}" ${isDone ? 'disabled' : ''}></div>
+                    <div><button class="btn-check ${isDone ? 'done' : ''}" onclick="toggleGymSet('${ex.name.replace(/'/g, "\\'")}', ${s}, ${exIdx}, this)">${isDone ? 'OK' : '✔'}</button></div>
+                    <div><span onclick="deleteGymSetRow('${ex.name.replace(/'/g, "\\'")}', ${s})" style="color: var(--danger); font-size: 14px; cursor:pointer; font-weight:900;">✖</span></div>
                 </div>`;
             }
 
@@ -2236,26 +2230,6 @@ input, textarea, select {
         cont.innerHTML = html;
     }
 
-    function addExtraGymSet(exName, newSetNum) {
-        if(typeof vBuz === 'function') vBuz(10);
-        // Platzhalter in DB ablegen, damit das UI die zusätzliche Reihe rendert
-        db.gym.logs.push({ date: getTodayDate(), planDay: currentFlexDay, ex: exName, set: newSetNum, w: '', r: '', emptyExtra: true });
-        save();
-        renderGymToday();
-    }
-
-    function deleteGymSetRow(exName, setNum) {
-        showConfirm(`Satz ${setNum} wirklich entfernen?`, function(res) {
-            if(res) {
-                db.gym.logs = db.gym.logs.filter(l => !(l.date === getTodayDate() && l.ex === exName && l.set === setNum));
-                save();
-                renderGymToday();
-                updateGymChart();
-                renderGymHistory();
-            }
-        });
-    }
-
     function toggleGymSet(exName, setNum, exIdx, btn) {
         const dateStr = getTodayDate();
         const day = currentFlexDay;
@@ -2263,6 +2237,7 @@ input, textarea, select {
         let logIdx = db.gym.logs.findIndex(l => l.date === dateStr && l.ex === exName && l.set === setNum && (l.planDay === day || !l.planDay));
         const wInput = document.getElementById(`g-w-${exIdx}-${setNum}`);
         const rInput = document.getElementById(`g-r-${exIdx}-${setNum}`);
+        const row = btn.closest('.set-row');
 
         const w = wInput.value;
         const r = rInput.value;
@@ -2272,6 +2247,7 @@ input, textarea, select {
             db.gym.logs.splice(logIdx, 1);
             save();
             btn.classList.remove('done');
+            row.classList.remove('done');
             btn.innerText = '✔';
             wInput.disabled = false;
             rInput.disabled = false;
@@ -2281,32 +2257,34 @@ input, textarea, select {
             if(!w || !r) { showAlert("Gewicht und Wiederholungen eintragen!"); return; }
             
             if (logIdx !== -1 && db.gym.logs[logIdx].emptyExtra) {
-                // Es war ein Extra-Satz, wir füllen ihn jetzt mit echten Daten
                 db.gym.logs[logIdx] = { date: dateStr, planDay: day, ex: exName, set: setNum, w: parseFloat(w), r: parseInt(r) };
             } else {
-                // Normaler regulärer Satz
                 db.gym.logs.push({ date: dateStr, planDay: day, ex: exName, set: setNum, w: parseFloat(w), r: parseInt(r) });
             }
             save();
             
             btn.classList.add('done');
+            row.classList.add('done');
             btn.innerText = 'OK';
             wInput.disabled = true;
             rInput.disabled = true;
             vBuz([50, 100, 50]);
             
-            // Auto-Collapse prüfen
+            // FIX: Auto-Collapse berechnet jetzt exakt, ob WIRKLICH alle (auch Extra-Sätze) fertig sind
             const todayPlan = (day === getGermanDay() && db.gym.plans[dateStr]) ? db.gym.plans[dateStr] : db.gym.plans[day];
             const exObj = todayPlan[exIdx];
             if(exObj) {
-                const logsForEx = db.gym.logs.filter(l => l.date === dateStr && l.ex === exName && !l.emptyExtra);
-                if(logsForEx.length >= exObj.sets) {
+                const allLogsForEx = db.gym.logs.filter(l => l.date === dateStr && l.ex === exName && (l.planDay === day || !l.planDay));
+                const doneLogsForEx = allLogsForEx.filter(l => !l.emptyExtra);
+                const totalSetsNow = Math.max(exObj.sets, allLogsForEx.length);
+                
+                if(doneLogsForEx.length >= totalSetsNow) {
                     setTimeout(() => {
                         const cont = document.getElementById(`gym-ex-content-${exIdx}`);
                         const icon = document.getElementById(`gym-ex-icon-${exIdx}`);
                         if(cont) cont.style.display = 'none';
                         if(icon) icon.style.transform = 'rotate(0deg)';
-                    }, 600);
+                    }, 500); // Sanftes Zuklappen nach 0.5s
                 }
             }
         }
@@ -4328,13 +4306,12 @@ function highlightMuscles(exName) {
     });
 }
 
-// Funktion: Übungsliste im Panel anzeigen (V3 - Mit Schließen-Funktion)
+// Funktion: Übungsliste im Panel anzeigen (V3 - Mit Dropdown Pfeil)
 function render3DExerciseList(title, exercises) {
-    // NEU: Klickbarer Header zum Schließen der Liste
     let html = `
     <div onclick="document.getElementById('bio-3d-info').innerHTML='<div style=\\'text-align:center; color:#94a3b8; font-size:12px;\\'>Tippe auf einen Muskel oder suche eine Übung.</div>'" style="cursor:pointer; color:var(--accent); font-size:14px; font-weight:800; margin-bottom:10px; text-transform:uppercase; letter-spacing:1px; display:flex; justify-content:space-between; align-items:center; background: rgba(255,140,0,0.1); padding: 10px; border-radius: 8px;">
         <span>⚡ ${title}</span>
-        <span style="font-size:10px; opacity:0.7; border: 1px solid var(--accent); padding: 3px 6px; border-radius: 6px; color: white;">✖ Schließen</span>
+        <span style="font-size:22px; line-height:0.5; color:var(--accent); transform: rotate(180deg);">▾</span>
     </div>`;
     
     if(exercises.length === 0) {
@@ -4342,6 +4319,11 @@ function render3DExerciseList(title, exercises) {
         document.getElementById('bio-3d-info').innerHTML = html;
         return;
     }
+
+    // NEU: overflow-x: hidden verhindert, dass die Liste nach links/rechts wackelt
+    html += `<div style="max-height: 300px; overflow-y: auto; overflow-x: hidden; padding-right: 5px; scrollbar-width: thin; scrollbar-color: var(--accent) #111;">`;
+
+    exercises.forEach(ex => {
 
     // NEU: Scrollbarer Container (max 300px Höhe), damit das UI sauber bleibt
     html += `<div style="max-height: 300px; overflow-y: auto; padding-right: 5px; scrollbar-width: thin; scrollbar-color: var(--accent) #111;">`;
