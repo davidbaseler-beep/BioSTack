@@ -412,7 +412,13 @@ input, textarea, select {
     .bio-3d-scene { width: 100%; max-width: 350px; height: 480px; perspective: 1500px; margin: 0 auto 15px auto; }
     .bio-3d-card { width: 100%; height: 100%; position: relative; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
     .bio-3d-card.is-flipped { transform: rotateY(180deg); }
+    
+    /* NEU: Verhindert, dass die Rückseite durch die Vorderseite hindurch geklickt wird */
+    .bio-3d-card.is-flipped .bio-3d-face:not(.bio-3d-back) { pointer-events: none !important; }
+    .bio-3d-card:not(.is-flipped) .bio-3d-back { pointer-events: none !important; }
+
     .bio-3d-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; overflow: hidden; background: #000; border: 1px solid rgba(198, 147, 32, 0.3); }
+    /* ... restliches 3D CSS bleibt gleich ... */
     .bio-3d-back { transform: rotateY(180deg); }
     .bio-3d-img { width: 100%; height: 100%; object-fit: contain; }
     .bio-3d-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; }
@@ -603,11 +609,25 @@ input, textarea, select {
                     </div>
 
                     <div class="bio-3d-face bio-3d-back">
-                        <img src="https://github.com/davidbaseler-beep/BioSTack/blob/main/img/hinten.jpeg?raw=true" class="bio-3d-img" alt="Back">
-                        <svg class="bio-3d-svg" viewBox="0 0 400 600">
-                            <path class="bio-3d-muscle" data-name="Rückenmuskulatur" data-ex="Klimmzüge breit,Rudern Langhantel,Kreuzheben" d="" />
-                        </svg>
-                    </div>
+            <img src="https://github.com/davidbaseler-beep/BioSTack/blob/main/img/hinten.jpeg?raw=true" class="bio-3d-img" alt="Back">
+            <svg class="bio-3d-svg" viewBox="0 0 400 600">
+                
+                <path class="bio-3d-muscle" data-name="Rückenmuskulatur" data-ex="Klimmzüge breit,Klimmzüge eng,Latzug breit,Rudern Langhantel,T-Bar Rudern,Kreuzheben" d="M152,242 L161,241 L180,243 L189,250 L199,256 L205,263 L213,267 L220,262 L226,255 L238,248 L254,243 L265,240 L273,243 L273,237 L270,228 L268,219 L266,211 L269,204 L273,196 L277,189 L278,182 L281,175 L281,165 L282,157 L284,148 L285,140 L285,135 L279,127 L275,123 L266,121 L259,120 L249,116 L243,115 L234,114 L226,113 L218,113 L213,113 L206,115 L197,115 L188,115 L181,116 L172,118 L162,120 L149,123 L138,128 L137,134 L139,141 L141,149 L140,159 L142,169 L145,176 L143,184 L149,190 L152,196 L153,206 L154,215 L154,222 L152,232 L152,238 Z" />
+                
+                <path class="bio-3d-muscle" data-name="Nacken / Trapezius" data-ex="Shrugs Langhantel,Shrugs Kurzhantel,Upright Rows,Face Pulls" d="M200,61 L196,73 L185,81 L180,84 L172,89 L162,92 L152,96 L143,101 L156,110 L172,117 L188,118 L216,122 L235,123 L256,117 L264,113 L283,104 L286,102 L280,101 L270,97 L262,94 L256,91 L246,87 L240,83 L236,79 L233,72 L230,66 L228,60 L220,57 L210,59 L198,58 Z" />
+
+                <path class="bio-3d-muscle" data-name="Hintere Schulter" data-ex="Reverse Flys,Face Pulls,Reverse Butterfly Maschine" d="M164,116 L158,113 L149,109 L141,102 L136,100 L126,103 L117,108 L109,115 L109,121 L105,128 L103,134 L103,144 L104,154 L111,148 L122,139 L130,132 L140,123 L153,121 L170,120 Z M262,116 L271,119 L284,123 L292,130 L294,136 L302,140 L312,144 L316,151 L320,147 L320,141 L320,130 L318,123 L315,116 L310,110 L302,104 L294,102 L289,103 L280,107 L272,109 L262,113 Z" />
+
+                <path class="bio-3d-muscle" data-name="Trizeps" data-ex="Trizepsdrücken Kabel,French Press,Skullcrusher,Dips eng,Trizeps Kickbacks" d="M116,217 L124,211 L128,207 L133,196 L137,187 L141,180 L142,174 L141,164 L138,154 L136,147 L134,141 L129,138 L123,140 L118,144 L111,148 L106,152 L105,156 L104,159 L103,163 L102,168 L100,174 L99,179 L99,186 L96,196 L97,203 L95,210 L97,214 L101,215 L109,219 L115,218 Z M317,154 L313,149 L305,145 L296,139 L288,137 L285,152 L285,166 L285,177 L287,186 L290,192 L293,203 L294,211 L301,213 L306,217 L313,219 L316,214 L324,209 L328,200 L328,196 L326,189 L325,180 L325,172 L325,167 L322,160 L319,154 Z" />
+
+                <path class="bio-3d-muscle" data-name="Gesäßmuskulatur" data-ex="Hip Thrust,Glute Bridge,Cable Kickbacks,Rumänisches Kreuzheben" d="M218,315 L231,322 L250,323 L266,326 L274,319 L282,310 L284,302 L281,294 L279,284 L277,276 L276,269 L274,259 L271,250 L269,246 L257,244 L249,247 L238,250 L228,256 L217,268 L214,276 L212,284 L210,277 L206,270 L202,263 L196,257 L190,252 L181,248 L172,246 L164,244 L157,243 L153,246 L151,252 L148,266 L146,274 L148,282 L144,290 L143,296 L143,304 L147,311 L152,319 L162,324 L171,325 L186,324 L193,321 L202,319 L205,318 L210,314 L216,315 Z" />
+
+                <path class="bio-3d-muscle" data-name="Beinbeuger (Hamstrings)" data-ex="Beinbeuger liegend,Beinbeuger sitzend,Rumänisches Kreuzheben,Good Mornings" d="M162,319 L153,315 L144,310 L139,311 L138,319 L137,327 L136,336 L136,344 L135,354 L136,361 L136,371 L136,379 L138,389 L141,397 L143,406 L145,414 L145,420 L152,415 L157,413 L160,415 L165,421 L173,421 L179,425 L182,432 L186,438 L189,430 L192,421 L194,409 L195,401 L198,391 L199,379 L200,373 L201,365 L202,356 L204,350 L205,342 L206,335 L206,328 L207,322 L207,319 L201,320 L196,322 L191,323 L186,323 L180,324 L174,325 L169,325 L165,323 L162,320 Z M216,318 L228,321 L236,324 L254,322 L265,319 L273,316 L280,312 L285,315 L288,324 L289,335 L289,342 L288,350 L287,358 L288,368 L286,378 L282,389 L279,398 L278,407 L278,416 L277,425 L273,421 L268,414 L264,413 L260,417 L256,423 L250,423 L248,420 L244,427 L239,434 L234,434 L233,429 L230,420 L230,415 L228,409 L228,403 L228,393 L228,386 L228,381 L227,375 L226,370 L222,363 L220,357 L218,351 L218,344 L216,336 L217,330 L218,322 Z" />
+
+                <path class="bio-3d-muscle" data-name="Waden / Unterschenkel" data-ex="Wadenheben stehend,Wadenheben sitzend" d="M157,414 L163,420 L167,428 L172,422 L181,430 L184,437 L186,442 L189,450 L189,457 L189,464 L189,464 L190,473 L190,481 L190,488 L186,498 L182,502 L176,495 L170,488 L167,485 L161,493 L154,495 L148,494 L144,493 L140,488 L137,479 L137,469 L137,461 L139,455 L141,449 L142,445 L143,441 L144,437 L146,434 L149,430 L151,425 L153,418 Z M249,421 L253,426 L260,421 L266,414 L269,418 L274,426 L278,435 L280,442 L281,450 L283,456 L285,464 L285,471 L283,481 L279,491 L274,497 L265,494 L260,488 L256,489 L252,495 L248,499 L241,502 L237,499 L234,491 L233,482 L232,471 L232,462 L233,454 L238,443 L238,438 L241,431 L244,427 L247,423 Z" />
+                
+            </svg>
+        </div>
                     
                 </div>
             </div>
@@ -4037,105 +4057,5 @@ if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
         });
     }
 </script>
-
-<div id="dev-svg-tool" style="position:fixed; bottom:0; left:0; width:100%; background:rgba(0,0,0,0.95); border-top:2px solid #FF8C00; color:white; padding:15px; z-index:999999; font-family:monospace; font-size:12px;">
-    <div style="display:flex; justify-content:space-between; margin-bottom:5px; align-items:center;">
-        <span style="font-weight:bold; color:#FF8C00;">SVG Path Generator (V4)</span>
-        <button onclick="toggleDevZoom()" style="background:#4facfe; color:black; border:none; padding:6px 10px; font-weight:bold; cursor:pointer; border-radius:5px;">🔍 ZOOM AN/AUS</button>
-    </div>
-    <input type="text" id="dev-path-output" style="width:100%; box-sizing:border-box; background:#111; color:#0f0; border:1px solid #333; padding:10px; margin-bottom:10px; font-size:14px;" readonly placeholder="Pfad erscheint hier...">
-    <button onclick="resetDevPath()" style="background:#ef4444; color:white; border:none; padding:8px 15px; font-weight:bold; cursor:pointer; border-radius:5px;">Reset</button>
-    <button onclick="copyDevPath()" style="background:#22c55e; color:white; border:none; padding:8px 15px; font-weight:bold; cursor:pointer; border-radius:5px; margin-left:10px;">Kopieren</button>
-</div>
-
-<script>
-    // FIX: Verhindert, dass die unsichtbare Vorderseite Klicks schluckt!
-    const devStyleFix = document.createElement('style');
-    devStyleFix.innerHTML = `
-        .bio-3d-card.is-flipped .bio-3d-face:not(.bio-3d-back) { pointer-events: none !important; }
-        .bio-3d-card:not(.is-flipped) .bio-3d-back { pointer-events: none !important; }
-    `;
-    document.head.appendChild(devStyleFix);
-
-    let devPoints = []; 
-    let devSvgElement = null; 
-    let devCurrentPolygon = null;
-    let devDots = []; 
-    let devZoomed = false;
-
-    function toggleDevZoom() {
-        const scene = document.querySelector('.bio-3d-scene');
-        if(scene) {
-            devZoomed = !devZoomed;
-            if(devZoomed) {
-                scene.style.transform = 'scale(2.2)';
-                scene.style.transformOrigin = 'top center';
-                scene.style.marginBottom = '500px'; 
-            } else {
-                scene.style.transform = 'none';
-                scene.style.marginBottom = '15px';
-            }
-        }
-    }
-
-    document.querySelectorAll('.bio-3d-svg').forEach(svg => {
-        svg.addEventListener('click', function(e) {
-            e.preventDefault(); e.stopPropagation();
-            
-            if (devSvgElement !== this) {
-                resetDevPath();
-                devSvgElement = this;
-            }
-
-            const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
-            const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
-            
-            const finalX = Math.round(svgP.x);
-            const finalY = Math.round(svgP.y);
-            devPoints.push({x: finalX, y: finalY});
-            
-            const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            dot.setAttribute("cx", finalX);
-            dot.setAttribute("cy", finalY);
-            dot.setAttribute("r", "1.5"); 
-            dot.setAttribute("fill", "#0f0"); 
-            dot.style.pointerEvents = "none";
-            svg.appendChild(dot);
-            devDots.push(dot);
-
-            let pathString = "M" + devPoints[0].x + "," + devPoints[0].y;
-            for(let i = 1; i < devPoints.length; i++) { pathString += " L" + devPoints[i].x + "," + devPoints[i].y; }
-            pathString += " Z";
-            
-            document.getElementById('dev-path-output').value = pathString;
-            
-            if(!devCurrentPolygon) {
-                devCurrentPolygon = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                devCurrentPolygon.setAttribute("fill", "none");
-                devCurrentPolygon.setAttribute("stroke", "#FF8C00");
-                devCurrentPolygon.setAttribute("stroke-width", "0.8");
-                devCurrentPolygon.style.pointerEvents = "none"; 
-                svg.appendChild(devCurrentPolygon);
-            }
-            devCurrentPolygon.setAttribute("d", pathString);
-        });
-    });
-    
-    function resetDevPath() {
-        devPoints = [];
-        if(devCurrentPolygon && devCurrentPolygon.parentNode) { 
-            devCurrentPolygon.parentNode.removeChild(devCurrentPolygon); 
-        }
-        devCurrentPolygon = null;
-        devDots.forEach(d => { if(d.parentNode) d.parentNode.removeChild(d); });
-        devDots = [];
-        document.getElementById('dev-path-output').value = "";
-    }
-    
-    function copyDevPath() {
-        const out = document.getElementById('dev-path-output'); out.select(); document.execCommand("copy"); alert("Pfad kopiert!");
-    }
-</script>
-
 </body>
 </html>
