@@ -347,30 +347,6 @@ input, textarea, select {
         .gym-set-btn { width: 45px; height: 40px; border-radius: 8px; border: none; font-weight: 900; cursor: pointer; transition: 0.2s; font-size: 14px;}
         .gym-set-btn.done { background: var(--success); color: white; box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);}
         .gym-set-btn.open { background: var(--warning); color: black; }
-        
-        /* --- NEU: TRACKING PROTOTYP UI --- */
-        .track-block { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(198, 147, 32, 0.3); border-radius: 12px; padding: 15px; margin-bottom: 15px; margin-top: 10px; }
-        .track-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .track-title { color: #F3E5AB; font-size: 14px; font-weight: 800; margin: 0; }
-        .track-history { font-size: 10px; color: #94a3b8; background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 6px; }
-
-        .track-labels { display: flex; text-align: center; font-size: 11px; color: #64748b; font-weight: bold; margin-bottom: 5px; }
-        .track-col-set { width: 15%; }
-        .track-col-kg { width: 30%; }
-        .track-col-reps { width: 30%; }
-        .track-col-check { width: 25%; }
-
-        .set-row { display: flex; align-items: center; text-align: center; background: rgba(0, 0, 0, 0.4); border-radius: 8px; padding: 6px 0; margin-bottom: 6px; transition: 0.3s; }
-        .set-row.done { background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); }
-
-        .track-input { width: 80%; background: #111; color: white; border: 1px solid #333; border-radius: 6px; padding: 6px; text-align: center; font-size: 14px; font-weight: bold; }
-        .track-input:focus { border-color: #C69320; outline: none; }
-
-        .btn-check { background: #333; color: white; border: none; border-radius: 6px; padding: 6px 15px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .set-row.done .btn-check { background: #22c55e; color: black; }
-
-        .btn-add-set { width: 100%; background: transparent; border: 1px dashed rgba(198, 147, 32, 0.5); color: #C69320; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; margin-top: 5px; }
-
         /* --- APP LOCK STYLES --- */
     #app-lock-screen { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.95); backdrop-filter:blur(15px); z-index:99999; flex-direction:column; align-items:center; justify-content:center; }
     .pin-dots { display:flex; gap:20px; margin-bottom:40px; justify-content:center; }
@@ -548,6 +524,16 @@ input, textarea, select {
         <div class="custom-modal-title">Neue Übung 🏋️</div>
         <div class="custom-modal-text">Trage die Details für dein Training ein.</div>
 
+        <select id="gym-mod-day" class="weight-input" style="margin-bottom: 15px; border-color: var(--day-glow); font-weight: bold;">
+            <option value="Montag">Montag</option>
+            <option value="Dienstag">Dienstag</option>
+            <option value="Mittwoch">Mittwoch</option>
+            <option value="Donnerstag">Donnerstag</option>
+            <option value="Freitag">Freitag</option>
+            <option value="Samstag">Samstag</option>
+            <option value="Sonntag">Sonntag</option>
+        </select>
+
         <div class="autocomplete-wrapper">
             <input type="text" id="gym-mod-name" class="custom-modal-input" placeholder="Übungsname (z.B. Bankdrücken)" autocomplete="off">
             <div id="gym-mod-autocomplete-list" class="autocomplete-items"></div>
@@ -564,40 +550,6 @@ input, textarea, select {
             <button class="modal-btn btn-cancel" onclick="closeGymModal()">Abbrechen</button>
             <button class="modal-btn btn-confirm" onclick="saveGymModal()">Speichern</button>
         </div>
-    </div>
-</div>
-
-<div id="time-modal"><div class="modal-body"><span class="close-modal-x" onclick="closeModal()">✕</span><h3 id="modal-title">Menge wählen</h3><div id="num-display" style="font-size: 32px; font-weight: 800; color: var(--accent); margin-bottom: 15px;">0</div><div class="numpad" id="numpad-grid"><div class="num-btn" onclick="pressNum('1')">1</div><div class="num-btn" onclick="pressNum('2')">2</div><div class="num-btn" onclick="pressNum('3')">3</div><div class="num-btn" onclick="pressNum('4')">4</div><div class="num-btn" onclick="pressNum('5')">5</div><div class="num-btn" onclick="pressNum('6')">6</div><div class="num-btn" onclick="pressNum('7')">7</div><div class="num-btn" onclick="pressNum('8')">8</div><div class="num-btn" onclick="pressNum('9')">9</div><div class="num-btn" onclick="pressNum('C')" style="color:#ef4444">C</div><div class="num-btn" onclick="pressNum('0')">0</div><div class="num-btn" onclick="pressNum('OK')" style="color:#22c55e">OK</div></div><div id="time-select" style="display:none"><button class="btn-action" style="background: var(--morning-glow)" onclick="confirmAdd('morning')">Morgens</button><button class="btn-action" style="background: var(--day-glow)" onclick="confirmAdd('day')">Mittags</button><button class="btn-action" style="background: var(--evening-glow)" onclick="confirmAdd('evening')">Abends</button></div></div></div>
-<div id="wiki-modal" class="custom-modal-overlay">
-    <div class="custom-modal-box" style="max-width: 90%; width: 350px;">
-        <div class="custom-modal-title">Nährstoff-Guide 📚</div>
-        <div class="custom-modal-text">Tippe zum Ausklappen</div>
-        
-        <div class="wiki-list">
-            
-            <div class="wiki-category">Fettlösliche Vitamine</div>
-            <div style="font-size: 11px; color: #fbbf24; margin-bottom: 10px; font-style: italic;">
-                ⚠️ Wichtig: Immer zusammen mit etwas Fett (z.B. Öl, Nüsse, Mahlzeit) einnehmen, damit der Körper sie aufnehmen kann.
-            </div>
-            
-            <div class="wiki-item" onclick="tglWiki(this)"><div class="wiki-header">Vitamin A <span class="wiki-arrow">▼</span></div><div class="wiki-content"><b>Retinol/Beta-Carotin</b><br>Wichtig für Sehkraft, gesunde Haut und ein starkes Immunsystem.<br><br><b>Wirkungsweise:</b> Reguliert Genexpression und Zelldifferenzierung.<br><b>Kinetik:</b> Speicherung in der Leber (Monate). Halbwertszeit: ~140 Tage.<br><br><b>Quellen:</b><br>- Süßkartoffel (1 großer, gekocht: ~1400µg)<br>- Karotten (1 mittel: ~500µg)<br>- Rinderleber (100g: ~6500µg - sehr hoch!)<br>- Spinat (100g: ~460µg)</div></div>
-            <div class="wiki-item" onclick="tglWiki(this)"><div class="wiki-header">Vitamin D <span class="wiki-arrow">▼</span></div><div class="wiki-content"><b>Calciferol</b><br>Essentiell für Knochenstoffwechsel, Immunsystem und Calcium-Aufnahme.<br><br><b>Wirkungsweise:</b> Wirkt als Prohormon an Vitamin-D-Rezeptoren (VDR) im ganzen Körper.<br><b>Kinetik:</b> Peak im Blut nach 12-24h. Halbwertszeit: 15-50 Tage (Fettgewebe-Speicher).<br><br><b>Quellen:</b><br>- Sonne (Hautsynthese, wichtigste Quelle)<br>- Hering (100g: ~25µg / 1000 IE)<br>- Lachs (100g: ~16µg / 640 IE)<br>- Eigelb (1 Stück: ~1µg / 40 IE)</div></div>
-            <div class="wiki-item" onclick="tglWiki(this)"><div class="wiki-header">Vitamin E <span class="wiki-arrow">▼</span></div><div class="wiki-content"><b>Tocopherol</b><br>Starkes Antioxidans. Schützt Zellen vor oxidativem Stress.<br><br><b>Wirkungsweise:</b> Neutralisiert freie Radikale in den Zellmembranen.<br><b>Kinetik:</b> Peak nach 4-8h. Halbwertszeit: ~48h (Leber-Umsatz).<br><br><b>Quellen:</b><br>- Sonnenblumenöl (1 EL: ~6mg)<br>- Mandeln (30g: ~7.3mg)<br>- Haselnüsse (30g: ~4.3mg)<br>- Avocado (1 halbe: ~2.1mg)</div></div>
-            <div class="wiki-item" onclick="tglWiki(this)"><div class="wiki-header">Vitamin K <span class="wiki-arrow">▼</span></div><div class="wiki-content"><b>Phyllochinon (K1) / Menachinon (K2)</b><br>Entscheidend für Blutgerinnung und Knochengesundheit.<br><br><b>Wirkungsweise:</b> Aktiviert Proteine (z.B. Osteocalcin), die Calcium in die Knochen einbauen.<br><b>Kinetik:</b> K1 hat eine kurze Halbwertszeit (Stunden), K2 (MK-7) hat eine sehr lange (Tage), was konstante Spiegel ermöglicht.<br><br><b>Quellen:</b><br>- Grünkohl (100g gekocht: ~800µg K1)<br>- Natto (fermentiertes Soja) (15g: ~150µg K2 - Top Quelle!)<br>- Brokkoli (100g: ~140µg K1)<br>- Gouda/Brie (30g: ~20µg K2)</div></div>
-
-            <div class="wiki-category">Wasserlösliche Vitamine</div>
-
-            <div class="wiki-item" onclick="tglWiki(this)"><div class="wiki-header">Vitamin C <span class="wiki-arrow">▼</span></div><div class="wiki-content"><b>Ascorbinsäure</b><br>Kollagenbildung, Immunsystem und starkes Antioxidans.<br><br><b>Wirkungsweise:</b> Donator von Elektronen; Cofaktor bei über 15 Enzymreaktionen.<br><b>Kinetik:</b> Peak nach 2-3h. Halbwertszeit: ~10-20 Tage. Überschuss wird innerhalb von Stunden über den Urin ausgeschieden.<br><br><b>Quellen:</b><br>- Rote Paprika (100g: ~190mg)<br>- Brokkoli (100g: ~90mg)<br>- Kiwi (1 Stück: ~70mg)<br>- Orange (1 mittel: ~70mg)</div></div>
-            <div class="wiki-item" onclick="tglWiki(this)"><div class="wiki-header">Vitamin B12 <span class="wiki-arrow">▼</span></div><div class="wiki-content"><b>Cobalamin</b><br>Blutbildung, Nervenfunktion, Zellteilung.<br><br><b>Wirkungsweise:</b> Essentiell für DNA-Synthese und Myelinscheiden (Nervenschutz).<br><b>Kinetik:</b> Komplexe Aufnahme via "Intrinsic Factor". Großer Leberspeicher reicht für 3-5 Jahre.<br><br><b>Quellen:</b><br>- Rindfleisch (100g: ~2.6µg)<br>- Lachs (100g: ~3µg)<br>- Eier (2 Stück: ~1µg)<br>- Hefeextrakt (Marmite) (1 TL: ~1.9µg)</div></div>
-
-            <div class="wiki-category">Mineralstoffe & Spurenelemente</div>
-
-            <div class="wiki-item" onclick="tglWiki(this)"><div class="wiki-header">Magnesium <span class="wiki-arrow">▼</span></div><div class="wiki-content">Entspannt Muskeln/Nerven, Energiestoffwechsel (ATP).<br><br><b>Wirkungsweise:</b> Cofaktor in über 300 Enzymreaktionen.<br><b>Kinetik:</b> Peak je nach Form (Citrat/Bisglycinat) 2-4h. Halbwertszeit im Blut: ~1000 Stunden (Speicherung in Knochen/Muskeln).<br><br><b>Quellen:</b><br>- Kürbiskerne (30g: ~150mg)<br>- Spinat (100g gekocht: ~87mg)<br>- Mandeln (30g: ~80mg)<br>- Schwarze Bohnen (100g gekocht: ~70mg)</div></div>
-            <div class="wiki-item" onclick="tglWiki(this)"><div class="wiki-header">Zink <span class="wiki-arrow">▼</span></div><div class="wiki-content">Immunsystem, Testosteron, Wundheilung.<br><br><b>Wirkungsweise:</b> Strukturbestandteil in Proteinen und Zellrezeptoren.<br><b>Kinetik:</b> Peak im Plasma nach 2-3h. Keine großen Langzeitspeicher (täglich nötig!).<br><br><b>Quellen:</b><br>- Austern (2 Stück: ~16mg - Extrem hoch!)<br>- Rindfleisch (100g: ~5mg)<br>- Kürbiskerne (30g: ~2.2mg)<br>- Haferflocken (100g: ~4mg)</div></div>
-
-        </div>
-
-        <button class="modal-btn btn-confirm" style="margin-top:15px;" onclick="closeWiki()">Schließen</button>
     </div>
 </div>
 
@@ -2086,32 +2038,32 @@ input, textarea, select {
     }
 
     function addGymExercise() {
-        // Felder zurücksetzen auf Standardwerte
         document.getElementById('gym-mod-name').value = '';
         document.getElementById('gym-mod-sets').value = '3';
         document.getElementById('gym-mod-reps').value = '8-12';
         document.getElementById('gym-mod-weight').value = '';
         
+        // NEU: Aktuellen Tag automatisch im Dropdown vorwählen
+        let currentDaySel = document.getElementById('gym-day-select').value;
+        if(currentDaySel === 'DATE') currentDaySel = getGermanDay();
+        document.getElementById('gym-mod-day').value = currentDaySel;
+        
         const autoList = document.getElementById('gym-mod-autocomplete-list');
         if(autoList) autoList.style.display = 'none';
 
-        // Autocomplete-Logik für dieses neue Fenster aktivieren
         const input = document.getElementById('gym-mod-name');
         input.oninput = function() {
             let val = this.value.toLowerCase();
             autoList.innerHTML = '';
             if (!val) { autoList.style.display = 'none'; return; }
             
-            // Suche die besten Matches
             let matches = gymExercises.filter(ex => ex.toLowerCase().includes(val)).slice(0, 8);
-            
             if(matches.length > 0) {
                 autoList.style.display = 'block';
                 matches.forEach(ex => {
                     let itemDiv = document.createElement("div");
                     itemDiv.className = "autocomplete-item";
                     itemDiv.innerText = ex;
-                    
                     itemDiv.onclick = function() {
                         input.value = ex;
                         autoList.style.display = 'none';
@@ -2123,7 +2075,6 @@ input, textarea, select {
             }
         };
 
-        // Fenster anzeigen
         document.getElementById('gym-add-modal').style.display = 'flex';
         setTimeout(() => input.focus(), 100);
     }
@@ -2137,16 +2088,16 @@ input, textarea, select {
         const sets = document.getElementById('gym-mod-sets').value;
         const reps = document.getElementById('gym-mod-reps').value.trim();
         const weight = document.getElementById('gym-mod-weight').value;
+        const targetDay = document.getElementById('gym-mod-day').value; // Liest jetzt aus dem Dropdown im Modal!
 
         if(!name || !sets || !reps) {
             showAlert("Bitte fülle Übungsname, Sätze und Wiederholungen aus.");
             return;
         }
 
-        const target = getGymPlannerTarget();
-        if(!db.gym.plans[target]) db.gym.plans[target] = [];
+        if(!db.gym.plans[targetDay]) db.gym.plans[targetDay] = [];
         
-        db.gym.plans[target].push({
+        db.gym.plans[targetDay].push({
             name: name, 
             sets: parseInt(sets) || 3, 
             reps: reps,
@@ -2156,8 +2107,7 @@ input, textarea, select {
         save();
         renderGymPlaner();
         renderGymToday();
-        if(typeof vBuz === 'function') vBuz([30, 50, 30]); // Kurze Vibration
-        
+        if(typeof vBuz === 'function') vBuz([30, 50, 30]);
         closeGymModal();
     }
 
@@ -2180,15 +2130,14 @@ input, textarea, select {
         }
     }
 
+    // --- DAS NEUE TRACKING UI ---
     function renderGymToday() {
         const day = currentFlexDay;
         const dateStr = getTodayDate();
         const cont = document.getElementById('gym-today-content');
         
-        // Prüfen ob es für HEUTE ein spezielles Datum-Override gibt, ansonsten den normalen Wochentag nehmen
         const specificPlan = db.gym.plans[dateStr];
         const weeklyPlan = db.gym.plans[day];
-        // Override gilt nur, wenn der FlexDay auch wirklich dem heutigen Tag entspricht
         const isOverride = (day === getGermanDay() && specificPlan && specificPlan.length > 0);
         const todayPlan = isOverride ? specificPlan : weeklyPlan;
         
@@ -2201,101 +2150,150 @@ input, textarea, select {
         }
 
         todayPlan.forEach((ex, exIdx) => {
-            let setsHtml = '';
+            // "Letztes Mal" Logik
+            const pastLogs = db.gym.logs.filter(l => l.ex === ex.name && l.date !== dateStr && !l.emptyExtra);
+            let lastTimeStr = "Erstes Mal!";
+            if (pastLogs.length > 0) {
+                pastLogs.sort((a,b) => new Date(b.date) - new Date(a.date));
+                lastTimeStr = `${pastLogs[0].w} kg x ${pastLogs[0].r} Wdh`;
+            }
+
+            let setsHtml = `
+                <div class="track-labels" style="justify-content: space-between; padding-right: 10px;">
+                    <div style="width: 15%;">SATZ</div>
+                    <div style="width: 25%;">KG</div>
+                    <div style="width: 25%;">WDH</div>
+                    <div style="width: 20%;">✔</div>
+                    <div style="width: 10%;"></div>
+                </div>
+            `;
+
             let allDone = true;
+            let loggedSetsToday = db.gym.logs.filter(l => l.date === dateStr && l.ex === ex.name && (l.planDay === day || !l.planDay));
+            let totalSetsToRender = Math.max(ex.sets, loggedSetsToday.length);
 
-            for(let s=1; s<=ex.sets; s++) {
-                const log = db.gym.logs.find(l => l.date === dateStr && l.ex === ex.name && l.set === s && (l.planDay === day || !l.planDay));
-                const isDone = !!log;
-                if(!isDone) allDone = false;
+            for(let s = 1; s <= totalSetsToRender; s++) {
+                const log = loggedSetsToday.find(l => l.set === s);
+                // Wenn es ein Log ist, aber 'emptyExtra' hat, ist es noch nicht erledigt
+                const isDone = log && !log.emptyExtra; 
+                
+                if(!isDone && s <= ex.sets) allDone = false; 
 
-                const weightVal = log ? log.w : '';
-                const repsVal = log ? log.r : '';
+                const weightVal = isDone ? log.w : '';
+                const repsVal = isDone ? log.r : '';
                 
                 setsHtml += `
-                <div class="gym-set-row">
-                    <span style="width:25px; color:#94a3b8; font-size:14px; font-weight:bold; text-align:center;">${s}</span>
-                    <input type="number" step="0.5" id="g-w-${exIdx}-${s}" class="gym-set-input" placeholder="kg" value="${weightVal}" ${isDone ? 'disabled' : ''}>
-                    <input type="number" id="g-r-${exIdx}-${s}" class="gym-set-input" placeholder="Wdh" value="${repsVal}" ${isDone ? 'disabled' : ''}>
-                    <button class="gym-set-btn ${isDone?'done':'open'}" onclick="toggleGymSet('${ex.name}', ${s}, ${exIdx}, this)">${isDone?'✓':'OK'}</button>
+                <div class="set-row ${isDone ? 'done' : ''}" style="justify-content: space-between; padding-right: 10px;">
+                    <div style="width: 15%; color:#C69320; font-weight:bold; font-size: 14px;">${s}</div>
+                    <div style="width: 25%;">
+                        <input type="number" step="0.5" id="g-w-${exIdx}-${s}" class="track-input" placeholder="kg" value="${weightVal}" ${isDone ? 'disabled' : ''} style="width:100%;">
+                    </div>
+                    <div style="width: 25%;">
+                        <input type="number" id="g-r-${exIdx}-${s}" class="track-input" placeholder="Wdh" value="${repsVal}" ${isDone ? 'disabled' : ''} style="width:100%;">
+                    </div>
+                    <div style="width: 20%;">
+                        <button class="btn-check" style="width:100%; padding: 6px 0;" onclick="toggleGymSet('${ex.name.replace(/'/g, "\\'")}', ${s}, ${exIdx}, this)">${isDone ? 'OK' : '✔'}</button>
+                    </div>
+                    <div style="width: 10%; text-align: right;">
+                        <span onclick="deleteGymSetRow('${ex.name.replace(/'/g, "\\'")}', ${s})" style="color: var(--danger); font-size: 14px; cursor:pointer; font-weight:900;">✖</span>
+                    </div>
                 </div>`;
             }
 
-            let targetW = (ex.weight && ex.weight > 0) ? ` | ${ex.weight} kg` : '';
-            
-            // Wenn alles fertig ist, klappen wir es direkt zu
             let displayState = allDone ? 'none' : 'block';
             let rotateState = allDone ? '0deg' : '180deg';
 
             html += `
-            <div class="gym-ex-card" id="gym-today-ex-${exIdx}">
+            <div class="track-block" id="gym-today-ex-${exIdx}">
                 <div onclick="toggleGymEx(${exIdx})" style="margin-bottom:0; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
                     <div style="display:flex; flex-direction:column; gap:3px;">
-                        <span onclick="event.stopPropagation(); renameGymPlanEx('${day}', ${exIdx}, '${ex.name.replace(/'/g, "\\'")}', '${dateStr}')" style="color:white; font-size:15px; font-weight:800; display:inline-flex; align-items:center; gap:6px;">${ex.name} <span style="font-size:10px; opacity:0.6;">✏️</span></span> 
-                        <span style="color:var(--morning-glow); font-size:11px; font-weight:700;">Ziel: ${ex.reps}${targetW}</span>
+                        <span style="color:white; font-size:15px; font-weight:800; display:inline-flex; align-items:center; gap:6px;">${ex.name}</span> 
+                        <span class="track-history">🕒 Letztes Mal: ${lastTimeStr}</span>
                     </div>
                     <span id="gym-ex-icon-${exIdx}" style="color:var(--accent); transition:0.3s; transform:rotate(${rotateState}); font-size:20px;">▾</span>
                 </div>
-                <div id="gym-ex-content-${exIdx}" style="display:${displayState}; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
+                
+                <div id="gym-ex-content-${exIdx}" style="display:${displayState}; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
                     ${setsHtml}
+                    <button class="btn-add-set" onclick="addExtraGymSet('${ex.name.replace(/'/g, "\\'")}', ${totalSetsToRender + 1})">+ EXTRA SATZ</button>
                 </div>
             </div>`;
         });
+        
         cont.innerHTML = html;
+    }
+
+    function addExtraGymSet(exName, newSetNum) {
+        if(typeof vBuz === 'function') vBuz(10);
+        // Platzhalter in DB ablegen, damit das UI die zusätzliche Reihe rendert
+        db.gym.logs.push({ date: getTodayDate(), planDay: currentFlexDay, ex: exName, set: newSetNum, w: '', r: '', emptyExtra: true });
+        save();
+        renderGymToday();
+    }
+
+    function deleteGymSetRow(exName, setNum) {
+        showConfirm(`Satz ${setNum} wirklich entfernen?`, function(res) {
+            if(res) {
+                db.gym.logs = db.gym.logs.filter(l => !(l.date === getTodayDate() && l.ex === exName && l.set === setNum));
+                save();
+                renderGymToday();
+                updateGymChart();
+                renderGymHistory();
+            }
+        });
     }
 
     function toggleGymSet(exName, setNum, exIdx, btn) {
         const dateStr = getTodayDate();
         const day = currentFlexDay;
-        let logIdx = db.gym.logs.findIndex(l => l.date === dateStr && l.ex === exName && l.set === setNum && (l.planDay === day || !l.planDay));
         
+        let logIdx = db.gym.logs.findIndex(l => l.date === dateStr && l.ex === exName && l.set === setNum && (l.planDay === day || !l.planDay));
         const wInput = document.getElementById(`g-w-${exIdx}-${setNum}`);
         const rInput = document.getElementById(`g-r-${exIdx}-${setNum}`);
 
-        if(logIdx !== -1) {
-            // UNCHECK: Log entfernen & Felder zum Editieren entsperren
+        const w = wInput.value;
+        const r = rInput.value;
+
+        if(logIdx !== -1 && !db.gym.logs[logIdx].emptyExtra) {
+            // IST BEREITS ABGEHAKT -> UNCHECK
             db.gym.logs.splice(logIdx, 1);
             save();
-            
             btn.classList.remove('done');
-            btn.classList.add('open');
-            btn.innerText = 'OK';
+            btn.innerText = '✔';
             wInput.disabled = false;
             rInput.disabled = false;
-            
             vBuz(30); 
         } else {
-            // CHECK: Felder speichern & sperren
-            const w = wInput.value;
-            const r = rInput.value;
-            if(!w || !r) { showAlert("Bitte Gewicht und Wiederholungen eintragen!"); return; }
+            // NOCH NICHT ABGEHAKT -> CHECK
+            if(!w || !r) { showAlert("Gewicht und Wiederholungen eintragen!"); return; }
             
-            db.gym.logs.push({ date: dateStr, planDay: day, ex: exName, set: setNum, w: parseFloat(w), r: parseInt(r) });
+            if (logIdx !== -1 && db.gym.logs[logIdx].emptyExtra) {
+                // Es war ein Extra-Satz, wir füllen ihn jetzt mit echten Daten
+                db.gym.logs[logIdx] = { date: dateStr, planDay: day, ex: exName, set: setNum, w: parseFloat(w), r: parseInt(r) };
+            } else {
+                // Normaler regulärer Satz
+                db.gym.logs.push({ date: dateStr, planDay: day, ex: exName, set: setNum, w: parseFloat(w), r: parseInt(r) });
+            }
             save();
             
-            btn.classList.remove('open');
             btn.classList.add('done');
-            btn.innerText = '✓';
+            btn.innerText = 'OK';
             wInput.disabled = true;
             rInput.disabled = true;
-            
             vBuz([50, 100, 50]);
             
-            // Auto-Collapse prüfen: Sind alle Sätze dieser Übung jetzt fertig?
-            const specificPlan = db.gym.plans[dateStr];
-            const isOverride = (day === getGermanDay() && specificPlan && specificPlan.length > 0);
-            const todayPlan = isOverride ? specificPlan : db.gym.plans[day];
-            
+            // Auto-Collapse prüfen
+            const todayPlan = (day === getGermanDay() && db.gym.plans[dateStr]) ? db.gym.plans[dateStr] : db.gym.plans[day];
             const exObj = todayPlan[exIdx];
             if(exObj) {
-                const logsForEx = db.gym.logs.filter(l => l.date === dateStr && l.ex === exName && (l.planDay === day || !l.planDay));
+                const logsForEx = db.gym.logs.filter(l => l.date === dateStr && l.ex === exName && !l.emptyExtra);
                 if(logsForEx.length >= exObj.sets) {
                     setTimeout(() => {
                         const cont = document.getElementById(`gym-ex-content-${exIdx}`);
                         const icon = document.getElementById(`gym-ex-icon-${exIdx}`);
                         if(cont) cont.style.display = 'none';
                         if(icon) icon.style.transform = 'rotate(0deg)';
-                    }, 500); // Eine halbe Sekunde warten für ein smoothes Erlebnis
+                    }, 600);
                 }
             }
         }
@@ -4325,15 +4323,17 @@ function render3DExerciseList(title, exercises) {
         return;
     }
 
-    // Scrollbarer Container
+    // NEU: Scrollbarer Container (max 300px Höhe), damit das UI sauber bleibt
     html += `<div style="max-height: 300px; overflow-y: auto; padding-right: 5px; scrollbar-width: thin; scrollbar-color: var(--accent) #111;">`;
 
     exercises.forEach(ex => {
         const safeEx = ex.replace(/'/g, "\\'");
         const map = muscleMapping[ex];
         
+        // NEU: Logik für die Badges
         let badgeHtml = "";
         if(map) {
+            // Prüfen, ob der aktuell angeklickte Muskel (title) Primär oder Sekundär ist
             if(map.primary.includes(title)) {
                 badgeHtml = `<span style="background: rgba(34, 197, 94, 0.15); color: #4ade80; font-size: 9px; font-weight: bold; padding: 3px 6px; border-radius: 4px; border: 1px solid rgba(34, 197, 94, 0.4); margin-right: 5px; letter-spacing: 0.5px;">ZIELMUSKEL</span>`;
             } else if(map.secondary.includes(title)) {
@@ -4345,7 +4345,7 @@ function render3DExerciseList(title, exercises) {
             <div class="bio-3d-ex" onclick="highlightMuscles('${safeEx}')" style="cursor:pointer; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.04); margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.05); transition: 0.2s;">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 6px;">
                     <span style="color:white; font-weight:bold; font-size:14px; line-height:1.2; padding-right:10px;">${ex}</span>
-                    <button style="background:var(--accent); border:none; border-radius:6px; color:black; font-size:10px; font-weight:900; padding:6px 12px; cursor:pointer; flex-shrink:0;" onclick="event.stopPropagation(); openAddFrom3D('${safeEx}')">+ TRACKEN</button>
+                    <button style="background:var(--accent); border:none; border-radius:6px; color:black; font-size:10px; font-weight:900; padding:6px 12px; cursor:pointer; flex-shrink:0;" onclick="event.stopPropagation(); openAddFrom3D('${safeEx}')">+ PLAN</button>
                 </div>
                 <div style="display:flex; align-items:center;">
                     ${badgeHtml}
@@ -4354,7 +4354,7 @@ function render3DExerciseList(title, exercises) {
         `;
     });
     
-    html += `</div>`; 
+    html += `</div>`; // Container schließen
     document.getElementById('bio-3d-info').innerHTML = html;
 }
 
@@ -4396,97 +4396,19 @@ function search3DExercise(query) {
     render3DExerciseList("Suchergebnisse", filtered);
 }
 
-    // --- TRACKING LOGIK (PROTOTYP) ---
-
-// 1. Simulierter Speicher (in echt kommt das aus dem LocalStorage)
-const pastWorkouts = {
-    "Bankdrücken (Langhantel)": "80 kg x 10 Wdh",
-    "Kniebeuge (Langhantel)": "100 kg x 8 Wdh",
-    "Klimmzüge (Obergriff)": "Körpergewicht x 12 Wdh"
-};
-
-// 2. Erzeugt einen HTML-Block für eine ausgewählte Übung
-function buildTrackingBlock(exName) {
-    let lastTime = pastWorkouts[exName] ? `Letztes Mal: ${pastWorkouts[exName]}` : "Erstes Mal!";
-
-    return `
-    <div class="track-block" id="track-${exName.replace(/\s+/g, '-')}">
-        <div class="track-header">
-            <h3 class="track-title">${exName}</h3>
-            <span class="track-history">🕒 ${lastTime}</span>
-        </div>
-        
-        <div class="track-labels">
-            <div class="track-col-set">SATZ</div>
-            <div class="track-col-kg">KG</div>
-            <div class="track-col-reps">WDH</div>
-            <div class="track-col-check">✔</div>
-        </div>
-
-        <div class="sets-container">
-            ${buildSetRow(1)}
-            ${buildSetRow(2)}
-            ${buildSetRow(3)}
-        </div>
-
-        <button class="btn-add-set" onclick="addSetToExercise(this)">+ SATZ HINZUFÜGEN</button>
-    </div>
-    `;
-}
-
-// 3. Erzeugt die Zeile für einen einzelnen Satz
-function buildSetRow(setNum) {
-    return `
-    <div class="set-row">
-        <div class="track-col-set" style="color:#C69320; font-weight:bold;">${setNum}</div>
-        <div class="track-col-kg"><input type="number" class="track-input" placeholder="-"></div>
-        <div class="track-col-reps"><input type="number" class="track-input" placeholder="-"></div>
-        <div class="track-col-check">
-            <button class="btn-check" onclick="toggleSetDone(this)">✔</button>
-        </div>
-    </div>
-    `;
-}
-
-// 4. Button-Logik: Neuen Satz hinzufügen
-function addSetToExercise(btn) {
-    if(typeof vBuz === 'function') vBuz(10);
-    let container = btn.previousElementSibling; 
-    let currentSets = container.querySelectorAll('.set-row').length;
-    container.insertAdjacentHTML('beforeend', buildSetRow(currentSets + 1));
-}
-
-// 5. Button-Logik: Satz abhaken
-function toggleSetDone(btn) {
-    if(typeof vBuz === 'function') vBuz(15);
-    let row = btn.closest('.set-row');
-    row.classList.toggle('done');
-    
-    if(row.classList.contains('done')) {
-        btn.innerText = "OK";
-    } else {
-        btn.innerText = "✔";
-    }
-}
-
-        // 6. Die neue Brücken-Funktion zum Testen des UIs
-        window.openAddFrom3D = function(exName) {
-            if(typeof vBuz === 'function') vBuz(15);
-            
-            const infoBox = document.getElementById('bio-3d-info');
-            
-            // Prüfen, ob der Block schon existiert, um Duplikate zu vermeiden
-            const existingId = `track-${exName.replace(/\s+/g, '-')}`;
-            if (!document.getElementById(existingId)) {
-                infoBox.insertAdjacentHTML('beforeend', buildTrackingBlock(exName));
+    // Brücken-Funktion: Überträgt den Übungsnamen direkt in dein Gym-Modal
+    window.openAddFrom3D = function(exName) {
+        if(typeof vBuz === 'function') vBuz(15);
+        addGymExercise(); // Dein vorhandenes Fenster öffnen
+        setTimeout(() => {
+            const input = document.getElementById('gym-mod-name');
+            if(input) {
+                input.value = exName;
+                input.dispatchEvent(new Event('input')); // Aktualisiert die UI
+                document.getElementById('gym-mod-autocomplete-list').style.display = 'none';
             }
-            
-            // Nach unten scrollen
-            setTimeout(() => {
-                const newBlock = document.getElementById(existingId);
-                if (newBlock) newBlock.scrollIntoView({ behavior: 'smooth', block: 'end' });
-            }, 100);
-        };
+        }, 150);
+    };
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
