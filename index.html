@@ -4040,7 +4040,7 @@ if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
 
 <div id="dev-svg-tool" style="position:fixed; bottom:0; left:0; width:100%; background:rgba(0,0,0,0.95); border-top:2px solid #FF8C00; color:white; padding:15px; z-index:999999; font-family:monospace; font-size:12px;">
     <div style="display:flex; justify-content:space-between; margin-bottom:5px; align-items:center;">
-        <span style="font-weight:bold; color:#FF8C00;">SVG Path Generator</span>
+        <span style="font-weight:bold; color:#FF8C00;">SVG Path Generator (V4)</span>
         <button onclick="toggleDevZoom()" style="background:#4facfe; color:black; border:none; padding:6px 10px; font-weight:bold; cursor:pointer; border-radius:5px;">🔍 ZOOM AN/AUS</button>
     </div>
     <input type="text" id="dev-path-output" style="width:100%; box-sizing:border-box; background:#111; color:#0f0; border:1px solid #333; padding:10px; margin-bottom:10px; font-size:14px;" readonly placeholder="Pfad erscheint hier...">
@@ -4049,6 +4049,14 @@ if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
 </div>
 
 <script>
+    // FIX: Verhindert, dass die unsichtbare Vorderseite Klicks schluckt!
+    const devStyleFix = document.createElement('style');
+    devStyleFix.innerHTML = `
+        .bio-3d-card.is-flipped .bio-3d-face:not(.bio-3d-back) { pointer-events: none !important; }
+        .bio-3d-card:not(.is-flipped) .bio-3d-back { pointer-events: none !important; }
+    `;
+    document.head.appendChild(devStyleFix);
+
     let devPoints = []; 
     let devSvgElement = null; 
     let devCurrentPolygon = null;
@@ -4074,7 +4082,6 @@ if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
         svg.addEventListener('click', function(e) {
             e.preventDefault(); e.stopPropagation();
             
-            // NEU: Automatischer Reset, wenn du das Modell gedreht hast!
             if (devSvgElement !== this) {
                 resetDevPath();
                 devSvgElement = this;
@@ -4087,14 +4094,12 @@ if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
             const finalY = Math.round(svgP.y);
             devPoints.push({x: finalX, y: finalY});
             
-            // NEU: Sichtbarkeit im 3D-Raum (backfaceVisibility) erzwungen
             const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
             dot.setAttribute("cx", finalX);
             dot.setAttribute("cy", finalY);
-            dot.setAttribute("r", "2"); 
+            dot.setAttribute("r", "1.5"); 
             dot.setAttribute("fill", "#0f0"); 
             dot.style.pointerEvents = "none";
-            dot.style.backfaceVisibility = "visible";
             svg.appendChild(dot);
             devDots.push(dot);
 
@@ -4108,9 +4113,8 @@ if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
                 devCurrentPolygon = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 devCurrentPolygon.setAttribute("fill", "none");
                 devCurrentPolygon.setAttribute("stroke", "#FF8C00");
-                devCurrentPolygon.setAttribute("stroke-width", "1");
+                devCurrentPolygon.setAttribute("stroke-width", "0.8");
                 devCurrentPolygon.style.pointerEvents = "none"; 
-                devCurrentPolygon.style.backfaceVisibility = "visible";
                 svg.appendChild(devCurrentPolygon);
             }
             devCurrentPolygon.setAttribute("d", pathString);
