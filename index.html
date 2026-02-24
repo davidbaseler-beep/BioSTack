@@ -581,22 +581,22 @@ input, textarea, select {
         <div class="collapse-content" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
             
             <div class="bio-3d-scene">
-                <div class="bio-3d-card" id="main-3d-card">
-                    <div class="bio-3d-face">
-                        <img src="img/vorne.jpg" class="bio-3d-img" alt="Front">
-                        <svg class="bio-3d-svg" viewBox="0 0 400 600">
-                            <path class="bio-3d-muscle" data-name="Brustmuskulatur" data-ex="Bankdrücken Langhantel,Dips,Butterfly Maschine" d="M150,150 Q200,140 250,150 L240,210 Q200,220 160,210 Z" />
-                            <path class="bio-3d-muscle" data-name="Bauchmuskulatur" data-ex="Crunches,Beinheben hängend,Plank" d="M175,230 L225,230 L215,350 L185,350 Z" />
-                        </svg>
-                    </div>
-                    <div class="bio-3d-face bio-3d-back">
-                        <img src="img/hinten.jpg" class="bio-3d-img" alt="Back">
-                        <svg class="bio-3d-svg" viewBox="0 0 400 600">
-                            <path class="bio-3d-muscle" data-name="Rückenmuskulatur" data-ex="Klimmzüge breit,Rudern Langhantel,Kreuzheben" d="M140,150 Q200,140 260,150 L280,350 Q200,380 120,350 Z" />
-                        </svg>
-                    </div>
-                </div>
-            </div>
+    <div class="bio-3d-card" id="main-3d-card">
+        <div class="bio-3d-face">
+            <img src="https://github.com/davidbaseler-beep/BioSTack/blob/main/img/vorne.jpeg?raw=true" class="bio-3d-img" alt="Front">
+            <svg class="bio-3d-svg" viewBox="0 0 400 600">
+                <path class="bio-3d-muscle" data-name="Brustmuskulatur" data-ex="Bankdrücken Langhantel,Dips,Butterfly Maschine" d="M150,150 Q200,140 250,150 L240,210 Q200,220 160,210 Z" />
+                <path class="bio-3d-muscle" data-name="Bauchmuskulatur" data-ex="Crunches,Beinheben hängend,Plank" d="M175,230 L225,230 L215,350 L185,350 Z" />
+            </svg>
+        </div>
+        <div class="bio-3d-face bio-3d-back">
+            <img src="https://github.com/davidbaseler-beep/BioSTack/blob/main/img/hinten.jpeg?raw=true" class="bio-3d-img" alt="Back">
+            <svg class="bio-3d-svg" viewBox="0 0 400 600">
+                <path class="bio-3d-muscle" data-name="Rückenmuskulatur" data-ex="Klimmzüge breit,Rudern Langhantel,Kreuzheben" d="M140,150 Q200,140 260,150 L280,350 Q200,380 120,350 Z" />
+            </svg>
+        </div>
+    </div>
+</div>
 
             <button class="btn-action" style="background: linear-gradient(135deg, #C69320 0%, #8A6514 100%); margin-bottom: 10px; box-shadow: 0 4px 15px rgba(198, 147, 32, 0.3);" onclick="document.getElementById('main-3d-card').classList.toggle('is-flipped'); document.querySelectorAll('.bio-3d-muscle').forEach(m => m.classList.remove('selected')); document.getElementById('bio-3d-info').innerHTML = '<div style=\'text-align:center; color:#94a3b8; font-size:12px;\'>Tippe auf einen Muskel, um Übungen zu laden.</div>';">
                 ↺ KÖRPER DREHEN
@@ -4014,17 +4014,6 @@ if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
             }
         }, 150);
     };
-
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('Service Worker registriert!', reg))
-                .catch(err => console.log('Service Worker Fehler:', err));
-        });
-    }
-</script>
-</body>
-</html>
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
