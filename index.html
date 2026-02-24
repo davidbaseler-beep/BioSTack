@@ -656,8 +656,15 @@ input, textarea, select {
                 <input type="text" id="gym-3d-search" class="weight-input" placeholder="🔍 Übung suchen..." oninput="search3DExercise(this.value)" style="margin-bottom: 5px; font-size: 14px; background: rgba(255,255,255,0.05) !important;">
             </div>
 
-            <div id="bio-3d-info" class="bio-3d-panel">
-                <div style="text-align:center; color:#94a3b8; font-size:12px;">Tippe auf einen Muskel oder suche eine Übung.</div>
+            <div id="bio-3d-info-wrapper" class="bio-3d-panel collapse-active" style="padding: 0; overflow: hidden;">
+                <div class="collapse-header" onclick="this.parentElement.classList.toggle('collapse-active')" style="padding: 15px; background: rgba(0,0,0,0.2);">
+                    <span id="bio-3d-info-title" style="color:var(--accent); font-size:14px; font-weight:800; text-transform:uppercase; letter-spacing:1px; margin:0;">⚡ Übungsauswahl</span>
+                </div>
+                <div class="collapse-content" style="margin-top: 0; padding: 0 15px 15px 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+                    <div id="bio-3d-info">
+                        <div style="text-align:center; color:#94a3b8; font-size:12px; padding-top: 15px;">Tippe auf einen Muskel oder suche eine Übung.</div>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -4293,16 +4300,22 @@ function highlightMuscles(exName) {
 
 // Funktion: Übungsliste im Panel anzeigen (V2 - Scrollbar & Badges)
 function render3DExerciseList(title, exercises) {
-    let html = `<div style="color:var(--accent); font-size:14px; font-weight:800; margin-bottom:10px; text-transform:uppercase; letter-spacing:1px;">⚡ ${title}</div>`;
+    // 1. Titel dynamisch in den Header setzen
+    document.getElementById('bio-3d-info-title').innerText = "⚡ " + title;
+    
+    // 2. Dropdown automatisch aufklappen, wenn ein Muskel geklickt wird
+    document.getElementById('bio-3d-info-wrapper').classList.add('collapse-active');
+
+    let html = "";
     
     if(exercises.length === 0) {
-        html += `<div style="color:#64748b; font-size:12px;">Keine Übungen gefunden.</div>`;
+        html += `<div style="color:#64748b; font-size:12px; text-align:center; padding-top: 15px;">Keine Übungen gefunden.</div>`;
         document.getElementById('bio-3d-info').innerHTML = html;
         return;
     }
 
     // NEU: Scrollbarer Container (max 300px Höhe), damit das UI sauber bleibt
-    html += `<div style="max-height: 300px; overflow-y: auto; padding-right: 5px; scrollbar-width: thin; scrollbar-color: var(--accent) #111;">`;
+    html += `<div style="max-height: 300px; overflow-y: auto; padding-right: 5px; margin-top: 15px; scrollbar-width: thin; scrollbar-color: var(--accent) #111;">`;
 
     exercises.forEach(ex => {
         const safeEx = ex.replace(/'/g, "\\'");
@@ -4367,7 +4380,9 @@ document.querySelectorAll('.bio-3d-muscle').forEach(muscle => {
 // Suchfunktion für das Textfeld
 function search3DExercise(query) {
     if(!query || query.length < 2) {
-        document.getElementById('bio-3d-info').innerHTML = `<div style="text-align:center; color:#94a3b8; font-size:12px;">Tippe auf einen Muskel oder suche eine Übung.</div>`;
+        // Titel zurücksetzen, wenn Suche gelöscht wird
+        document.getElementById('bio-3d-info-title').innerText = "⚡ ÜBUNGSAUSWAHL";
+        document.getElementById('bio-3d-info').innerHTML = `<div style="text-align:center; color:#94a3b8; font-size:12px; padding-top: 15px;">Tippe auf einen Muskel oder suche eine Übung.</div>`;
         return;
     }
     const filtered = gymExercises.filter(ex => ex.toLowerCase().includes(query.toLowerCase())).slice(0, 12);
