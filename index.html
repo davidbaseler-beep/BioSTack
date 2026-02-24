@@ -422,15 +422,16 @@ input, textarea, select {
 
         .bio-3d-img { 
             position: absolute;
-            width: 130%;       /* MACHT ES DEUTLICH GRÖßER */
-            height: 130%;      /* IDENTISCH ZUR BREITE */
-            object-fit: cover; 
-            top: -10%;         /* HÖHE AUSGLEICHEN */
-            left: -15%;        /* SCHIEBT DAS BILD NACH RECHTS. Wenn zu weit: -10% oder -5% testen */
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; /* Zwingt das Bild, GANZ in die Box zu passen (nicht zu nah) */
+            object-position: center; /* Zwingt das Bild EXAKT in die Mitte (nicht zu weit links) */
+            top: 0;
+            left: 0;
             pointer-events: none; 
             user-select: none; 
         }
-
+        
         .bio-3d-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; }
         .bio-3d-muscle { fill: transparent; stroke: transparent; cursor: pointer; transition: 0.3s; }
         .bio-3d-muscle:hover { fill: rgba(198, 147, 32, 0.2); }
