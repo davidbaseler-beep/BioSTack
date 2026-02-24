@@ -4046,12 +4046,14 @@ if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
             pathString += " Z";
             
             document.getElementById('dev-path-output').value = pathString;
-            if(!devCurrentPolygon) {
-                devCurrentPolygon = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                devCurrentPolygon.setAttribute("fill", "rgba(255, 140, 0, 0.5)");
-                devCurrentPolygon.setAttribute("stroke", "#FF8C00");
-                svg.appendChild(devCurrentPolygon);
-            }
+                    if(!devCurrentPolygon) {
+            devCurrentPolygon = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            devCurrentPolygon.setAttribute("fill", "rgba(255, 140, 0, 0.5)");
+            devCurrentPolygon.setAttribute("stroke", "#FF8C00");
+            // NEU: Klicks gehen durch das gelbe Feld hindurch
+            devCurrentPolygon.style.pointerEvents = "none"; 
+            svg.appendChild(devCurrentPolygon);
+        }
             devCurrentPolygon.setAttribute("d", pathString);
         });
     });
