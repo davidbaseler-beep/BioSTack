@@ -424,7 +424,23 @@ input, textarea, select {
     .bio-3d-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; }
     .bio-3d-muscle { fill: transparent; stroke: transparent; cursor: pointer; transition: 0.3s; }
     .bio-3d-muscle:hover { fill: rgba(198, 147, 32, 0.2); }
-    .bio-3d-muscle.selected { fill: rgba(198, 147, 32, 0.4); stroke: #F3E5AB; stroke-width: 2; filter: drop-shadow(0 0 15px #C69320); }
+    /* Den alten .selected Style kannst du behalten oder hiermit ergänzen */
+            .bio-3d-muscle.selected { fill: rgba(198, 147, 32, 0.4); stroke: #F3E5AB; stroke-width: 2; filter: drop-shadow(0 0 15px #C69320); }
+
+            /* NEU: Hauptmuskel (Grün) */
+            .bio-3d-muscle.primary { 
+                fill: rgba(34, 197, 94, 0.45) !important; 
+                stroke: #22c55e !important; 
+                stroke-width: 2.5px;
+                filter: drop-shadow(0 0 12px #22c55e);
+            }
+            /* NEU: Hilfsmuskel (Orange) */
+            .bio-3d-muscle.secondary { 
+                fill: rgba(245, 158, 11, 0.4) !important; 
+                stroke: #f59e0b !important;
+                stroke-width: 1.5px;
+                filter: drop-shadow(0 0 8px #f59e0b);
+            }
     .bio-3d-panel { background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 16px; padding: 15px; margin-top: 15px; text-align: left;}
     .bio-3d-ex { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size:13px; }
     .bio-3d-ex:last-child { border: none; }
@@ -636,8 +652,12 @@ input, textarea, select {
                 ↺ KÖRPER DREHEN
             </button>
 
+                        <div style="padding: 0 5px; margin-bottom: 10px;">
+                <input type="text" id="gym-3d-search" class="weight-input" placeholder="🔍 Übung suchen..." oninput="search3DExercise(this.value)" style="margin-bottom: 5px; font-size: 14px; background: rgba(255,255,255,0.05) !important;">
+            </div>
+
             <div id="bio-3d-info" class="bio-3d-panel">
-                <div style="text-align:center; color:#94a3b8; font-size:12px;">Tippe auf einen Muskel, um Übungen zu laden.</div>
+                <div style="text-align:center; color:#94a3b8; font-size:12px;">Tippe auf einen Muskel oder suche eine Übung.</div>
             </div>
 
         </div>
@@ -4009,31 +4029,102 @@ if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
     });
 }
 
-    // --- 3D MUSKEL MAP LOGIK ---
-    document.querySelectorAll('.bio-3d-muscle').forEach(muscle => {
-        muscle.addEventListener('click', function(e) {
-            e.stopPropagation(); // Verhindert Scroll-Konflikte
-            if(typeof vBuz === 'function') vBuz(15); // Haptisches Feedback
-            
-            // Alle anderen deselektieren, aktuellen hervorheben
-            document.querySelectorAll('.bio-3d-muscle').forEach(m => m.classList.remove('selected'));
-            this.classList.add('selected');
+    // --- 3D MUSKEL MAP LOGIK (INTELLIGENT VERSION) ---
 
-            const name = this.getAttribute('data-name');
-            const exercises = this.getAttribute('data-ex').split(',');
-            
-            let html = `<div style="color:var(--accent); font-size:14px; font-weight:800; margin-bottom:10px;">⚡ ${name}</div>`;
-            exercises.forEach(ex => {
-                html += `
-                    <div class="bio-3d-ex">
-                        <span style="color:white; font-weight:bold;">${ex}</span>
-                        <button style="background:var(--accent); border:none; border-radius:8px; color:white; font-size:10px; font-weight:900; padding:6px 12px; cursor:pointer;" onclick="openAddFrom3D('${ex}')">+ PLAN</button>
-                    </div>
-                `;
-            });
-            document.getElementById('bio-3d-info').innerHTML = html;
-        });
+// 1. Die anatomische Datenbank für das Highlighting
+const muscleMapping = {
+    "Bankdrücken Langhantel": { primary: ["Brustmuskulatur"], secondary: ["Schultern", "Trizeps"] },
+    "Schrägbankdrücken Kurzhantel": { primary: ["Brustmuskulatur"], secondary: ["Schultern", "Trizeps"] },
+    "Kniebeugen": { primary: ["Oberschenkel (Quads)"], secondary: ["Gesäßmuskulatur", "Bauch & Core"] },
+    "Beinpresse": { primary: ["Oberschenkel (Quads)"], secondary: ["Gesäßmuskulatur", "Waden / Unterschenkel"] },
+    "Klimmzüge breit": { primary: ["Rückenmuskulatur"], secondary: ["Bizeps", "Hintere Schulter"] },
+    "Kreuzheben": { primary: ["Rückenmuskulatur", "Gesäßmuskulatur"], secondary: ["Beinbeuger (Hamstrings)", "Unterarme", "Bauch & Core"] },
+    "Schulterdrücken Kurzhantel": { primary: ["Schultern"], secondary: ["Trizeps", "Nacken / Trapezius"] },
+    "Crunches": { primary: ["Bauch & Core"], secondary: [] },
+    "Langhantel Curls": { primary: ["Bizeps"], secondary: ["Unterarme"] },
+    "Wadenheben stehend": { primary: ["Waden / Unterschenkel"], secondary: [] }
+    // Hier kannst du weitere Übungen nach diesem Muster ergänzen
+};
+
+// Funktion: Muskeln auf dem Modell zum Leuchten bringen
+function highlightMuscles(exName) {
+    // Alle alten Farben löschen
+    document.querySelectorAll('.bio-3d-muscle').forEach(m => {
+        m.classList.remove('selected', 'primary', 'secondary');
     });
+
+    const map = muscleMapping[exName];
+    if (!map) return;
+
+    // Hauptmuskeln grün
+    map.primary.forEach(mName => {
+        document.querySelectorAll(`[data-name="${mName}"]`).forEach(el => el.classList.add('primary'));
+    });
+
+    // Hilfsmuskeln orange
+    map.secondary.forEach(mName => {
+        document.querySelectorAll(`[data-name="${mName}"]`).forEach(el => el.classList.add('secondary'));
+    });
+}
+
+// Funktion: Übungsliste im Panel anzeigen
+function render3DExerciseList(title, exercises) {
+    let html = `<div style="color:var(--accent); font-size:14px; font-weight:800; margin-bottom:10px; text-transform:uppercase; letter-spacing:1px;">⚡ ${title}</div>`;
+    
+    if(exercises.length === 0) {
+        html += `<div style="color:#64748b; font-size:12px;">Keine Übungen gefunden.</div>`;
+    }
+
+    exercises.forEach(ex => {
+        html += `
+            <div class="bio-3d-ex" onclick="highlightMuscles('${ex.replace(/'/g, "\\'")}')" style="cursor:pointer; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.02); margin-bottom: 5px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:white; font-weight:bold; font-size:13px;">${ex}</span>
+                    <button style="background:var(--accent); border:none; border-radius:8px; color:white; font-size:10px; font-weight:900; padding:6px 10px; cursor:pointer;" onclick="event.stopPropagation(); openAddFrom3D('${ex.replace(/'/g, "\\'")}')">+ PLAN</button>
+                </div>
+            </div>
+        `;
+    });
+    document.getElementById('bio-3d-info').innerHTML = html;
+}
+
+// Event Listener für Klicks auf die Muskel-Pfade
+document.querySelectorAll('.bio-3d-muscle').forEach(muscle => {
+    muscle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if(typeof vBuz === 'function') vBuz(15);
+        
+        const name = this.getAttribute('data-name');
+        
+        // 1. Modell visuell zurücksetzen und diesen Muskel markieren
+        document.querySelectorAll('.bio-3d-muscle').forEach(m => m.classList.remove('selected', 'primary', 'secondary'));
+        this.classList.add('selected');
+
+        // 2. Filter: Suche alle Übungen, die diesen Muskel als primary oder secondary haben
+        let filtered = gymExercises.filter(ex => {
+            const map = muscleMapping[ex];
+            return map && (map.primary.includes(name) || map.secondary.includes(name));
+        });
+
+        // Backup: Falls im Mapping noch nichts steht, nimm die alten statischen Daten
+        if(filtered.length === 0) {
+            const staticEx = this.getAttribute('data-ex').split(',').filter(x => x !== "");
+            filtered = staticEx;
+        }
+
+        render3DExerciseList(name, filtered);
+    });
+});
+
+// Suchfunktion für das Textfeld
+function search3DExercise(query) {
+    if(!query || query.length < 2) {
+        document.getElementById('bio-3d-info').innerHTML = `<div style="text-align:center; color:#94a3b8; font-size:12px;">Tippe auf einen Muskel oder suche eine Übung.</div>`;
+        return;
+    }
+    const filtered = gymExercises.filter(ex => ex.toLowerCase().includes(query.toLowerCase())).slice(0, 12);
+    render3DExerciseList("Suchergebnisse", filtered);
+}
 
     // Brücken-Funktion: Überträgt den Übungsnamen direkt in dein Gym-Modal
     window.openAddFrom3D = function(exName) {
