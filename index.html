@@ -726,7 +726,11 @@ input, textarea, select {
             <h3 style="margin:0; color:var(--day-glow); font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">📝 Trainings-Planer</h3>
         </div>
         <div class="collapse-content" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
-            <div style="font-size:11px; color:#94a3b8; margin-bottom:5px; text-align:center; font-weight:700;">ZIEL-TAG WÄHLEN</div>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                <div style="font-size:11px; color:#94a3b8; font-weight:700;">ZIEL-TAG WÄHLEN</div>
+                <button style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: #cbd5e1; font-size: 10px; font-weight: bold; padding: 6px 12px; border-radius: 8px; cursor: pointer;" onclick="moveCurrentDay()">🔄 TAG VERSCHIEBEN</button>
+            </div>
             
             <select id="gym-day-select" class="weight-input" onchange="gymPlannerTargetChanged()">
                 <option value="Montag">Montag (Jede Woche)</option>
@@ -4659,9 +4663,32 @@ function search3DExercise(query) {
         const list = document.getElementById('gym-templates-list');
         list.innerHTML = '';
         
+        // Button zum Speichern eigener Pläne
+        list.innerHTML += `
+            <button class="btn-action" style="background: var(--success); color: white; margin-bottom: 20px; font-size:12px; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);" onclick="saveCurrentWeekAsTemplate()">💾 AKTUELLEN WOCHENPLAN SPEICHERN</button>
+        `;
+        
+        // Eigene Pläne anzeigen
+        if(db.customGymTemplates && db.customGymTemplates.length > 0) {
+            list.innerHTML += `<div style="font-size:12px; font-weight:900; color:var(--success); margin-bottom:10px; text-transform:uppercase; letter-spacing:1px;">Deine eigenen Pläne</div>`;
+            db.customGymTemplates.forEach(tpl => {
+                list.innerHTML += `
+                    <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 16px; padding: 15px; margin-bottom: 15px; position: relative;">
+                        <div style="position:absolute; top:15px; right:15px; color:var(--danger); cursor:pointer; font-size:18px; font-weight:bold; background:rgba(239, 68, 68, 0.2); width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:8px;" onclick="deleteCustomTemplate('${tpl.id}')">✖</div>
+                        <div style="font-size: 15px; font-weight: 900; color: white; margin-bottom: 4px; padding-right:40px;">${tpl.name}</div>
+                        <div style="font-size: 10px; font-weight: 800; color: var(--success); text-transform: uppercase; margin-bottom: 15px;">${tpl.tags}</div>
+                        <button class="btn-action" style="background: var(--success); margin: 0; padding: 10px; font-size: 12px;" onclick="applyCustomTemplate('${tpl.id}')">⬇️ EIGENEN PLAN LADEN</button>
+                    </div>
+                `;
+            });
+            list.innerHTML += `<div style="height:1px; background:rgba(255,255,255,0.1); margin: 20px 0;"></div>`;
+        }
+
+        list.innerHTML += `<div style="font-size:12px; font-weight:900; color:var(--day-glow); margin-bottom:10px; text-transform:uppercase; letter-spacing:1px;">Master Pläne (System)</div>`;
+        
         gymTemplatesDB.forEach((tpl, idx) => {
             list.innerHTML += `
-                <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 16px; padding: 15px; margin-bottom: 15px; position: relative;">
+                <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 16px; padding: 15px; margin-bottom: 15px;">
                     <div style="font-size: 15px; font-weight: 900; color: white; margin-bottom: 4px;">${tpl.name}</div>
                     <div style="font-size: 10px; font-weight: 800; color: var(--accent); text-transform: uppercase; margin-bottom: 8px;">${tpl.tags}</div>
                     <div style="font-size: 12px; color: #cbd5e1; line-height: 1.4; margin-bottom: 15px;">${tpl.desc}</div>
@@ -4678,24 +4705,120 @@ function search3DExercise(query) {
     }
 
     function applyGymTemplate(index) {
-        showConfirm("Achtung: Dein kompletter aktueller Wochentag-Plan wird überschrieben (spezifische Datums-Einträge bleiben erhalten). Fortfahren?", function(res) {
+        showConfirm("Achtung: Dein kompletter aktueller Wochentag-Plan wird überschrieben. Fortfahren?", function(res) {
             if(res) {
                 const tpl = gymTemplatesDB[index];
                 const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
-                
-                // Überschreibe nur die Wochentage, um Kalender-Overrides nicht zu löschen
                 days.forEach(d => {
                     db.gym.plans[d] = tpl.plan[d] ? JSON.parse(JSON.stringify(tpl.plan[d])) : [];
                 });
-                
                 save();
                 closeGymTemplates();
                 renderGymPlaner();
                 renderGymToday();
-                if(typeof vBuz === 'function') vBuz([100, 50, 100, 50, 300]); // Erfolgs-Vibration
+                if(typeof vBuz === 'function') vBuz([100, 50, 100, 50, 300]);
                 showAlert(`"${tpl.name}" wurde erfolgreich als dein neuer Trainingsplan geladen!`, "Plan geladen 🚀");
             }
         }, "Plan überschreiben?", "JA, PLAN LADEN");
+    }
+
+    // NEU: Funktionen für eigene Pläne
+    function saveCurrentWeekAsTemplate() {
+        showPrompt("Name für deinen eigenen Trainingsplan:", "Mein Sommer Split", function(name) {
+            if(name && name.trim() !== "") {
+                if(!db.customGymTemplates) db.customGymTemplates = [];
+                
+                // Wir kopieren nur die nackten Wochentage (ohne Datums-Overrides)
+                let weekPlan = {};
+                const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+                days.forEach(d => {
+                    weekPlan[d] = db.gym.plans[d] ? JSON.parse(JSON.stringify(db.gym.plans[d])) : [];
+                });
+                
+                db.customGymTemplates.push({
+                    id: 'ctpl_' + Date.now(),
+                    name: name.trim(),
+                    tags: "Eigener Plan | Custom",
+                    desc: "Dein selbst erstellter, individueller Master-Plan.",
+                    plan: weekPlan
+                });
+                save();
+                openGymTemplates(); // Modal direkt aktualisieren
+                showAlert("Dein eigener Plan wurde erfolgreich gespeichert!", "Erfolg");
+            }
+        }, "Als Vorlage speichern");
+    }
+
+    function applyCustomTemplate(id) {
+        showConfirm("Achtung: Dein kompletter aktueller Wochentag-Plan wird überschrieben. Fortfahren?", function(res) {
+            if(res) {
+                const tpl = db.customGymTemplates.find(t => t.id === id);
+                if(!tpl) return;
+                const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+                days.forEach(d => {
+                    db.gym.plans[d] = tpl.plan[d] ? JSON.parse(JSON.stringify(tpl.plan[d])) : [];
+                });
+                save();
+                closeGymTemplates();
+                renderGymPlaner();
+                renderGymToday();
+                if(typeof vBuz === 'function') vBuz([100, 50, 100, 50, 300]);
+                showAlert(`Dein eigener Plan "${tpl.name}" wurde geladen!`, "Plan geladen 🚀");
+            }
+        }, "Plan überschreiben?", "JA, PLAN LADEN");
+    }
+
+    function deleteCustomTemplate(id) {
+        showConfirm("Möchtest du diesen eigenen Plan wirklich löschen?", function(res) {
+            if(res) {
+                db.customGymTemplates = db.customGymTemplates.filter(t => t.id !== id);
+                save();
+                openGymTemplates(); // Modal direkt aktualisieren
+            }
+        });
+    }
+
+    // NEU: Einzelnen Tag kopieren/verschieben
+    function moveCurrentDay() {
+        const sourceDay = getGymPlannerTarget();
+        
+        // Verhindern, dass leere Tage verschoben werden
+        if(!db.gym.plans[sourceDay] || db.gym.plans[sourceDay].length === 0) {
+            showAlert("Dieser Tag ist komplett leer. Es gibt nichts zu verschieben.", "Leer");
+            return;
+        }
+
+        showPrompt(`Wohin soll der Plan von "${sourceDay}" verschoben werden?\n(Bitte den Ziel-Wochentag eingeben, z.B. Mittwoch)`, "", function(targetDay) {
+            if(!targetDay) return;
+            
+            targetDay = targetDay.trim();
+            // Automatisch ersten Buchstaben groß machen, den Rest klein (für exaktes Matching)
+            targetDay = targetDay.charAt(0).toUpperCase() + targetDay.slice(1).toLowerCase();
+            
+            const validDays = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+            
+            if(validDays.includes(targetDay)) {
+                if(sourceDay === targetDay) return; // Nichts tun, wenn gleicher Tag
+                
+                // 1. Plan auf den neuen Tag kopieren
+                db.gym.plans[targetDay] = JSON.parse(JSON.stringify(db.gym.plans[sourceDay]));
+                
+                // 2. Alten Tag komplett leeren
+                db.gym.plans[sourceDay] = [];
+                
+                save();
+                
+                // 3. UI aktualisieren: Dropdown auf den neuen Tag springen lassen
+                const selectEl = document.getElementById('gym-day-select');
+                if(selectEl) selectEl.value = targetDay;
+                gymPlannerTargetChanged();
+                
+                if(typeof vBuz === 'function') vBuz([50, 50, 50]);
+                showAlert(`Plan wurde erfolgreich von ${sourceDay} nach ${targetDay} verschoben!`, "Verschoben 🔄");
+            } else {
+                showAlert("Ungültiger Tag! Bitte gib einen korrekten Wochentag ein (z.B. Montag, Dienstag...).", "Fehler");
+            }
+        }, "Tag verschieben");
     }
 
     if ('serviceWorker' in navigator) {
