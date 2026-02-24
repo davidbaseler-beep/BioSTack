@@ -4073,7 +4073,13 @@ if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
     document.querySelectorAll('.bio-3d-svg').forEach(svg => {
         svg.addEventListener('click', function(e) {
             e.preventDefault(); e.stopPropagation();
-            devSvgElement = this;
+            
+            // NEU: Automatischer Reset, wenn du das Modell gedreht hast!
+            if (devSvgElement !== this) {
+                resetDevPath();
+                devSvgElement = this;
+            }
+
             const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
             const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
             
@@ -4081,13 +4087,14 @@ if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
             const finalY = Math.round(svgP.y);
             devPoints.push({x: finalX, y: finalY});
             
-            // NEU: Winziger grüner Punkt zur perfekten Orientierung
+            // NEU: Sichtbarkeit im 3D-Raum (backfaceVisibility) erzwungen
             const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
             dot.setAttribute("cx", finalX);
             dot.setAttribute("cy", finalY);
-            dot.setAttribute("r", "1.5"); 
+            dot.setAttribute("r", "2"); 
             dot.setAttribute("fill", "#0f0"); 
             dot.style.pointerEvents = "none";
+            dot.style.backfaceVisibility = "visible";
             svg.appendChild(dot);
             devDots.push(dot);
 
@@ -4101,8 +4108,9 @@ if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
                 devCurrentPolygon = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 devCurrentPolygon.setAttribute("fill", "none");
                 devCurrentPolygon.setAttribute("stroke", "#FF8C00");
-                devCurrentPolygon.setAttribute("stroke-width", "0.8"); // Hauchdünne Linie
+                devCurrentPolygon.setAttribute("stroke-width", "1");
                 devCurrentPolygon.style.pointerEvents = "none"; 
+                devCurrentPolygon.style.backfaceVisibility = "visible";
                 svg.appendChild(devCurrentPolygon);
             }
             devCurrentPolygon.setAttribute("d", pathString);
@@ -4111,8 +4119,11 @@ if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
     
     function resetDevPath() {
         devPoints = [];
-        if(devCurrentPolygon && devSvgElement) { devSvgElement.removeChild(devCurrentPolygon); devCurrentPolygon = null; }
-        devDots.forEach(d => { if(devSvgElement) devSvgElement.removeChild(d); });
+        if(devCurrentPolygon && devCurrentPolygon.parentNode) { 
+            devCurrentPolygon.parentNode.removeChild(devCurrentPolygon); 
+        }
+        devCurrentPolygon = null;
+        devDots.forEach(d => { if(d.parentNode) d.parentNode.removeChild(d); });
         devDots = [];
         document.getElementById('dev-path-output').value = "";
     }
