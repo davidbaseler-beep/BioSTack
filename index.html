@@ -649,27 +649,21 @@ input, textarea, select {
             </div>
 
                         <button class="btn-action" style="background: linear-gradient(135deg, #C69320 0%, #8A6514 100%); margin-bottom: 10px; box-shadow: 0 4px 15px rgba(198, 147, 32, 0.3);" onclick="document.getElementById('main-3d-card').classList.toggle('is-flipped');">
-                ↺ KÖRPER DREHEN
-            </button>
-        </div>
-    </div>
+                ↺ KÖRPER DREHEN
+            </button>
 
-        <div class="chart-container" id="gym-col-3d-results" style="margin-bottom: 15px; border: 1px solid rgba(245, 158, 11, 0.3);">
-        <div class="collapse-header" onclick="tglCollapse('gym-col-3d-results')">
-            <h3 style="margin:0; color:#f59e0b; font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">📋 Übungs-Auswahl</h3>
-        </div>
-        <div class="collapse-content" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
-            <div style="padding: 0 5px; margin-bottom: 10px;">
-                <input type="text" id="gym-3d-search" class="weight-input" placeholder="🔍 Übung suchen..." oninput="search3DExercise(this.value)" style="margin-bottom: 5px; font-size: 14px; background: rgba(255,255,255,0.05) !important;">
-            </div>
+                        <div style="padding: 0 5px; margin-bottom: 10px;">
+                <input type="text" id="gym-3d-search" class="weight-input" placeholder="🔍 Übung suchen..." oninput="search3DExercise(this.value)" style="margin-bottom: 5px; font-size: 14px; background: rgba(255,255,255,0.05) !important;">
+            </div>
 
-            <div id="bio-3d-info" class="bio-3d-panel" style="margin-top: 0;">
-                <div style="text-align:center; color:#94a3b8; font-size:12px;">Tippe auf einen Muskel oder suche eine Übung.</div>
-            </div>
-        </div>
-    </div>
+            <div id="bio-3d-info" class="bio-3d-panel">
+                <div style="text-align:center; color:#94a3b8; font-size:12px;">Tippe auf einen Muskel oder suche eine Übung.</div>
+            </div>
 
-    <div class="chart-container" id="gym-col-heute" style="margin-bottom: 15px; border: 1px solid rgba(255, 179, 71, 0.3);">
+        </div>
+    </div>
+
+    <div class="chart-container" id="gym-col-heute" style="margin-bottom: 15px; border: 1px solid rgba(255, 179, 71, 0.3);">
         <div class="collapse-header" onclick="tglCollapse('gym-col-heute')">
             <h3 style="margin:0; color:var(--morning-glow); font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">🔥 Heute Tracken</h3>
         </div>
@@ -4361,16 +4355,13 @@ document.querySelectorAll('.bio-3d-muscle').forEach(muscle => {
         });
 
         // Backup: Falls im Mapping noch nichts steht, nimm die alten statischen Daten
-        if(filtered.length === 0) {
-            const staticEx = this.getAttribute('data-ex').split(',').filter(x => x !== "");
-            filtered = staticEx;
-        }
+        if(filtered.length === 0) {
+            const staticEx = this.getAttribute('data-ex').split(',').filter(x => x !== "");
+            filtered = staticEx;
+        }
 
-        render3DExerciseList(name, filtered);
-        
-        // NEU: Das Dropdown "Übungs-Auswahl" wird automatisch aufgeklappt, wenn ein Muskel angetippt wurde
-        document.getElementById('gym-col-3d-results').classList.add('collapse-active');
-    });
+        render3DExerciseList(name, filtered);
+    });
 });
 
 // Suchfunktion für das Textfeld
