@@ -535,6 +535,16 @@ input, textarea, select {
         <div class="custom-modal-title">Neue Übung 🏋️</div>
         <div class="custom-modal-text">Trage die Details für dein Training ein.</div>
 
+        <select id="gym-mod-day" class="weight-input" style="margin-bottom: 15px; font-weight: bold; color: var(--day-glow); background: rgba(79, 172, 254, 0.1); border-color: var(--day-glow);">
+            <option value="Montag" style="color:black;">Montag</option>
+            <option value="Dienstag" style="color:black;">Dienstag</option>
+            <option value="Mittwoch" style="color:black;">Mittwoch</option>
+            <option value="Donnerstag" style="color:black;">Donnerstag</option>
+            <option value="Freitag" style="color:black;">Freitag</option>
+            <option value="Samstag" style="color:black;">Samstag</option>
+            <option value="Sonntag" style="color:black;">Sonntag</option>
+        </select>
+
         <div class="autocomplete-wrapper">
             <input type="text" id="gym-mod-name" class="custom-modal-input" placeholder="Übungsname (z.B. Bankdrücken)" autocomplete="off">
             <div id="gym-mod-autocomplete-list" class="autocomplete-items"></div>
@@ -2086,6 +2096,11 @@ input, textarea, select {
         document.getElementById('gym-mod-reps').value = '8-12';
         document.getElementById('gym-mod-weight').value = '';
         
+        // NEU: Tag im Modal vorauswählen (nimmt den aktuell im Planer ausgewählten oder den heutigen Tag)
+        let preselectDay = document.getElementById('gym-day-select').value;
+        if(preselectDay === 'DATE') preselectDay = getGermanDay();
+        document.getElementById('gym-mod-day').value = preselectDay;
+        
         const autoList = document.getElementById('gym-mod-autocomplete-list');
         if(autoList) autoList.style.display = 'none';
 
@@ -2131,13 +2146,15 @@ input, textarea, select {
         const sets = document.getElementById('gym-mod-sets').value;
         const reps = document.getElementById('gym-mod-reps').value.trim();
         const weight = document.getElementById('gym-mod-weight').value;
+        
+        // NEU: Nimmt jetzt den Tag direkt aus dem Dropdown im Modal
+        const target = document.getElementById('gym-mod-day').value;
 
         if(!name || !sets || !reps) {
             showAlert("Bitte fülle Übungsname, Sätze und Wiederholungen aus.");
             return;
         }
 
-        const target = getGymPlannerTarget();
         if(!db.gym.plans[target]) db.gym.plans[target] = [];
         
         db.gym.plans[target].push({
