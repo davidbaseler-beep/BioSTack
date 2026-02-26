@@ -574,6 +574,88 @@ input, textarea, select {
         <button class="modal-btn btn-cancel" style="margin-top: 15px; width: 100%;" onclick="closeGymTemplates()">Abbrechen</button>
     </div>
 </div>
+<button class="modal-btn btn-cancel" style="margin-top: 15px; width: 100%;" onclick="closeGymTemplates()">Abbrechen</button>
+    </div>
+</div>
+
+<div id="template-editor-modal" class="custom-modal-overlay">
+    <div class="custom-modal-box" style="max-width: 95%; width: 380px; height: 90vh; display: flex; flex-direction: column; padding: 20px;">
+        <div class="custom-modal-title" id="tpl-edit-title">Plan erstellen 🛠️</div>
+        
+        <input type="text" id="tpl-edit-name" class="weight-input" placeholder="Name des Plans (z.B. Mein Split)" style="margin-bottom: 10px;">
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+            <div style="font-size:11px; color:#94a3b8; font-weight:700;">WOCHENTAG</div>
+            <button style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: #cbd5e1; font-size: 10px; font-weight: bold; padding: 6px 12px; border-radius: 8px; cursor: pointer;" onclick="openTemplateDayShift()">🔄 TAG VERSCHIEBEN</button>
+        </div>
+
+        <div class="gym-day-tabs" id="tpl-day-tabs" style="margin-bottom: 10px;">
+            <div class="gym-day-tab" id="ted-Montag" onclick="setTplFlexDay('Montag')">Mo</div>
+            <div class="gym-day-tab" id="ted-Dienstag" onclick="setTplFlexDay('Dienstag')">Di</div>
+            <div class="gym-day-tab" id="ted-Mittwoch" onclick="setTplFlexDay('Mittwoch')">Mi</div>
+            <div class="gym-day-tab" id="ted-Donnerstag" onclick="setTplFlexDay('Donnerstag')">Do</div>
+            <div class="gym-day-tab" id="ted-Freitag" onclick="setTplFlexDay('Freitag')">Fr</div>
+            <div class="gym-day-tab" id="ted-Samstag" onclick="setTplFlexDay('Samstag')">Sa</div>
+            <div class="gym-day-tab" id="ted-Sonntag" onclick="setTplFlexDay('Sonntag')">So</div>
+        </div>
+
+        <div id="tpl-ex-list" style="flex: 1; overflow-y: auto; text-align: left; margin-bottom: 15px; border: 1px solid var(--glass-border); padding: 10px; border-radius: 12px; background: rgba(0,0,0,0.2);">
+        </div>
+
+        <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--glass-border);">
+            <div class="autocomplete-wrapper" style="margin-bottom:10px;">
+                <input type="text" id="tpl-add-name" class="custom-modal-input" placeholder="Übungsname suchen..." style="font-size:14px; padding:10px;" autocomplete="off">
+                <div id="tpl-add-autocomplete" class="autocomplete-items"></div>
+            </div>
+            <div style="display:flex; gap:5px; margin-bottom:10px;">
+                <input type="number" id="tpl-add-sets" class="custom-modal-input" placeholder="Sätze" value="3" style="font-size:14px; padding:10px; margin:0;">
+                <input type="text" id="tpl-add-reps" class="custom-modal-input" placeholder="Wdh" value="8-12" style="font-size:14px; padding:10px; margin:0;">
+                <input type="number" step="any" id="tpl-add-weight" class="custom-modal-input" placeholder="kg (opt)" style="font-size:14px; padding:10px; margin:0;">
+            </div>
+            <button class="btn-action" style="background: var(--accent); padding:10px; font-size:12px; margin:0;" onclick="addExToTemplateDraft()">+ ÜBUNG HINZUFÜGEN</button>
+        </div>
+
+        <div class="modal-btn-row">
+            <button class="modal-btn btn-cancel" onclick="closeTemplateEditor()">Abbrechen</button>
+            <button class="modal-btn btn-confirm" onclick="saveTemplateDraft()">Speichern</button>
+        </div>
+    </div>
+</div>
+<div id="day-shift-modal" class="custom-modal-overlay">
+    <div class="custom-modal-box">
+        <div class="custom-modal-title">Tag umlegen 🔄</div>
+        <div class="custom-modal-text">Verschiebe, tausche oder kopiere ein Training auf einen anderen Tag.</div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <span style="font-size:12px; color:#94a3b8; font-weight:bold; width:60px; text-align:left;">Von:</span>
+            <select id="shift-from-day" class="weight-input" style="margin-bottom:0; flex:1; padding:10px; font-size:14px; text-align:left;">
+                <option value="Montag" style="color:black;">Montag</option><option value="Dienstag" style="color:black;">Dienstag</option><option value="Mittwoch" style="color:black;">Mittwoch</option><option value="Donnerstag" style="color:black;">Donnerstag</option><option value="Freitag" style="color:black;">Freitag</option><option value="Samstag" style="color:black;">Samstag</option><option value="Sonntag" style="color:black;">Sonntag</option>
+            </select>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <span style="font-size:12px; color:#94a3b8; font-weight:bold; width:60px; text-align:left;">Nach:</span>
+            <select id="shift-to-day" class="weight-input" style="margin-bottom:0; flex:1; padding:10px; font-size:14px; text-align:left; border-color:var(--day-glow);">
+                <option value="Montag" style="color:black;">Montag</option><option value="Dienstag" style="color:black;">Dienstag</option><option value="Mittwoch" style="color:black;">Mittwoch</option><option value="Donnerstag" style="color:black;">Donnerstag</option><option value="Freitag" style="color:black;">Freitag</option><option value="Samstag" style="color:black;">Samstag</option><option value="Sonntag" style="color:black;">Sonntag</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom:20px;">
+            <select id="shift-action" class="weight-input" style="margin-bottom:0; font-size:14px; text-align:left; background: rgba(255,140,0,0.1); border-color:var(--accent); color:var(--accent); font-weight:bold;">
+                <option value="move" style="color:black;">➡️ Verschieben (Quelle leeren)</option>
+                <option value="swap" style="color:black;">🔄 Tauschen (Tage wechseln)</option>
+                <option value="copy" style="color:black;">📄 Kopieren (Quelle bleibt)</option>
+            </select>
+        </div>
+
+        <div class="modal-btn-row">
+            <button class="modal-btn btn-cancel" onclick="closeDayShiftModal()">Abbrechen</button>
+            <button class="modal-btn btn-confirm" onclick="executeDayShift()">Ausführen</button>
+        </div>
+    </div>
+</div>
+
+
 <div id="time-modal"><div class="modal-body"><span class="close-modal-x" onclick="closeModal()">✕</span><h3 id="modal-title">Menge wählen</h3><div id="num-display" style="font-size: 32px; font-weight: 800; color: var(--accent); margin-bottom: 15px;">0</div><div class="numpad" id="numpad-grid"><div class="num-btn" onclick="pressNum('1')">1</div><div class="num-btn" onclick="pressNum('2')">2</div><div class="num-btn" onclick="pressNum('3')">3</div><div class="num-btn" onclick="pressNum('4')">4</div><div class="num-btn" onclick="pressNum('5')">5</div><div class="num-btn" onclick="pressNum('6')">6</div><div class="num-btn" onclick="pressNum('7')">7</div><div class="num-btn" onclick="pressNum('8')">8</div><div class="num-btn" onclick="pressNum('9')">9</div><div class="num-btn" onclick="pressNum('C')" style="color:#ef4444">C</div><div class="num-btn" onclick="pressNum('0')">0</div><div class="num-btn" onclick="pressNum('OK')" style="color:#22c55e">OK</div></div><div id="time-select" style="display:none"><button class="btn-action" style="background: var(--morning-glow)" onclick="confirmAdd('morning')">Morgens</button><button class="btn-action" style="background: var(--day-glow)" onclick="confirmAdd('day')">Mittags</button><button class="btn-action" style="background: var(--evening-glow)" onclick="confirmAdd('evening')">Abends</button></div></div></div>
 <div id="wiki-modal" class="custom-modal-overlay">
     <div class="custom-modal-box" style="max-width: 90%; width: 350px;">
@@ -627,86 +709,11 @@ input, textarea, select {
         </div>
     </div>
 
-    <div class="chart-container" id="gym-col-3d" style="margin-bottom: 15px; border: 1px solid rgba(198, 147, 32, 0.3);">
-        <div class="collapse-header" onclick="tglCollapse('gym-col-3d')">
-            <h3 style="margin:0; color:var(--accent); font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">🧍‍♂️ 3D Muskel-Map</h3>
-        </div>
-        <div class="collapse-content" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
-            
-                                <div class="bio-3d-scene">
-                <div class="bio-3d-card" id="main-3d-card">
-                    
-                    <div class="bio-3d-face">
-                        <img src="https://github.com/davidbaseler-beep/BioSTack/blob/main/img/vorne.jpeg?raw=true" class="bio-3d-img" alt="Front">
-                        <svg class="bio-3d-svg" viewBox="0 0 400 600">
-                            
-                            <path class="bio-3d-muscle" data-name="Brustmuskulatur" data-ex="Bankdrücken Langhantel,Schrägbankdrücken Kurzhantel,Butterfly Maschine,Kabel Flys stehend" d="M230,114 L239,120 L248,127 L252,137 L250,144 L250,150 L250,158 L248,161 L248,165 L248,167 L246,170 L240,172 L233,175 L228,176 L222,174 L214,172 L208,169 L205,168 L200,168 L195,168 L188,170 L183,171 L176,172 L171,174 L165,174 L162,174 L158,172 L155,171 L152,170 L148,169 L147,165 L146,160 L145,155 L144,150 L144,144 L144,139 L143,135 L144,131 L147,127 L150,124 L152,122 L159,117 L162,113 L170,115 L176,116 L182,119 L188,121 L194,120 L199,120 L204,120 L208,119 L211,117 L218,116 L220,115 L226,114 Z" />
-                            
-                            <path class="bio-3d-muscle" data-name="Bauch & Core" data-ex="Crunches,Beinheben hängend,Plank,Cable Crunch,Russian Twists" d="M193,172 L181,175 L174,176 L163,180 L156,183 L149,187 L145,194 L148,206 L150,215 L150,226 L148,240 L150,249 L152,253 L158,262 L162,267 L173,266 L196,267 L215,268 L231,269 L242,260 L242,242 L240,234 L241,225 L240,217 L241,209 L243,204 L245,199 L250,191 L246,185 L238,182 L234,180 L226,179 L221,177 L215,175 L209,174 L199,172 Z" />
-                            
-                            <path class="bio-3d-muscle" data-name="Schultern" data-ex="Schulterdrücken Kurzhantel,Seitheben Kurzhantel,Frontheben Kabel,Arnold Press" d="M139,144 L131,148 L125,155 L114,159 L112,151 L112,142 L114,133 L116,127 L120,118 L123,116 L128,112 L137,107 L142,106 L150,111 L157,113 L159,115 L152,120 L148,124 L144,128 L141,135 Z M249,104 L262,108 L271,116 L275,123 L277,129 L279,136 L279,142 L279,150 L276,154 L269,153 L264,150 L262,147 L257,144 L254,138 L252,132 L250,130 L247,126 L242,121 L239,117 L236,113 L235,112 L239,110 L240,110 L243,109 L245,108 L247,107 Z" />
-                            
-                            <path class="bio-3d-muscle" data-name="Bizeps" data-ex="Langhantel Curls,Kurzhantel Curls,Hammercurls,Kabelcurls" d="M115,221 L112,212 L111,204 L108,196 L107,190 L110,179 L111,171 L114,163 L121,159 L127,152 L135,146 L138,158 L139,166 L140,176 L139,183 L137,190 L134,199 L132,205 L128,211 L122,215 Z M260,149 L270,159 L275,170 L278,180 L282,192 L282,204 L282,212 L278,220 L273,217 L266,211 L261,204 L256,196 L253,185 L253,178 L253,170 L253,160 L255,155 Z" />
-                            
-                            <path class="bio-3d-muscle" data-name="Unterarme" data-ex="Reverse Curls,Farmers Walk,Suitcase Carry" d="M105,203 L110,214 L98,224 L93,236 L93,247 L91,262 L88,280 L94,286 L101,287 L105,285 L109,276 L116,264 L119,254 L123,248 L126,238 L130,229 L132,220 L125,218 L122,219 L118,222 L113,218 L111,213 L107,207 L104,207 L100,215 L99,219 Z M263,217 L271,218 L277,224 L283,218 L286,206 L287,204 L294,216 L297,230 L297,239 L299,249 L301,260 L302,269 L304,274 L305,282 L300,283 L293,286 L289,287 L287,282 L283,274 L278,267 L275,259 L271,251 L270,246 L267,233 L264,224 Z" />
-                            
-                            <path class="bio-3d-muscle" data-name="Oberschenkel (Quads)" data-ex="Kniebeugen,Beinpresse,Beinstrecker,Ausfallschritte,Bulgarian Split Squats" d="M148,269 L169,287 L180,309 L192,325 L190,358 L190,367 L189,382 L185,392 L185,401 L177,413 L167,399 L162,401 L158,408 L155,409 L147,401 L143,386 L142,370 L142,358 L142,342 L146,320 L146,290 L150,277 Z M215,428 L224,407 L231,397 L235,403 L245,412 L245,396 L252,372 L254,349 L254,330 L254,311 L248,297 L245,272 L242,261 L234,276 L225,289 L220,297 L208,316 L203,324 L199,335 L205,349 L206,360 L210,375 L210,391 L210,412 L209,422 Z" />
-                            
-                        </svg>
-                    </div>
-
-                    <div class="bio-3d-face bio-3d-back">
-            <img src="https://github.com/davidbaseler-beep/BioSTack/blob/main/img/hinten.jpeg?raw=true" class="bio-3d-img" alt="Back">
-            <svg class="bio-3d-svg" viewBox="0 0 400 600">
-                
-                <path class="bio-3d-muscle" data-name="Rückenmuskulatur" data-ex="Klimmzüge breit,Klimmzüge eng,Latzug breit,Rudern Langhantel,T-Bar Rudern,Kreuzheben" d="M152,242 L161,241 L180,243 L189,250 L199,256 L205,263 L213,267 L220,262 L226,255 L238,248 L254,243 L265,240 L273,243 L273,237 L270,228 L268,219 L266,211 L269,204 L273,196 L277,189 L278,182 L281,175 L281,165 L282,157 L284,148 L285,140 L285,135 L279,127 L275,123 L266,121 L259,120 L249,116 L243,115 L234,114 L226,113 L218,113 L213,113 L206,115 L197,115 L188,115 L181,116 L172,118 L162,120 L149,123 L138,128 L137,134 L139,141 L141,149 L140,159 L142,169 L145,176 L143,184 L149,190 L152,196 L153,206 L154,215 L154,222 L152,232 L152,238 Z" />
-                
-                <path class="bio-3d-muscle" data-name="Nacken / Trapezius" data-ex="Shrugs Langhantel,Shrugs Kurzhantel,Upright Rows,Face Pulls" d="M200,61 L196,73 L185,81 L180,84 L172,89 L162,92 L152,96 L143,101 L156,110 L172,117 L188,118 L216,122 L235,123 L256,117 L264,113 L283,104 L286,102 L280,101 L270,97 L262,94 L256,91 L246,87 L240,83 L236,79 L233,72 L230,66 L228,60 L220,57 L210,59 L198,58 Z" />
-
-                <path class="bio-3d-muscle" data-name="Hintere Schulter" data-ex="Reverse Flys,Face Pulls,Reverse Butterfly Maschine" d="M164,116 L158,113 L149,109 L141,102 L136,100 L126,103 L117,108 L109,115 L109,121 L105,128 L103,134 L103,144 L104,154 L111,148 L122,139 L130,132 L140,123 L153,121 L170,120 Z M262,116 L271,119 L284,123 L292,130 L294,136 L302,140 L312,144 L316,151 L320,147 L320,141 L320,130 L318,123 L315,116 L310,110 L302,104 L294,102 L289,103 L280,107 L272,109 L262,113 Z" />
-
-                <path class="bio-3d-muscle" data-name="Trizeps" data-ex="Trizepsdrücken Kabel,French Press,Skullcrusher,Dips eng,Trizeps Kickbacks" d="M116,217 L124,211 L128,207 L133,196 L137,187 L141,180 L142,174 L141,164 L138,154 L136,147 L134,141 L129,138 L123,140 L118,144 L111,148 L106,152 L105,156 L104,159 L103,163 L102,168 L100,174 L99,179 L99,186 L96,196 L97,203 L95,210 L97,214 L101,215 L109,219 L115,218 Z M317,154 L313,149 L305,145 L296,139 L288,137 L285,152 L285,166 L285,177 L287,186 L290,192 L293,203 L294,211 L301,213 L306,217 L313,219 L316,214 L324,209 L328,200 L328,196 L326,189 L325,180 L325,172 L325,167 L322,160 L319,154 Z" />
-
-                <path class="bio-3d-muscle" data-name="Gesäßmuskulatur" data-ex="Hip Thrust,Glute Bridge,Cable Kickbacks,Rumänisches Kreuzheben" d="M218,315 L231,322 L250,323 L266,326 L274,319 L282,310 L284,302 L281,294 L279,284 L277,276 L276,269 L274,259 L271,250 L269,246 L257,244 L249,247 L238,250 L228,256 L217,268 L214,276 L212,284 L210,277 L206,270 L202,263 L196,257 L190,252 L181,248 L172,246 L164,244 L157,243 L153,246 L151,252 L148,266 L146,274 L148,282 L144,290 L143,296 L143,304 L147,311 L152,319 L162,324 L171,325 L186,324 L193,321 L202,319 L205,318 L210,314 L216,315 Z" />
-
-                <path class="bio-3d-muscle" data-name="Beinbeuger (Hamstrings)" data-ex="Beinbeuger liegend,Beinbeuger sitzend,Rumänisches Kreuzheben,Good Mornings" d="M162,319 L153,315 L144,310 L139,311 L138,319 L137,327 L136,336 L136,344 L135,354 L136,361 L136,371 L136,379 L138,389 L141,397 L143,406 L145,414 L145,420 L152,415 L157,413 L160,415 L165,421 L173,421 L179,425 L182,432 L186,438 L189,430 L192,421 L194,409 L195,401 L198,391 L199,379 L200,373 L201,365 L202,356 L204,350 L205,342 L206,335 L206,328 L207,322 L207,319 L201,320 L196,322 L191,323 L186,323 L180,324 L174,325 L169,325 L165,323 L162,320 Z M216,318 L228,321 L236,324 L254,322 L265,319 L273,316 L280,312 L285,315 L288,324 L289,335 L289,342 L288,350 L287,358 L288,368 L286,378 L282,389 L279,398 L278,407 L278,416 L277,425 L273,421 L268,414 L264,413 L260,417 L256,423 L250,423 L248,420 L244,427 L239,434 L234,434 L233,429 L230,420 L230,415 L228,409 L228,403 L228,393 L228,386 L228,381 L227,375 L226,370 L222,363 L220,357 L218,351 L218,344 L216,336 L217,330 L218,322 Z" />
-
-                <path class="bio-3d-muscle" data-name="Waden / Unterschenkel" data-ex="Wadenheben stehend,Wadenheben sitzend" d="M157,414 L163,420 L167,428 L172,422 L181,430 L184,437 L186,442 L189,450 L189,457 L189,464 L189,464 L190,473 L190,481 L190,488 L186,498 L182,502 L176,495 L170,488 L167,485 L161,493 L154,495 L148,494 L144,493 L140,488 L137,479 L137,469 L137,461 L139,455 L141,449 L142,445 L143,441 L144,437 L146,434 L149,430 L151,425 L153,418 Z M249,421 L253,426 L260,421 L266,414 L269,418 L274,426 L278,435 L280,442 L281,450 L283,456 L285,464 L285,471 L283,481 L279,491 L274,497 L265,494 L260,488 L256,489 L252,495 L248,499 L241,502 L237,499 L234,491 L233,482 L232,471 L232,462 L233,454 L238,443 L238,438 L241,431 L244,427 L247,423 Z" />
-                
-            </svg>
-        </div>
-                    
-                </div>
-            </div>
-
-                        <button class="btn-action" style="background: linear-gradient(135deg, #C69320 0%, #8A6514 100%); margin-bottom: 10px; box-shadow: 0 4px 15px rgba(198, 147, 32, 0.3);" onclick="document.getElementById('main-3d-card').classList.toggle('is-flipped');">
-                ↺ KÖRPER DREHEN
-            </button>
-
-                        <div style="padding: 0 5px; margin-bottom: 10px;">
-                <input type="text" id="gym-3d-search" class="weight-input" placeholder="🔍 Übung suchen..." oninput="search3DExercise(this.value)" style="margin-bottom: 5px; font-size: 14px; background: rgba(255,255,255,0.05) !important;">
-            </div>
-
-            <div id="bio-3d-info-wrapper" class="bio-3d-panel collapse-active" style="padding: 0; overflow: hidden;">
-                <div class="collapse-header" onclick="tglCollapse('bio-3d-info-wrapper')" style="padding: 15px; background: rgba(0,0,0,0.2);">
-                    <span id="bio-3d-info-title" style="color:var(--accent); font-size:14px; font-weight:800; text-transform:uppercase; letter-spacing:1px; margin:0;">⚡ Übungsauswahl</span>
-                </div>
-                <div class="collapse-content" style="margin-top: 0; padding: 0 15px 15px 15px; border-top: 1px solid rgba(255,255,255,0.05);">
-                    <div id="bio-3d-info">
-                        <div style="text-align:center; color:#94a3b8; font-size:12px; padding-top: 15px;">Tippe auf einen Muskel oder suche eine Übung.</div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
     <div class="chart-container" id="gym-col-heute" style="margin-bottom: 15px; border: 1px solid rgba(255, 179, 71, 0.3);">
         <div class="collapse-header" onclick="tglCollapse('gym-col-heute')">
             <h3 style="margin:0; color:var(--morning-glow); font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">🔥 Heute Tracken</h3>
         </div>
         <div class="collapse-content" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
-            
             <div class="gym-day-tabs" id="gym-flex-tabs">
                 <div class="gym-day-tab" id="ftab-Montag" onclick="setFlexDay('Montag')">Mo</div>
                 <div class="gym-day-tab" id="ftab-Dienstag" onclick="setFlexDay('Dienstag')">Di</div>
@@ -716,7 +723,6 @@ input, textarea, select {
                 <div class="gym-day-tab" id="ftab-Samstag" onclick="setFlexDay('Samstag')">Sa</div>
                 <div class="gym-day-tab" id="ftab-Sonntag" onclick="setFlexDay('Sonntag')">So</div>
             </div>
-
             <div id="gym-today-content"></div>
         </div>
     </div>
@@ -726,12 +732,10 @@ input, textarea, select {
             <h3 style="margin:0; color:var(--day-glow); font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">📝 Trainings-Planer</h3>
         </div>
         <div class="collapse-content" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
-            
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
                 <div style="font-size:11px; color:#94a3b8; font-weight:700;">ZIEL-TAG WÄHLEN</div>
                 <button style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: #cbd5e1; font-size: 10px; font-weight: bold; padding: 6px 12px; border-radius: 8px; cursor: pointer;" onclick="moveCurrentDay()">🔄 TAG VERSCHIEBEN</button>
             </div>
-            
             <select id="gym-day-select" class="weight-input" onchange="gymPlannerTargetChanged()">
                 <option value="Montag">Montag (Jede Woche)</option>
                 <option value="Dienstag">Dienstag (Jede Woche)</option>
@@ -742,15 +746,65 @@ input, textarea, select {
                 <option value="Sonntag">Sonntag (Jede Woche)</option>
                 <option value="DATE">📅 Spezielles Datum...</option>
             </select>
-            
             <input type="date" id="gym-date-select" class="weight-input" style="display:none; border-color:var(--accent); max-width: 250px; margin: 0 auto 10px auto;" onchange="renderGymPlaner()">
-            
             <div id="gym-planer-list"></div>
-            
             <button class="btn-action" style="background: #1e293b; border: 1px solid var(--day-glow); color: var(--day-glow); margin-bottom: 10px;" onclick="openGymTemplates()">📚 VORGEFERTIGTE PLÄNE LADEN</button>
             <button class="btn-action" style="background:var(--accent)" onclick="addGymExercise()">+ ÜBUNG HINZUFÜGEN</button>
         </div>
     </div>
+
+    <div class="chart-container" id="gym-col-3d" style="margin-bottom: 15px; border: 1px solid rgba(198, 147, 32, 0.3);">
+        <div class="collapse-header" onclick="tglCollapse('gym-col-3d')">
+            <h3 style="margin:0; color:var(--accent); font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">🧍‍♂️ 3D Muskel-Map</h3>
+        </div>
+        <div class="collapse-content" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+            <div class="bio-3d-scene">
+                <div class="bio-3d-card" id="main-3d-card">
+                    <div class="bio-3d-face">
+                        <img src="https://github.com/davidbaseler-beep/BioSTack/blob/main/img/vorne.jpeg?raw=true" class="bio-3d-img" alt="Front">
+                        <svg class="bio-3d-svg" viewBox="0 0 400 600">
+                            <path class="bio-3d-muscle" data-name="Brustmuskulatur" data-ex="Bankdrücken Langhantel,Schrägbankdrücken Kurzhantel,Butterfly Maschine,Kabel Flys stehend" d="M230,114 L239,120 L248,127 L252,137 L250,144 L250,150 L250,158 L248,161 L248,165 L248,167 L246,170 L240,172 L233,175 L228,176 L222,174 L214,172 L208,169 L205,168 L200,168 L195,168 L188,170 L183,171 L176,172 L171,174 L165,174 L162,174 L158,172 L155,171 L152,170 L148,169 L147,165 L146,160 L145,155 L144,150 L144,144 L144,139 L143,135 L144,131 L147,127 L150,124 L152,122 L159,117 L162,113 L170,115 L176,116 L182,119 L188,121 L194,120 L199,120 L204,120 L208,119 L211,117 L218,116 L220,115 L226,114 Z" />
+                            <path class="bio-3d-muscle" data-name="Bauch & Core" data-ex="Crunches,Beinheben hängend,Plank,Cable Crunch,Russian Twists" d="M193,172 L181,175 L174,176 L163,180 L156,183 L149,187 L145,194 L148,206 L150,215 L150,226 L148,240 L150,249 L152,253 L158,262 L162,267 L173,266 L196,267 L215,268 L231,269 L242,260 L242,242 L240,234 L241,225 L240,217 L241,209 L243,204 L245,199 L250,191 L246,185 L238,182 L234,180 L226,179 L221,177 L215,175 L209,174 L199,172 Z" />
+                            <path class="bio-3d-muscle" data-name="Schultern" data-ex="Schulterdrücken Kurzhantel,Seitheben Kurzhantel,Frontheben Kabel,Arnold Press" d="M139,144 L131,148 L125,155 L114,159 L112,151 L112,142 L114,133 L116,127 L120,118 L123,116 L128,112 L137,107 L142,106 L150,111 L157,113 L159,115 L152,120 L148,124 L144,128 L141,135 Z M249,104 L262,108 L271,116 L275,123 L277,129 L279,136 L279,142 L279,150 L276,154 L269,153 L264,150 L262,147 L257,144 L254,138 L252,132 L250,130 L247,126 L242,121 L239,117 L236,113 L235,112 L239,110 L240,110 L243,109 L245,108 L247,107 Z" />
+                            <path class="bio-3d-muscle" data-name="Bizeps" data-ex="Langhantel Curls,Kurzhantel Curls,Hammercurls,Kabelcurls" d="M115,221 L112,212 L111,204 L108,196 L107,190 L110,179 L111,171 L114,163 L121,159 L127,152 L135,146 L138,158 L139,166 L140,176 L139,183 L137,190 L134,199 L132,205 L128,211 L122,215 Z M260,149 L270,159 L275,170 L278,180 L282,192 L282,204 L282,212 L278,220 L273,217 L266,211 L261,204 L256,196 L253,185 L253,178 L253,170 L253,160 L255,155 Z" />
+                            <path class="bio-3d-muscle" data-name="Unterarme" data-ex="Reverse Curls,Farmers Walk,Suitcase Carry" d="M105,203 L110,214 L98,224 L93,236 L93,247 L91,262 L88,280 L94,286 L101,287 L105,285 L109,276 L116,264 L119,254 L123,248 L126,238 L130,229 L132,220 L125,218 L122,219 L118,222 L113,218 L111,213 L107,207 L104,207 L100,215 L99,219 Z M263,217 L271,218 L277,224 L283,218 L286,206 L287,204 L294,216 L297,230 L297,239 L299,249 L301,260 L302,269 L304,274 L305,282 L300,283 L293,286 L289,287 L287,282 L283,274 L278,267 L275,259 L271,251 L270,246 L267,233 L264,224 Z" />
+                            <path class="bio-3d-muscle" data-name="Oberschenkel (Quads)" data-ex="Kniebeugen,Beinpresse,Beinstrecker,Ausfallschritte,Bulgarian Split Squats" d="M148,269 L169,287 L180,309 L192,325 L190,358 L190,367 L189,382 L185,392 L185,401 L177,413 L167,399 L162,401 L158,408 L155,409 L147,401 L143,386 L142,370 L142,358 L142,342 L146,320 L146,290 L150,277 Z M215,428 L224,407 L231,397 L235,403 L245,412 L245,396 L252,372 L254,349 L254,330 L254,311 L248,297 L245,272 L242,261 L234,276 L225,289 L220,297 L208,316 L203,324 L199,335 L205,349 L206,360 L210,375 L210,391 L210,412 L209,422 Z" />
+                        </svg>
+                    </div>
+
+                    <div class="bio-3d-face bio-3d-back">
+                        <img src="https://github.com/davidbaseler-beep/BioSTack/blob/main/img/hinten.jpeg?raw=true" class="bio-3d-img" alt="Back">
+                        <svg class="bio-3d-svg" viewBox="0 0 400 600">
+                            <path class="bio-3d-muscle" data-name="Rückenmuskulatur" data-ex="Klimmzüge breit,Klimmzüge eng,Latzug breit,Rudern Langhantel,T-Bar Rudern,Kreuzheben" d="M152,242 L161,241 L180,243 L189,250 L199,256 L205,263 L213,267 L220,262 L226,255 L238,248 L254,243 L265,240 L273,243 L273,237 L270,228 L268,219 L266,211 L269,204 L273,196 L277,189 L278,182 L281,175 L281,165 L282,157 L284,148 L285,140 L285,135 L279,127 L275,123 L266,121 L259,120 L249,116 L243,115 L234,114 L226,113 L218,113 L213,113 L206,115 L197,115 L188,115 L181,116 L172,118 L162,120 L149,123 L138,128 L137,134 L139,141 L141,149 L140,159 L142,169 L145,176 L143,184 L149,190 L152,196 L153,206 L154,215 L154,222 L152,232 L152,238 Z" />
+                            <path class="bio-3d-muscle" data-name="Nacken / Trapezius" data-ex="Shrugs Langhantel,Shrugs Kurzhantel,Upright Rows,Face Pulls" d="M200,61 L196,73 L185,81 L180,84 L172,89 L162,92 L152,96 L143,101 L156,110 L172,117 L188,118 L216,122 L235,123 L256,117 L264,113 L283,104 L286,102 L280,101 L270,97 L262,94 L256,91 L246,87 L240,83 L236,79 L233,72 L230,66 L228,60 L220,57 L210,59 L198,58 Z" />
+                            <path class="bio-3d-muscle" data-name="Hintere Schulter" data-ex="Reverse Flys,Face Pulls,Reverse Butterfly Maschine" d="M164,116 L158,113 L149,109 L141,102 L136,100 L126,103 L117,108 L109,115 L109,121 L105,128 L103,134 L103,144 L104,154 L111,148 L122,139 L130,132 L140,123 L153,121 L170,120 Z M262,116 L271,119 L284,123 L292,130 L294,136 L302,140 L312,144 L316,151 L320,147 L320,141 L320,130 L318,123 L315,116 L310,110 L302,104 L294,102 L289,103 L280,107 L272,109 L262,113 Z" />
+                            <path class="bio-3d-muscle" data-name="Trizeps" data-ex="Trizepsdrücken Kabel,French Press,Skullcrusher,Dips eng,Trizeps Kickbacks" d="M116,217 L124,211 L128,207 L133,196 L137,187 L141,180 L142,174 L141,164 L138,154 L136,147 L134,141 L129,138 L123,140 L118,144 L111,148 L106,152 L105,156 L104,159 L103,163 L102,168 L100,174 L99,179 L99,186 L96,196 L97,203 L95,210 L97,214 L101,215 L109,219 L115,218 Z M317,154 L313,149 L305,145 L296,139 L288,137 L285,152 L285,166 L285,177 L287,186 L290,192 L293,203 L294,211 L301,213 L306,217 L313,219 L316,214 L324,209 L328,200 L328,196 L326,189 L325,180 L325,172 L325,167 L322,160 L319,154 Z" />
+                            <path class="bio-3d-muscle" data-name="Gesäßmuskulatur" data-ex="Hip Thrust,Glute Bridge,Cable Kickbacks,Rumänisches Kreuzheben" d="M218,315 L231,322 L250,323 L266,326 L274,319 L282,310 L284,302 L281,294 L279,284 L277,276 L276,269 L274,259 L271,250 L269,246 L257,244 L249,247 L238,250 L228,256 L217,268 L214,276 L212,284 L210,277 L206,270 L202,263 L196,257 L190,252 L181,248 L172,246 L164,244 L157,243 L153,246 L151,252 L148,266 L146,274 L148,282 L144,290 L143,296 L143,304 L147,311 L152,319 L162,324 L171,325 L186,324 L193,321 L202,319 L205,318 L210,314 L216,315 Z" />
+                            <path class="bio-3d-muscle" data-name="Beinbeuger (Hamstrings)" data-ex="Beinbeuger liegend,Beinbeuger sitzend,Rumänisches Kreuzheben,Good Mornings" d="M162,319 L153,315 L144,310 L139,311 L138,319 L137,327 L136,336 L136,344 L135,354 L136,361 L136,371 L136,379 L138,389 L141,397 L143,406 L145,414 L145,420 L152,415 L157,413 L160,415 L165,421 L173,421 L179,425 L182,432 L186,438 L189,430 L192,421 L194,409 L195,401 L198,391 L199,379 L200,373 L201,365 L202,356 L204,350 L205,342 L206,335 L206,328 L207,322 L207,319 L201,320 L196,322 L191,323 L186,323 L180,324 L174,325 L169,325 L165,323 L162,320 Z M216,318 L228,321 L236,324 L254,322 L265,319 L273,316 L280,312 L285,315 L288,324 L289,335 L289,342 L288,350 L287,358 L288,368 L286,378 L282,389 L279,398 L278,407 L278,416 L277,425 L273,421 L268,414 L264,413 L260,417 L256,423 L250,423 L248,420 L244,427 L239,434 L234,434 L233,429 L230,420 L230,415 L228,409 L228,403 L228,393 L228,386 L228,381 L227,375 L226,370 L222,363 L220,357 L218,351 L218,344 L216,336 L217,330 L218,322 Z" />
+                            <path class="bio-3d-muscle" data-name="Waden / Unterschenkel" data-ex="Wadenheben stehend,Wadenheben sitzend" d="M157,414 L163,420 L167,428 L172,422 L181,430 L184,437 L186,442 L189,450 L189,457 L189,464 L189,464 L190,473 L190,481 L190,488 L186,498 L182,502 L176,495 L170,488 L167,485 L161,493 L154,495 L148,494 L144,493 L140,488 L137,479 L137,469 L137,461 L139,455 L141,449 L142,445 L143,441 L144,437 L146,434 L149,430 L151,425 L153,418 Z M249,421 L253,426 L260,421 L266,414 L269,418 L274,426 L278,435 L280,442 L281,450 L283,456 L285,464 L285,471 L283,481 L279,491 L274,497 L265,494 L260,488 L256,489 L252,495 L248,499 L241,502 L237,499 L234,491 L233,482 L232,471 L232,462 L233,454 L238,443 L238,438 L241,431 L244,427 L247,423 Z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-action" style="background: linear-gradient(135deg, #C69320 0%, #8A6514 100%); margin-bottom: 10px; box-shadow: 0 4px 15px rgba(198, 147, 32, 0.3);" onclick="document.getElementById('main-3d-card').classList.toggle('is-flipped');">
+                ↺ KÖRPER DREHEN
+            </button>
+            <div style="padding: 0 5px; margin-bottom: 10px;">
+                <input type="text" id="gym-3d-search" class="weight-input" placeholder="🔍 Übung suchen..." oninput="search3DExercise(this.value)" style="margin-bottom: 5px; font-size: 14px; background: rgba(255,255,255,0.05) !important;">
+            </div>
+            <div id="bio-3d-info-wrapper" class="bio-3d-panel collapse-active" style="padding: 0; overflow: hidden;">
+                <div class="collapse-header" onclick="tglCollapse('bio-3d-info-wrapper')" style="padding: 15px; background: rgba(0,0,0,0.2);">
+                    <span id="bio-3d-info-title" style="color:var(--accent); font-size:14px; font-weight:800; text-transform:uppercase; letter-spacing:1px; margin:0;">⚡ Übungsauswahl</span>
+                </div>
+                <div class="collapse-content" style="margin-top: 0; padding: 0 15px 15px 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+                    <div id="bio-3d-info">
+                        <div style="text-align:center; color:#94a3b8; font-size:12px; padding-top: 15px;">Tippe auf einen Muskel oder suche eine Übung.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="chart-container" id="gym-col-chart" style="margin-bottom: 15px; border: 1px solid rgba(168, 85, 247, 0.3);">
         <div class="collapse-header" onclick="tglCollapse('gym-col-chart')">
             <h3 style="margin:0; color:var(--labor-glow); font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">📈 Fortschritt (Max)</h3>
@@ -784,7 +838,7 @@ input, textarea, select {
             <div id="gym-history-list"></div>
         </div>
     </div>
-    </div>
+</div>
 
 <div id="page-plan" class="page active">
     <div class="header-widget">
@@ -1155,6 +1209,25 @@ input, textarea, select {
             </div>
         </div>
 
+        <div class="chart-container" style="padding: 0; background: transparent; border: none; margin: 0 0 15px 0;" id="set-col-health">
+            <div class="collapse-header" onclick="tglCollapse('set-col-health')" style="background: var(--glass); padding: 12px 15px; border-radius: 12px; border: 1px solid var(--success);">
+                <h3 style="color:var(--success); font-size: 14px; margin: 0;">🌐 Smartwatch / Health Connect</h3>
+            </div>
+            <div class="collapse-content" style="padding: 15px; background: rgba(34, 197, 94, 0.05); border-radius: 12px; margin-top: 5px;">
+                <div style="font-size:11px; color:#cbd5e1; margin-bottom:15px; line-height:1.4;">Verbinde deine Smartwatch (Garmin, Samsung, etc.) über Health Connect. Daten synchronisieren sich automatisch beim Öffnen der App.</div>
+                
+                <button class="btn-action" style="background: var(--success); color: white; margin-bottom: 15px; font-size:12px; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);" onclick="syncHealthData(false)">🔄 JETZT VERBINDEN / SYNC</button>
+
+                <div style="border-top:1px dashed rgba(255,255,255,0.1); padding-top:10px;">
+                    <div style="font-size:11px; font-weight:bold; color:var(--success); margin-bottom:10px;">ANZEIGE IM DASHBOARD:</div>
+                    <label class="checkbox-row"><input type="checkbox" id="chk-hc-steps"> 👣 Schritte anzeigen</label>
+                    <label class="checkbox-row"><input type="checkbox" id="chk-hc-sleep"> 💤 Schlaf anzeigen</label>
+                    <label class="checkbox-row"><input type="checkbox" id="chk-hc-hr"> 🫀 Ø Puls anzeigen</label>
+                    <label class="checkbox-row"><input type="checkbox" id="chk-hc-cal"> 🔥 Aktivitätskalorien anzeigen</label>
+                    <label class="checkbox-row"><input type="checkbox" id="chk-hc-water"> 💧 Wasserbedarf anzeigen</label>
+                </div>
+            </div>
+        </div>
         <div class="chart-container" style="padding: 0; background: transparent; border: none; margin: 0 0 15px 0;" id="set-col-backup">
             <div class="collapse-header" onclick="tglCollapse('set-col-backup')" style="background: var(--glass); padding: 12px 15px; border-radius: 12px; border: 1px solid var(--glass-border);">
                 <h3 style="color:var(--day-glow); font-size: 14px; margin: 0;">☁️ Cloud & Backup</h3>
@@ -1325,70 +1398,44 @@ input, textarea, select {
         const grid = document.getElementById('body-summary-grid');
         if(!grid) return;
         
-        // Ändert das Grid-Layout programmatisch in unser neues Listen-Layout
         grid.className = "analytics-list-wrapper";
-
         let html = "";
         let hasData = false;
         
-        // Basis-Wert für die Fortschrittsbalken (100% = Gesamtumsatz, falls vorhanden, sonst 3000 als Dummy)
         const maxKcal = db.analytics.gesamtumsatz ? db.analytics.gesamtumsatz : 3000;
+        const set = db.healthSettings || { steps: true, sleep: true, hr: true, cal: true, water: true };
 
+        // --- HEALTH CONNECT KACHELN ---
+        if(db.analytics.steps !== undefined && set.steps) {
+            html += `<div class="analytics-list-item"><div class="analytics-header"><div class="analytics-label"><span style="color:var(--radar-glow); font-size:18px;">👣</span> Schritte</div><div class="analytics-value-wrap"><span class="analytics-value" style="color:white;">${db.analytics.steps}</span><span class="analytics-subtext">Heute</span></div></div><div class="analytics-bar-bg"><div class="analytics-bar-fill" style="width: ${Math.min((db.analytics.steps/10000)*100, 100)}%; background: var(--radar-glow); box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);"></div></div></div>`;
+            hasData = true;
+        }
+        if(db.analytics.activeCal !== undefined && set.cal) {
+            html += `<div class="analytics-list-item"><div class="analytics-header"><div class="analytics-label"><span style="color:var(--warning); font-size:18px;">🔥</span> Aktiv-Kalorien</div><div class="analytics-value-wrap"><span class="analytics-value" style="color:white;">${db.analytics.activeCal}</span><span class="analytics-subtext">Heute</span></div></div><div class="analytics-bar-bg"><div class="analytics-bar-fill" style="width: ${Math.min((db.analytics.activeCal/1000)*100, 100)}%; background: var(--warning); box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);"></div></div></div>`;
+            hasData = true;
+        }
+        if(db.analytics.sleepStr !== undefined && set.sleep) {
+            html += `<div class="analytics-list-item"><div class="analytics-header"><div class="analytics-label"><span style="color:#a855f7; font-size:18px;">💤</span> Schlaf</div><div class="analytics-value-wrap"><span class="analytics-value" style="color:white;">${db.analytics.sleepStr}</span><span class="analytics-subtext">Letzte Nacht</span></div></div><div class="analytics-bar-bg"><div class="analytics-bar-fill" style="width: 100%; background: #a855f7; box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);"></div></div></div>`;
+            hasData = true;
+        }
+        if(db.analytics.heartRate !== undefined && set.hr) {
+            html += `<div class="analytics-list-item"><div class="analytics-header"><div class="analytics-label"><span style="color:#ef4444; font-size:18px;">🫀</span> Ø Puls</div><div class="analytics-value-wrap"><span class="analytics-value" style="color:white;">${db.analytics.heartRate}</span><span class="analytics-subtext">BPM (24h)</span></div></div><div class="analytics-bar-bg"><div class="analytics-bar-fill" style="width: ${Math.min((db.analytics.heartRate/150)*100, 100)}%; background: #ef4444; box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);"></div></div></div>`;
+            hasData = true;
+        }
+
+        // --- ALTE UMSATZ KACHELN ---
         if(db.analytics.grundumsatz && db.analytics.showGrund) {
             let pct = Math.min((db.analytics.grundumsatz / maxKcal) * 100, 100);
-            html += `
-            <div class="analytics-list-item">
-                <div class="analytics-header">
-                    <div class="analytics-label"><span style="color:var(--accent); font-size:18px;">🔥</span> Grundumsatz</div>
-                    <div class="analytics-value-wrap">
-                        <span class="analytics-value">${db.analytics.grundumsatz}</span>
-                        <span class="analytics-subtext">kcal / Tag</span>
-                    </div>
-                </div>
-                <div class="analytics-bar-bg"><div class="analytics-bar-fill" style="width: ${pct}%; background: var(--accent); box-shadow: 0 0 10px rgba(255,140,0,0.5);"></div></div>
-            </div>`;
+            html += `<div class="analytics-list-item"><div class="analytics-header"><div class="analytics-label"><span style="color:var(--accent); font-size:18px;">🔥</span> Grundumsatz</div><div class="analytics-value-wrap"><span class="analytics-value">${db.analytics.grundumsatz}</span><span class="analytics-subtext">kcal / Tag</span></div></div><div class="analytics-bar-bg"><div class="analytics-bar-fill" style="width: ${pct}%; background: var(--accent); box-shadow: 0 0 10px rgba(255,140,0,0.5);"></div></div></div>`;
             hasData = true;
         }
-
         if(db.analytics.leistungsumsatz && db.analytics.showLeistung) {
             let pct = Math.min((db.analytics.leistungsumsatz / maxKcal) * 100, 100);
-            html += `
-            <div class="analytics-list-item">
-                <div class="analytics-header">
-                    <div class="analytics-label"><span style="color:var(--day-glow); font-size:18px;">⚡</span> Leistungsumsatz</div>
-                    <div class="analytics-value-wrap">
-                        <span class="analytics-value">${db.analytics.leistungsumsatz}</span>
-                        <span class="analytics-subtext">kcal / Tag</span>
-                    </div>
-                </div>
-                <div class="analytics-bar-bg"><div class="analytics-bar-fill" style="width: ${pct}%; background: var(--day-glow); box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);"></div></div>
-            </div>`;
+            html += `<div class="analytics-list-item"><div class="analytics-header"><div class="analytics-label"><span style="color:var(--day-glow); font-size:18px;">⚡</span> Leistungsumsatz</div><div class="analytics-value-wrap"><span class="analytics-value">${db.analytics.leistungsumsatz}</span><span class="analytics-subtext">kcal / Tag</span></div></div><div class="analytics-bar-bg"><div class="analytics-bar-fill" style="width: ${pct}%; background: var(--day-glow); box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);"></div></div></div>`;
             hasData = true;
         }
-
         if(db.analytics.gesamtumsatz && db.analytics.showGesamt) {
-            html += `
-            <div class="analytics-list-item">
-                <div class="analytics-header">
-                    <div class="analytics-label"><span style="color:var(--success); font-size:18px;">🎯</span> Gesamtumsatz</div>
-                    <div class="analytics-value-wrap">
-                        <span class="analytics-value" style="color:var(--success);">${db.analytics.gesamtumsatz}</span>
-                        <span class="analytics-subtext">kcal / Tag</span>
-                    </div>
-                </div>
-                <div class="analytics-bar-bg"><div class="analytics-bar-fill" style="width: 100%; background: var(--success); box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);"></div></div>
-            </div>`;
-            hasData = true;
-        }
-
-        // Weitere Parameter als schmale Liste anhängen, falls aktiv
-        if((db.personal.weight && db.analytics.showGewicht) || (db.analytics.bmi && db.analytics.showBmi) || (db.analytics.whtr && db.analytics.showWhtr) || (db.analytics.whr && db.analytics.showWhr)) {
-            html += `<div class="analytics-list-item" style="padding: 10px 15px;">`;
-            if(db.personal.weight && db.analytics.showGewicht) html += `<div style="display:flex; justify-content:space-between; margin: 4px 0;"><span style="color:#94a3b8; font-size:12px; font-weight:700;">Aktuelles Gewicht</span><span style="color:white; font-weight:800; font-size:13px;">${db.personal.weight} kg</span></div>`;
-            if(db.analytics.bmi && db.analytics.showBmi) html += `<div style="display:flex; justify-content:space-between; margin: 4px 0;"><span style="color:#94a3b8; font-size:12px; font-weight:700;">BMI (Body Mass Index)</span><span style="color:white; font-weight:800; font-size:13px;">${db.analytics.bmi}</span></div>`;
-            if(db.analytics.whtr && db.analytics.showWhtr) html += `<div style="display:flex; justify-content:space-between; margin: 4px 0;"><span style="color:#94a3b8; font-size:12px; font-weight:700;">WHtR (Bauchfett-Index)</span><span style="color:white; font-weight:800; font-size:13px;">${db.analytics.whtr}</span></div>`;
-            if(db.analytics.whr && db.analytics.showWhr) html += `<div style="display:flex; justify-content:space-between; margin: 4px 0;"><span style="color:#94a3b8; font-size:12px; font-weight:700;">WHR (Taille-Hüfte)</span><span style="color:white; font-weight:800; font-size:13px;">${db.analytics.whr}</span></div>`;
-            html += `</div>`;
+            html += `<div class="analytics-list-item"><div class="analytics-header"><div class="analytics-label"><span style="color:var(--success); font-size:18px;">🎯</span> Gesamtumsatz</div><div class="analytics-value-wrap"><span class="analytics-value" style="color:var(--success);">${db.analytics.gesamtumsatz}</span><span class="analytics-subtext">kcal / Tag</span></div></div><div class="analytics-bar-bg"><div class="analytics-bar-fill" style="width: 100%; background: var(--success); box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);"></div></div></div>`;
             hasData = true;
         }
 
@@ -1990,8 +2037,9 @@ input, textarea, select {
     }
 
     function updateRadarChart() {
-        const ctxEl = document.getElementById('radarChart');
-        if(!ctxEl) return;
+    if (typeof Chart === 'undefined') return; // NEU
+    const ctxEl = document.getElementById('radarChart');
+    if(!ctxEl) return;
         
         let eSum = 0, fSum = 0, sSum = 0, count = 0;
         const dates = Object.keys(db.feedback).sort().reverse();
@@ -2343,8 +2391,9 @@ input, textarea, select {
     }
 
     function updateGymChart() {
-        const sel = document.getElementById('gym-chart-select').value;
-        const ctxEl = document.getElementById('gymChart');
+    if (typeof Chart === 'undefined') return; // NEU
+    const sel = document.getElementById('gym-chart-select').value;
+    const ctxEl = document.getElementById('gymChart');
         const statsRow = document.getElementById('gym-stats-row');
         
         if(gymChartInstance) gymChartInstance.destroy();
@@ -2966,8 +3015,82 @@ function manualRefill(id, current) {
         });
     }
     function tglHist(date) { const e = document.getElementById('hist-det-'+date); if(e) e.style.display = e.style.display==='block'?'none':'block'; }
-    function initChart() { const ctx = document.getElementById('weightChart').getContext('2d'); if(weightChart) weightChart.destroy(); const sortedData = [...db.weightData].sort((a,b) => { const dateA = a.isoDate ? new Date(a.isoDate) : new Date(a.date.split('.').reverse().join('-')); const dateB = b.isoDate ? new Date(b.isoDate) : new Date(b.date.split('.').reverse().join('-')); return dateA - dateB; }); const labels = sortedData.map(d => d.date); const data = sortedData.map(d => d.val); const trend = data.map((val, i, arr) => { const start = Math.max(0, i - 6); const subset = arr.slice(start, i + 1); const sum = subset.reduce((a, b) => a + b, 0); return sum / subset.length; }); if(trend.length > 1) { const currentTrend = trend[trend.length - 1]; const prevTrend = trend[trend.length >= 8 ? trend.length - 8 : 0]; const diff = currentTrend - prevTrend; const arrow = diff > 0 ? '📈' : '📉'; const displayVal = Math.abs(diff) > 0.9 ? `${Math.abs(diff).toFixed(2)}kg` : `${(Math.abs(diff) * 1000).toFixed(0)}g`; const el = document.getElementById('trend-ui'); if(el) el.innerHTML = `<span style="color:${diff > 0 ? '#f87171' : '#4ade80'}">${arrow} Echter Trend: ${diff > 0 ? '+' : '-'}${displayVal} / Woche</span>`; } weightChart = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [ { label: 'kg', data: data, borderColor: '#FF8C00', tension: 0.4, fill: true, backgroundColor: 'rgba(255, 140, 0, 0.1)', pointRadius: 6, pointHitRadius: 30 }, { label: 'Trend (7d)', data: trend, borderColor: '#4facfe', borderDash: [5, 5], tension: 0.4, pointRadius: 0, fill: false } ] }, options: { plugins: { legend: { display: false } } } }); }
-    
+function initChart() {
+        // 1. SICHERHEITS-CHECK: Verhindert den Absturz, falls Chart.js noch lädt
+        if (typeof Chart === 'undefined') {
+            console.warn("Chart.js noch nicht bereit.");
+            return;
+        }
+
+        const ctxEl = document.getElementById('weightChart');
+        if (!ctxEl) return;
+        const ctx = ctxEl.getContext('2d');
+
+        if (weightChart) weightChart.destroy();
+
+        // DEINE LOGIK: DATEN SORTIEREN
+        const sortedData = [...db.weightData].sort((a, b) => {
+            const dateA = a.isoDate ? new Date(a.isoDate) : new Date(a.date.split('.').reverse().join('-'));
+            const dateB = b.isoDate ? new Date(b.isoDate) : new Date(b.date.split('.').reverse().join('-'));
+            return dateA - dateB;
+        });
+
+        const labels = sortedData.map(d => d.date);
+        const data = sortedData.map(d => d.val);
+
+        // DEINE LOGIK: TREND BERECHNEN (Wochendurchschnitt)
+        const trend = data.map((val, i, arr) => {
+            const start = Math.max(0, i - 6);
+            const subset = arr.slice(start, i + 1);
+            const sum = subset.reduce((a, b) => a + b, 0);
+            return sum / subset.length;
+        });
+
+        if (trend.length > 1) {
+            const currentTrend = trend[trend.length - 1];
+            const prevTrend = trend[trend.length >= 8 ? trend.length - 8 : 0];
+            const diff = currentTrend - prevTrend;
+            const arrow = diff > 0 ? '📈' : '📉';
+            const displayVal = Math.abs(diff) > 0.9 ? `${Math.abs(diff).toFixed(2)}kg` : `${(Math.abs(diff) * 1000).toFixed(0)}g`;
+            const el = document.getElementById('trend-ui');
+            if (el) el.innerHTML = `<span style="color:${diff > 0 ? '#f87171' : '#4ade80'}">${arrow} Echter Trend: ${diff > 0 ? '+' : '-'}${displayVal} / Woche</span>`;
+        }
+
+        // CHART ZEICHNEN
+        weightChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                        label: 'kg',
+                        data: data,
+                        borderColor: '#FF8C00',
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: 'rgba(255, 140, 0, 0.1)',
+                        pointRadius: 6,
+                        pointHitRadius: 30
+                    },
+                    {
+                        label: 'Trend (7d)',
+                        data: trend,
+                        borderColor: '#4facfe',
+                        borderDash: [5, 5],
+                        tension: 0.4,
+                        pointRadius: 0,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }    
     function addWeight() { 
         const val = document.getElementById('w-val').value; 
         const dateInput = document.getElementById('w-date').value; 
@@ -3103,6 +3226,11 @@ function manualRefill(id, current) {
             loadMasse(); 
             renderLabWidget(); 
             updateRadarChart(); 
+
+            // NEU: Silent Auto-Sync beim Öffnen des Tabs
+            if(db.healthSyncActive) {
+                syncHealthData(true);
+            }
         } 
         if(p==='profile') { 
             renderHistory(); 
@@ -3228,23 +3356,27 @@ function manualRefill(id, current) {
         document.getElementById('chk-show-leistung').checked = db.analytics.showLeistung;
         document.getElementById('chk-show-gesamt').checked = db.analytics.showGesamt;
         document.getElementById('chk-show-top-level').checked = db.analytics.showTopLevel !== false;
-        document.getElementById('chk-show-confetti').checked = db.analytics.showConfetti !== false; // NEU: Standardmäßig true
-        
-        // Neu: Zyklus laden
+        document.getElementById('chk-show-confetti').checked = db.analytics.showConfetti !== false;
         document.getElementById('chk-show-cycle').checked = db.analytics.showCycle || false;
         document.getElementById('set-cycle-start').value = db.personal.cycleStart || '';
         document.getElementById('set-cycle-length').value = db.personal.cycleLength || 28;
-        
         document.getElementById('chk-haptic').checked = db.analytics.haptic;
+
+        // NEU: Health Connect Settings (inklusive Yazio/Nutrition)
+        if(!db.healthSettings) db.healthSettings = { steps: true, sleep: true, hr: true, cal: true, water: true, nutri: true };
+        document.getElementById('chk-hc-steps').checked = db.healthSettings.steps !== false;
+        document.getElementById('chk-hc-sleep').checked = db.healthSettings.sleep !== false;
+        document.getElementById('chk-hc-hr').checked = db.healthSettings.hr !== false;
+        document.getElementById('chk-hc-cal').checked = db.healthSettings.cal !== false;
+        document.getElementById('chk-hc-water').checked = db.healthSettings.water !== false;
+        
         
         updatePalStatus();
         document.getElementById('settings-modal').style.display = 'flex';
     }
 
     function closeSettingsModal() {
-        // NEU: Start-Tab beim Schließen speichern
         db.startTab = document.getElementById('setting-start-tab').value;
-
         db.analytics.showBp = document.getElementById('chk-show-bp').checked;
         db.userName = document.getElementById('set-name').value.trim();
         db.personal.gender = document.getElementById('set-gender').value;
@@ -3272,18 +3404,23 @@ function manualRefill(id, current) {
         db.analytics.showLeistung = document.getElementById('chk-show-leistung').checked;
         db.analytics.showGesamt = document.getElementById('chk-show-gesamt').checked;
         db.analytics.showTopLevel = document.getElementById('chk-show-top-level').checked;
-        db.analytics.showConfetti = document.getElementById('chk-show-confetti').checked; // NEU: Speichert die Auswahl
-
-        // Neu: Zyklus speichern
+        db.analytics.showConfetti = document.getElementById('chk-show-confetti').checked;
         db.analytics.showCycle = document.getElementById('chk-show-cycle').checked;
         db.personal.cycleStart = document.getElementById('set-cycle-start').value;
         db.personal.cycleLength = parseInt(document.getElementById('set-cycle-length').value) || 28;
-
         db.analytics.haptic = document.getElementById('chk-haptic').checked;
+
+        // NEU: Health Connect Settings Speichern (inklusive Yazio/Nutrition)
+        if(!db.healthSettings) db.healthSettings = {};
+        db.healthSettings.steps = document.getElementById('chk-hc-steps').checked;
+        db.healthSettings.sleep = document.getElementById('chk-hc-sleep').checked;
+        db.healthSettings.hr = document.getElementById('chk-hc-hr').checked;
+        db.healthSettings.cal = document.getElementById('chk-hc-cal').checked;
+        db.healthSettings.water = document.getElementById('chk-hc-water').checked;
+        
 
         save(); 
         
-        // NEU: Wenn ein Backup geladen wurde, App nach dem Speichern aktualisieren
         if (needsReloadAfterSave) {
             location.reload();
             return;
@@ -3317,9 +3454,11 @@ function manualRefill(id, current) {
                         needsReloadAfterSave = true; // Reload für den Speichern-Button vormerken
                         showAlert("Lokales Backup erfolgreich geladen!\n\nBitte klicke nun unten auf 'SCHLIEßEN & SPEICHERN', um den Vorgang abzuschließen.", "Erfolg");
                         document.getElementById('fileInput').value = ''; // Input zurücksetzen
-                    } catch (err) { 
-                        showAlert("Ungültige Datei.", "Fehler"); 
-                    }
+                    } catch (err) {
+            console.error("Health Plugin Fehler:", err);
+            // Zeigt uns jetzt den ECHTEN Fehler an:
+            if(!silent) showAlert("Details: " + (err.message || JSON.stringify(err)), "Sync Fehler");
+        }
                 };
                 reader.readAsText(file);
             } else {
@@ -3678,6 +3817,7 @@ function manualRefill(id, current) {
     // --- APP-START INITIALISIERUNG ---
     setTimeout(() => {
         loadStartTabSetting(); // Lädt deine Einstellung ins Dropdown
+        updateDashboardView(); // FIX: Versteckt den Fasten-Timer direkt beim Start, falls deaktiviert!
         if(db.startTab && db.startTab !== 'plan') {
             showPage(db.startTab); // Springt magisch zum gewählten Tab!
         }
@@ -3991,6 +4131,7 @@ function renderBpHistory() {
 }
 
 function initBpChart() {
+    if (typeof Chart === 'undefined') return; // NEU
     const ctxEl = document.getElementById('bpChart');
     const avgDiv = document.getElementById('bp-weekly-avg');
     if(!ctxEl) return;
@@ -4477,6 +4618,7 @@ function search3DExercise(query) {
 
 // --- GYM TEMPLATES DATENBANK & LOGIK ---
     const gymTemplatesDB = [
+        // --- DEINE BISHERIGEN 15 PLÄNE ---
         {
             name: "Science-Based PPL (6x)", tags: "Hypertrophie | 6 Tage | Profi", desc: "Optimales Volumen & Frequenz. Push, Pull, Legs, Push, Pull, Legs, Rest.",
             plan: {
@@ -4568,7 +4710,7 @@ function search3DExercise(query) {
                 "Dienstag": [],
                 "Mittwoch": [{name:"Ausfallschritte (Gehend)",sets:3,reps:"12/Bein"},{name:"Floor Press (Kurzhantel)",sets:3,reps:"12-15"},{name:"Überzüge (Kurzhantel)",sets:3,reps:"12"},{name:"Seitheben (Kurzhantel)",sets:4,reps:"15"},{name:"Trizeps-Kickbacks",sets:3,reps:"12"}],
                 "Donnerstag": [],
-                "Freitag": [{name:"Bulgarian Split Squats",sets:3,reps:"10/Bein"},{name:"Fliegende (Kurzhantel)",sets:3,reps:"12"},{name:"Aufrechtes Rudern (Langhantel)",sets:3,reps:"12"},{name:"Shrugs (Kurzhantel)",sets:3,reps:"15"},{name:"Hammercurls",sets:3,reps:"12"}],
+                "Freitag": [{name:"Bulgarian Split Squats",sets:3,reps:"10/Bein"},{name:"Fliegende (Kurzhantel)",sets:3,reps:"12"},{name:"Aufrechtes Rudern (Langhantel)",sets:3,reps:"12"},{name:"Shrugs (Nackenheben)",sets:3,reps:"15"},{name:"Hammercurls",sets:3,reps:"12"}],
                 "Samstag": [],
                 "Sonntag": []
             }
@@ -4612,7 +4754,7 @@ function search3DExercise(query) {
         {
             name: "Mentzer Heavy Duty (3x)", tags: "High Intensity | 3 Tage | Brutal", desc: "Nur 1-2 Sätze bis zum absoluten Muskelversagen. Extrem hohe Intensität.",
             plan: {
-                "Montag": [{name:"Brustpresse (Maschine)",sets:2,reps:"6-8 (Versagen)"},{name:"Butterfly (Maschine)",sets:1,reps:"8-10 (Versagen)"},{name:"Latzug (Enger Griff)",sets:2,reps:"6-8 (Versagen)"},{name:"Kreuzheben",sets:1,reps:"5-8 (Versagen)"}],
+                "Montag": [{name:"Brustpresse (Maschine)",sets:2,reps:"6-8 (Versagen)"},{name:"Butterfly (Maschine)",sets:1,reps:"8-10 (Versagen)"},{name:"Latzug (Enger Griff)",sets:2,reps:"6-8 (Versagen)"},{name:"Kreuzheben (Klassisch)",sets:1,reps:"5-8 (Versagen)"}],
                 "Dienstag": [],
                 "Mittwoch": [{name:"Beinpresse (45 Grad)",sets:2,reps:"8-10 (Versagen)"},{name:"Leg Extensions (Beinstrecker)",sets:1,reps:"10-12 (Versagen)"},{name:"Leg Curls (Beinbeuger)",sets:2,reps:"8-10 (Versagen)"},{name:"Wadenheben (Stehend)",sets:2,reps:"12-15 (Versagen)"}],
                 "Donnerstag": [],
@@ -4656,6 +4798,286 @@ function search3DExercise(query) {
                 "Samstag": [],
                 "Sonntag": []
             }
+        },
+
+        // --- DEINE 20 NEUEN PREMIUM PLÄNE ---
+        
+        {
+            name: "Science-Based GK A/B (3x)", tags: "Hypertrophie | 3 Tage | Periodisierung", desc: "Modernes Ganzkörper-Training. Zwei verschiedene Einheiten (A und B), die sich abwechseln.",
+            plan: {
+                "Montag": [{name:"Kniebeuge (Langhantel)",sets:3,reps:"6-8"},{name:"Bankdrücken (Langhantel)",sets:3,reps:"8-10"},{name:"Langhantelrudern (Vorgebeugt)",sets:3,reps:"8-10"},{name:"Leg Curls (Beinbeuger)",sets:2,reps:"10-12"},{name:"Seitheben (Kurzhantel)",sets:3,reps:"15"},{name:"Bizepscurls (Kurzhantel)",sets:2,reps:"12"}],
+                "Dienstag": [],
+                "Mittwoch": [{name:"Kreuzheben (Klassisch)",sets:3,reps:"5-6"},{name:"Schulterdrücken (Military Press)",sets:3,reps:"8-10"},{name:"Latzug (Breit zur Brust)",sets:3,reps:"8-10"},{name:"Beinpresse (45 Grad)",sets:3,reps:"10-12"},{name:"Trizepsdrücken (Kabelzug)",sets:2,reps:"12"},{name:"Wadenheben (Stehend)",sets:3,reps:"15"}],
+                "Donnerstag": [],
+                "Freitag": [{name:"Kniebeuge (Langhantel)",sets:3,reps:"8-10"},{name:"Schrägbankdrücken (Kurzhantel)",sets:3,reps:"8-12"},{name:"Kabelrudern (Sitzend)",sets:3,reps:"10-12"},{name:"Rumänisches Kreuzheben",sets:2,reps:"10-12"},{name:"Face Pulls",sets:3,reps:"15"},{name:"Hammercurls",sets:2,reps:"12"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Science-Based GK Push/Pull Fokus (4x)", tags: "Hypertrophie | 4 Tage | Hybrid", desc: "4x Ganzkörper, aber jeden Tag ein anderer Fokus. Perfekt für maximale Muskelproteinsynthese.",
+            plan: {
+                "Montag": [{name:"Kniebeuge (Langhantel)",sets:3,reps:"6-8"},{name:"Bankdrücken (Langhantel)",sets:4,reps:"8-10"},{name:"Schrägbankdrücken (Kurzhantel)",sets:3,reps:"10-12"},{name:"Kabelrudern (Sitzend)",sets:3,reps:"10"},{name:"Trizepsdrücken (Seil)",sets:3,reps:"12"}],
+                "Dienstag": [{name:"Rumänisches Kreuzheben",sets:3,reps:"8-10"},{name:"Klimmzüge (Obergriff)",sets:4,reps:"8-10"},{name:"Latzug (Enger Griff)",sets:3,reps:"10-12"},{name:"Schulterdrücken Kurzhantel",sets:3,reps:"10"},{name:"Bizepscurls (SZ-Stange)",sets:3,reps:"12"}],
+                "Mittwoch": [],
+                "Donnerstag": [{name:"Beinpresse (45 Grad)",sets:3,reps:"10-12"},{name:"Dips (Barren)",sets:4,reps:"8-10"},{name:"Butterfly (Maschine)",sets:3,reps:"12-15"},{name:"Langhantelrudern (Vorgebeugt)",sets:3,reps:"10"},{name:"French Press (Skullcrusher)",sets:3,reps:"12"}],
+                "Freitag": [{name:"Kreuzheben (Klassisch)",sets:3,reps:"5"},{name:"T-Bar Rudern",sets:4,reps:"8-10"},{name:"Face Pulls",sets:3,reps:"12-15"},{name:"Arnold Press",sets:3,reps:"10"},{name:"Hammercurls",sets:3,reps:"12"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "HFT (High Frequency) Ganzkörper (5x)", tags: "Science | 5 Tage | Low Volume", desc: "Jeden Tag Ganzkörper, aber nur 1-2 Sätze pro Muskel. Extreme Frequenz, kein Muskelkater.",
+            plan: {
+                "Montag": [{name:"Kniebeuge (Langhantel)",sets:2,reps:"8"},{name:"Bankdrücken (Langhantel)",sets:2,reps:"8"},{name:"Klimmzüge (Obergriff)",sets:2,reps:"8"},{name:"Seitheben (Kurzhantel)",sets:2,reps:"12"}],
+                "Dienstag": [{name:"Kreuzheben (Klassisch)",sets:1,reps:"5"},{name:"Schulterdrücken (Military Press)",sets:2,reps:"8"},{name:"Kabelrudern (Sitzend)",sets:2,reps:"10"},{name:"Bizepscurls (Kurzhantel)",sets:2,reps:"12"}],
+                "Mittwoch": [{name:"Beinpresse (45 Grad)",sets:2,reps:"10"},{name:"Schrägbankdrücken (Kurzhantel)",sets:2,reps:"10"},{name:"Latzug (Breit zur Brust)",sets:2,reps:"10"},{name:"Trizepsdrücken (Kabelzug)",sets:2,reps:"12"}],
+                "Donnerstag": [{name:"Rumänisches Kreuzheben",sets:2,reps:"8"},{name:"Dips (Barren)",sets:2,reps:"10"},{name:"Langhantelrudern (Vorgebeugt)",sets:2,reps:"8"},{name:"Wadenheben (Stehend)",sets:2,reps:"15"}],
+                "Freitag": [{name:"Frontkniebeuge",sets:2,reps:"8"},{name:"Kurzhantel-Bankdrücken",sets:2,reps:"10"},{name:"Klimmzüge (Untergriff / Chin-Ups)",sets:2,reps:"8"},{name:"Face Pulls",sets:2,reps:"15"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "DUP Ganzkörper (Strength/Hyp/Endurance) (3x)", tags: "Science | 3 Tage | Periodisierung", desc: "Daily Undulating Periodization. Mo: Schwer (Kraft), Mi: Mittel (Hypertrophie), Fr: Leicht (Ausdauer/Pump).",
+            plan: {
+                "Montag": [{name:"Kniebeuge (Langhantel)",sets:4,reps:"4-6"},{name:"Bankdrücken (Langhantel)",sets:4,reps:"4-6"},{name:"Langhantelrudern (Vorgebeugt)",sets:4,reps:"4-6"},{name:"Kreuzheben (Klassisch)",sets:2,reps:"5"}],
+                "Dienstag": [],
+                "Mittwoch": [{name:"Beinpresse (45 Grad)",sets:3,reps:"8-12"},{name:"Schrägbankdrücken (Kurzhantel)",sets:3,reps:"8-12"},{name:"Klimmzüge (Obergriff)",sets:3,reps:"8-12"},{name:"Schulterdrücken Kurzhantel",sets:3,reps:"8-12"},{name:"Bizepscurls (SZ-Stange)",sets:3,reps:"10"}],
+                "Donnerstag": [],
+                "Freitag": [{name:"Ausfallschritte (Gehend)",sets:3,reps:"15-20"},{name:"Butterfly (Maschine)",sets:3,reps:"15-20"},{name:"Kabelrudern (Sitzend)",sets:3,reps:"15-20"},{name:"Seitheben (Kurzhantel)",sets:3,reps:"15-20"},{name:"Trizepsdrücken (Kabelzug)",sets:3,reps:"15-20"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Hypertrophy Specific Training (HST) (3x)", tags: "Science | 3 Tage | Mechanischer Load", desc: "Fester 15er, 10er, 5er Block. Konstant steigende Gewichte. Keine Sätze zum Versagen.",
+            plan: {
+                "Montag": [{name:"Kniebeuge (Langhantel)",sets:2,reps:"15"},{name:"Leg Curls (Beinbeuger)",sets:2,reps:"15"},{name:"Bankdrücken (Langhantel)",sets:2,reps:"15"},{name:"Klimmzüge (Obergriff)",sets:2,reps:"15"},{name:"Schulterdrücken (Military Press)",sets:1,reps:"15"},{name:"Bizepscurls (Kurzhantel)",sets:1,reps:"15"}],
+                "Dienstag": [],
+                "Mittwoch": [{name:"Kniebeuge (Langhantel)",sets:2,reps:"15"},{name:"Leg Curls (Beinbeuger)",sets:2,reps:"15"},{name:"Bankdrücken (Langhantel)",sets:2,reps:"15"},{name:"Klimmzüge (Obergriff)",sets:2,reps:"15"},{name:"Schulterdrücken (Military Press)",sets:1,reps:"15"},{name:"Bizepscurls (Kurzhantel)",sets:1,reps:"15"}],
+                "Donnerstag": [],
+                "Freitag": [{name:"Kniebeuge (Langhantel)",sets:2,reps:"15"},{name:"Leg Curls (Beinbeuger)",sets:2,reps:"15"},{name:"Bankdrücken (Langhantel)",sets:2,reps:"15"},{name:"Klimmzüge (Obergriff)",sets:2,reps:"15"},{name:"Schulterdrücken (Military Press)",sets:1,reps:"15"},{name:"Bizepscurls (Kurzhantel)",sets:1,reps:"15"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "5/3/1 Boring But Big (4x)", tags: "Powerlifting | 4 Tage | Kraft & Masse", desc: "Jim Wendler System. Eine schwere Hauptübung (5/3/1), danach die gleiche Übung 5x10 für Masse.",
+            plan: {
+                "Montag": [{name:"Schulterdrücken (Military Press)",sets:3,reps:"5/3/1"},{name:"Schulterdrücken (Military Press)",sets:5,reps:"10"},{name:"Klimmzüge (Obergriff)",sets:5,reps:"10"}],
+                "Dienstag": [{name:"Kreuzheben (Klassisch)",sets:3,reps:"5/3/1"},{name:"Kreuzheben (Klassisch)",sets:5,reps:"10"},{name:"Beinheben (Hängend)",sets:5,reps:"15"}],
+                "Mittwoch": [],
+                "Donnerstag": [{name:"Bankdrücken (Langhantel)",sets:3,reps:"5/3/1"},{name:"Bankdrücken (Langhantel)",sets:5,reps:"10"},{name:"Kurzhantelrudern (Einarmig)",sets:5,reps:"10"}],
+                "Freitag": [{name:"Kniebeuge (Langhantel)",sets:3,reps:"5/3/1"},{name:"Kniebeuge (Langhantel)",sets:5,reps:"10"},{name:"Leg Curls (Beinbeuger)",sets:5,reps:"10"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Texas Method (3x)", tags: "Powerlifting | 3 Tage | Kraft", desc: "Perfekt nach 5x5. Mo: Volumen, Mi: Recovery, Fr: Intensity (1RM PR).",
+            plan: {
+                "Montag": [{name:"Kniebeuge (Langhantel)",sets:5,reps:"5"},{name:"Bankdrücken (Langhantel)",sets:5,reps:"5"},{name:"Kreuzheben (Klassisch)",sets:1,reps:"5"}],
+                "Dienstag": [],
+                "Mittwoch": [{name:"Frontkniebeuge",sets:2,reps:"5"},{name:"Schulterdrücken (Military Press)",sets:3,reps:"5"},{name:"Klimmzüge (Obergriff)",sets:3,reps:"Max"}],
+                "Donnerstag": [],
+                "Freitag": [{name:"Kniebeuge (Langhantel)",sets:1,reps:"5"},{name:"Bankdrücken (Langhantel)",sets:1,reps:"5"},{name:"Power Clean (Standumsetzen)",sets:5,reps:"3"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "PPLUL (Push/Pull/Legs/Upper/Lower) (5x)", tags: "Hybrid | 5 Tage | Elite", desc: "Vereint die Vorteile von PPL und OK/UK. Hohe Frequenz und massives Volumen.",
+            plan: {
+                "Montag": [{name:"Bankdrücken (Langhantel)",sets:4,reps:"5-8"},{name:"Schulterdrücken Kurzhantel",sets:3,reps:"8-10"},{name:"Schrägbankdrücken (Kurzhantel)",sets:3,reps:"10"},{name:"Trizepsdrücken (Kabelzug)",sets:3,reps:"12"}],
+                "Dienstag": [{name:"Klimmzüge (Obergriff)",sets:4,reps:"6-8"},{name:"Langhantelrudern (Vorgebeugt)",sets:3,reps:"8-10"},{name:"Face Pulls",sets:3,reps:"15"},{name:"Bizepscurls (SZ-Stange)",sets:3,reps:"10"}],
+                "Mittwoch": [{name:"Kniebeuge (Langhantel)",sets:4,reps:"5-8"},{name:"Rumänisches Kreuzheben",sets:3,reps:"8-10"},{name:"Leg Extensions (Beinstrecker)",sets:3,reps:"12"},{name:"Wadenheben (Stehend)",sets:4,reps:"15"}],
+                "Donnerstag": [{name:"Schrägbankdrücken (Langhantel)",sets:3,reps:"8-10"},{name:"Latzug (Breit zur Brust)",sets:3,reps:"8-10"},{name:"Seitheben (Kurzhantel)",sets:4,reps:"15"},{name:"Hammercurls",sets:3,reps:"12"}],
+                "Freitag": [{name:"Kreuzheben (Klassisch)",sets:3,reps:"5"},{name:"Beinpresse (45 Grad)",sets:3,reps:"10-12"},{name:"Leg Curls (Beinbeuger)",sets:3,reps:"12"},{name:"Wadenheben (Sitzend)",sets:4,reps:"15"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Antagonist Split (3x)", tags: "Bodybuilding | 3 Tage | Effizient", desc: "Immer Gegenspieler zusammen trainieren (Super-Sätze möglich). Enormer Pump, spart Zeit.",
+            plan: {
+                "Montag": [{name:"Bankdrücken (Langhantel)",sets:4,reps:"8-10"},{name:"Langhantelrudern (Vorgebeugt)",sets:4,reps:"8-10"},{name:"Schrägbankdrücken (Kurzhantel)",sets:3,reps:"10-12"},{name:"Latzug (Breit zur Brust)",sets:3,reps:"10-12"},{name:"Butterfly (Maschine)",sets:3,reps:"15"},{name:"Reverse Butterfly (Maschine)",sets:3,reps:"15"}],
+                "Dienstag": [],
+                "Mittwoch": [{name:"Kniebeuge (Langhantel)",sets:4,reps:"8-10"},{name:"Rumänisches Kreuzheben",sets:4,reps:"8-10"},{name:"Leg Extensions (Beinstrecker)",sets:3,reps:"12-15"},{name:"Leg Curls (Beinbeuger)",sets:3,reps:"12-15"},{name:"Wadenheben (Stehend)",sets:4,reps:"15"}],
+                "Donnerstag": [],
+                "Freitag": [{name:"Schulterdrücken (Military Press)",sets:4,reps:"8-10"},{name:"Klimmzüge (Untergriff / Chin-Ups)",sets:3,reps:"8-10"},{name:"Bizepscurls (SZ-Stange)",sets:3,reps:"10-12"},{name:"French Press (Skullcrusher)",sets:3,reps:"10-12"},{name:"Hammercurls",sets:3,reps:"12"},{name:"Trizepsdrücken (Seil)",sets:3,reps:"12"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "PHUL (Power Hypertrophy Upper Lower) (4x)", tags: "Hybrid | 4 Tage | Bewährt", desc: "Zwei Power-Tage für Kraft, zwei Hypertrophie-Tage für reines Muskelwachstum.",
+            plan: {
+                "Montag": [{name:"Bankdrücken (Langhantel)",sets:4,reps:"3-5"},{name:"Langhantelrudern (Vorgebeugt)",sets:4,reps:"3-5"},{name:"Schulterdrücken (Military Press)",sets:3,reps:"5-8"},{name:"Latzug (Breit zur Brust)",sets:3,reps:"6-10"},{name:"Langhantel Curls",sets:3,reps:"6-10"},{name:"French Press (Skullcrusher)",sets:3,reps:"6-10"}],
+                "Dienstag": [{name:"Kniebeuge (Langhantel)",sets:4,reps:"3-5"},{name:"Kreuzheben (Klassisch)",sets:3,reps:"3-5"},{name:"Beinpresse (45 Grad)",sets:4,reps:"10-15"},{name:"Leg Curls (Beinbeuger)",sets:3,reps:"6-10"},{name:"Wadenheben (Stehend)",sets:4,reps:"6-10"}],
+                "Mittwoch": [],
+                "Donnerstag": [{name:"Schrägbankdrücken (Kurzhantel)",sets:4,reps:"8-12"},{name:"Fliegende (Kurzhantel)",sets:3,reps:"10-15"},{name:"Kabelrudern (Sitzend)",sets:4,reps:"8-12"},{name:"Kurzhantelrudern (Einarmig)",sets:3,reps:"10-15"},{name:"Seitheben (Kurzhantel)",sets:4,reps:"10-15"},{name:"Bizepscurls (Kurzhantel)",sets:3,reps:"10-15"}],
+                "Freitag": [{name:"Frontkniebeuge",sets:4,reps:"8-12"},{name:"Ausfallschritte (Gehend)",sets:3,reps:"10-15"},{name:"Leg Extensions (Beinstrecker)",sets:3,reps:"10-15"},{name:"Leg Curls (Beinbeuger)",sets:3,reps:"10-15"},{name:"Wadenheben (Sitzend)",sets:4,reps:"10-15"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Kettlebell Only Functional GK (3x)", tags: "Functional | 3 Tage | Kondition", desc: "Perfekt für Athleten und Kampfsportler. Baut Core-Stabilität und explosive Kraft auf.",
+            plan: {
+                "Montag": [{name:"Kettlebell Swing (Russisch)",sets:4,reps:"15-20"},{name:"Kettlebell Goblet Squat",sets:3,reps:"10-12"},{name:"Kettlebell Press",sets:3,reps:"8-10"},{name:"Renegade Rows",sets:3,reps:"10/Seite"},{name:"Turkish Get-Up",sets:2,reps:"5/Seite"}],
+                "Dienstag": [],
+                "Mittwoch": [{name:"Kettlebell Snatch",sets:4,reps:"8/Seite"},{name:"Ausfallschritte (Gehend)",sets:3,reps:"12/Seite"},{name:"Liegestütze (Klassisch)",sets:3,reps:"Max"},{name:"Kettlebell Clean",sets:3,reps:"8-10"},{name:"Plank (Unterarmstütz)",sets:3,reps:"1 Min"}],
+                "Donnerstag": [],
+                "Freitag": [{name:"Kettlebell Swing (Russisch)",sets:5,reps:"20"},{name:"Kettlebell Goblet Squat",sets:4,reps:"12"},{name:"Kettlebell Press",sets:3,reps:"10"},{name:"Renegade Rows",sets:3,reps:"12/Seite"},{name:"Farmer's Walk",sets:3,reps:"1 Min"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Calisthenics Advanced (Skills) (4x)", tags: "Bodyweight | 4 Tage | Skills", desc: "Fokus auf Front Lever, Planche, Muscle-Ups und fortgeschrittene Körperbeherrschung.",
+            plan: {
+                "Montag": [{name:"Handstand Walk",sets:4,reps:"Max Distanz"},{name:"Handstand Push-Ups (An der Wand)",sets:4,reps:"5-8"},{name:"Pseudo Planche Liegestütze",sets:3,reps:"8-10"},{name:"Pike Push-Ups",sets:3,reps:"10-12"},{name:"L-Sit (Boden)",sets:4,reps:"20 Sek"}],
+                "Dienstag": [{name:"Muscle-Up (Stange)",sets:4,reps:"3-5"},{name:"Front Lever (Tuck)",sets:4,reps:"15 Sek"},{name:"Breite Klimmzüge",sets:3,reps:"8-10"},{name:"Skin the Cat",sets:3,reps:"5"},{name:"Dragon Flag (Full)",sets:3,reps:"5-8"}],
+                "Mittwoch": [],
+                "Donnerstag": [{name:"Pistol Squats",sets:4,reps:"5-8/Bein"},{name:"Shrimp Squats",sets:3,reps:"8/Bein"},{name:"Nordic Hamstring Curls",sets:3,reps:"5-8"},{name:"Jump Squats",sets:3,reps:"15"},{name:"Wadenheben mit Eigengewicht (Einbeinig)",sets:4,reps:"20"}],
+                "Freitag": [{name:"Ring Dips",sets:4,reps:"8-12"},{name:"L-Sit Klimmzüge",sets:4,reps:"6-8"},{name:"Typewriter Liegestütze",sets:3,reps:"10"},{name:"Australian Pull-Ups (Körpergewichts-Rudern)",sets:3,reps:"12"},{name:"Human Flag (Full)",sets:4,reps:"Max Sek"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Machine-Only (Anfänger / Reha) (3x)", tags: "Maschinen | 3 Tage | Gelenkschonend", desc: "Sehr sicheres Training, komplett ohne freie Gewichte. Fokus auf reine Muskelkontraktion.",
+            plan: {
+                "Montag": [{name:"Beinpresse",sets:3,reps:"12-15"},{name:"Brustpresse (Maschine)",sets:3,reps:"10-12"},{name:"Latzug (Breit zur Brust)",sets:3,reps:"10-12"},{name:"Schulterpresse (Maschine)",sets:3,reps:"12-15"},{name:"Bizeps-Maschine",sets:2,reps:"15"},{name:"Trizeps-Maschine",sets:2,reps:"15"}],
+                "Dienstag": [],
+                "Mittwoch": [{name:"Hackenschmidt-Kniebeuge",sets:3,reps:"10-12"},{name:"Butterfly (Maschine)",sets:3,reps:"12-15"},{name:"Rudern an der Maschine (Brustgestützt)",sets:3,reps:"10-12"},{name:"Reverse Butterfly (Maschine)",sets:3,reps:"15"},{name:"Leg Curls (Beinbeuger)",sets:3,reps:"12-15"},{name:"Wadenheben (Sitzend)",sets:3,reps:"15"}],
+                "Donnerstag": [],
+                "Freitag": [{name:"Leg Extensions (Beinstrecker)",sets:3,reps:"15"},{name:"Beinpresse (Horizontal)",sets:3,reps:"12"},{name:"Brustpresse (Maschine)",sets:3,reps:"10-12"},{name:"Latzug (Enger Griff)",sets:3,reps:"10-12"},{name:"Kabel-Crunches",sets:3,reps:"15-20"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Booty & Core Builder (UK Fokus) (3x)", tags: "Ästhetik | 3 Tage | Unterkörper", desc: "Speziell für den Aufbau von Gesäß und einer starken Körpermitte konzipiert.",
+            plan: {
+                "Montag": [{name:"Hip Thrusts (Langhantel)",sets:4,reps:"8-10"},{name:"Bulgarian Split Squats",sets:3,reps:"10-12/Bein"},{name:"Leg Curls (Beinbeuger)",sets:3,reps:"12-15"},{name:"Abduktoren-Maschine",sets:3,reps:"15-20"},{name:"Crunches",sets:3,reps:"20"}],
+                "Dienstag": [],
+                "Mittwoch": [{name:"Rumänisches Kreuzheben",sets:4,reps:"8-10"},{name:"Beinpresse (45 Grad)",sets:3,reps:"10-12"},{name:"Glute Bridges (Ohne Gewicht)",sets:3,reps:"15-20"},{name:"Kabelzug-Kickbacks (Gluteus)",sets:3,reps:"15/Bein"},{name:"Plank (Unterarmstütz)",sets:3,reps:"1 Min"}],
+                "Donnerstag": [],
+                "Freitag": [{name:"Kniebeuge (Langhantel)",sets:4,reps:"8-10"},{name:"Hip Thrusts (Langhantel)",sets:3,reps:"12-15"},{name:"Ausfallschritte (Rückwärts)",sets:3,reps:"12/Bein"},{name:"Donkey Kicks (Boden)",sets:3,reps:"15/Bein"},{name:"Russian Twists",sets:3,reps:"20"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "V-Taper Fokus (Rücken & Schultern) (4x)", tags: "Ästhetik | 4 Tage | Oberkörper", desc: "Zielt auf die perfekte V-Form ab. Breiter Latissimus, massive seitliche Schultern.",
+            plan: {
+                "Montag": [{name:"Klimmzüge (Obergriff)",sets:4,reps:"6-8"},{name:"Latzug (Breit zur Brust)",sets:3,reps:"10-12"},{name:"Schulterdrücken (Military Press)",sets:4,reps:"8-10"},{name:"Seitheben (Kurzhantel)",sets:5,reps:"15-20"},{name:"Bankdrücken (Langhantel)",sets:3,reps:"8-10"}],
+                "Dienstag": [{name:"Kniebeuge (Langhantel)",sets:3,reps:"8-10"},{name:"Rumänisches Kreuzheben",sets:3,reps:"10"},{name:"Leg Extensions (Beinstrecker)",sets:3,reps:"12"},{name:"Wadenheben (Stehend)",sets:4,reps:"15"}],
+                "Mittwoch": [],
+                "Donnerstag": [{name:"Langhantelrudern (Vorgebeugt)",sets:4,reps:"8-10"},{name:"Kabelrudern (Sitzend)",sets:3,reps:"12"},{name:"Arnold Press",sets:3,reps:"10"},{name:"Seitheben am Kabelzug (Einarmig)",sets:4,reps:"15"},{name:"Face Pulls",sets:4,reps:"15"}],
+                "Freitag": [{name:"Schrägbankdrücken (Kurzhantel)",sets:3,reps:"8-10"},{name:"Latzug (Gestreckte Arme)",sets:3,reps:"12-15"},{name:"Reverse Butterfly (Maschine)",sets:3,reps:"15"},{name:"Bizepscurls (Kurzhantel)",sets:3,reps:"12"},{name:"Trizepsdrücken (Kabelzug)",sets:3,reps:"12"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Arm-Spezialisierung (Add-On / Fokus) (4x)", tags: "Ästhetik | 4 Tage | Massive Arme", desc: "Dein Standard-Training, ergänzt durch einen separaten, reinen Arm-Tag für extremen Pump.",
+            plan: {
+                "Montag": [{name:"Bankdrücken (Langhantel)",sets:4,reps:"8-10"},{name:"Schulterdrücken Kurzhantel",sets:3,reps:"8-10"},{name:"Klimmzüge (Obergriff)",sets:4,reps:"8-10"},{name:"Langhantelrudern (Vorgebeugt)",sets:3,reps:"8-10"}],
+                "Dienstag": [{name:"Kniebeuge (Langhantel)",sets:4,reps:"8-10"},{name:"Beinpresse (45 Grad)",sets:3,reps:"10-12"},{name:"Leg Curls (Beinbeuger)",sets:3,reps:"12-15"},{name:"Wadenheben (Stehend)",sets:4,reps:"15"}],
+                "Mittwoch": [],
+                "Donnerstag": [{name:"Schrägbankdrücken (Kurzhantel)",sets:3,reps:"8-10"},{name:"Latzug (Enger Griff)",sets:3,reps:"10-12"},{name:"Seitheben (Kurzhantel)",sets:4,reps:"15"}],
+                "Freitag": [{name:"Langhantel Curls",sets:4,reps:"8-10"},{name:"French Press (Skullcrusher)",sets:4,reps:"8-10"},{name:"Preacher Curls (Scott-Bank)",sets:3,reps:"12-15"},{name:"Trizepsdrücken (Seil)",sets:3,reps:"12-15"},{name:"Hammercurls",sets:3,reps:"12-15"},{name:"Trizeps-Kickbacks",sets:3,reps:"15"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Tactical Barbell / Functional Fitness (3x)", tags: "Athletik | 3 Tage | Militär", desc: "Für Polizei, Feuerwehr oder Hyrox. Reine Kraft, Stabilität und Ausdauer.",
+            plan: {
+                "Montag": [{name:"Frontkniebeuge",sets:3,reps:"5"},{name:"Schulterdrücken (Military Press)",sets:3,reps:"5"},{name:"Klimmzüge (Obergriff)",sets:3,reps:"5"},{name:"Farmer's Walk",sets:3,reps:"1 Min"}],
+                "Dienstag": [],
+                "Mittwoch": [{name:"Kreuzheben (Klassisch)",sets:3,reps:"5"},{name:"Bankdrücken (Langhantel)",sets:3,reps:"5"},{name:"Langhantelrudern (Vorgebeugt)",sets:3,reps:"5"},{name:"Sandbag Cleans",sets:3,reps:"8-10"}],
+                "Donnerstag": [],
+                "Freitag": [{name:"Kniebeuge (Langhantel)",sets:3,reps:"5"},{name:"Dips (Barren)",sets:3,reps:"Max"},{name:"Kettlebell Swing (Russisch)",sets:4,reps:"20"},{name:"Plank (Unterarmstütz)",sets:3,reps:"Max Sek"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "DUP Push/Pull (4x)", tags: "Science | 4 Tage | Periodisierung", desc: "Push/Pull Split mit wellenförmiger Periodisierung. Tag 1/2 Schwer, Tag 3/4 Hypertrophie.",
+            plan: {
+                "Montag": [{name:"Bankdrücken (Langhantel)",sets:4,reps:"4-6"},{name:"Kniebeuge (Langhantel)",sets:4,reps:"4-6"},{name:"Schulterdrücken (Military Press)",sets:3,reps:"6-8"},{name:"Dips (Barren)",sets:3,reps:"6-8"}],
+                "Dienstag": [{name:"Kreuzheben (Klassisch)",sets:4,reps:"4-6"},{name:"Klimmzüge (Obergriff)",sets:4,reps:"4-6"},{name:"Langhantelrudern (Vorgebeugt)",sets:3,reps:"6-8"},{name:"Langhantel Curls",sets:3,reps:"6-8"}],
+                "Mittwoch": [],
+                "Donnerstag": [{name:"Schrägbankdrücken (Kurzhantel)",sets:3,reps:"10-12"},{name:"Beinpresse (45 Grad)",sets:3,reps:"10-15"},{name:"Seitheben (Kurzhantel)",sets:4,reps:"12-15"},{name:"Trizepsdrücken (Kabelzug)",sets:3,reps:"12-15"}],
+                "Freitag": [{name:"Latzug (Breit zur Brust)",sets:3,reps:"10-12"},{name:"Kabelrudern (Sitzend)",sets:3,reps:"10-15"},{name:"Leg Curls (Beinbeuger)",sets:3,reps:"12-15"},{name:"Hammercurls",sets:3,reps:"12-15"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Weekend Warrior (2x)", tags: "Zeitsparend | 2 Tage | Intensiv", desc: "Nur am Wochenende Zeit? Samstag Oberkörper ballern, Sonntag Beine zerstören.",
+            plan: {
+                "Montag": [],
+                "Dienstag": [],
+                "Mittwoch": [],
+                "Donnerstag": [],
+                "Freitag": [],
+                "Samstag": [{name:"Bankdrücken (Langhantel)",sets:4,reps:"8-10"},{name:"Klimmzüge (Obergriff)",sets:4,reps:"8-10"},{name:"Schulterdrücken Kurzhantel",sets:3,reps:"10"},{name:"Kabelrudern (Sitzend)",sets:3,reps:"10-12"},{name:"Bizepscurls (Kurzhantel)",sets:3,reps:"12"},{name:"Trizepsdrücken (Kabelzug)",sets:3,reps:"12"}],
+                "Sonntag": [{name:"Kniebeuge (Langhantel)",sets:4,reps:"8-10"},{name:"Rumänisches Kreuzheben",sets:4,reps:"8-10"},{name:"Beinpresse (45 Grad)",sets:3,reps:"10-12"},{name:"Leg Curls (Beinbeuger)",sets:3,reps:"12-15"},{name:"Wadenheben (Stehend)",sets:4,reps:"15-20"},{name:"Crunches",sets:3,reps:"20"}]
+            }
+        },
+        {
+            name: "Madcow 5x5 (Intermediate) (3x)", tags: "Powerlifting | 3 Tage | Plateau-Breaker", desc: "Für Athleten, die im normalen 5x5 stagnieren. Ramp-up Sets bis zu einem schweren Top-Satz.",
+            plan: {
+                "Montag": [{name:"Kniebeuge (Langhantel)",sets:5,reps:"5 (Ramp-up)"},{name:"Bankdrücken (Langhantel)",sets:5,reps:"5 (Ramp-up)"},{name:"Langhantelrudern (Vorgebeugt)",sets:5,reps:"5 (Ramp-up)"},{name:"Hyperextensions (Rückenstrecker)",sets:2,reps:"12"}],
+                "Dienstag": [],
+                "Mittwoch": [{name:"Kniebeuge (Langhantel)",sets:4,reps:"5 (Light)"},{name:"Schulterdrücken (Military Press)",sets:4,reps:"5 (Ramp-up)"},{name:"Kreuzheben (Klassisch)",sets:4,reps:"5 (Ramp-up)"},{name:"Sit-Ups",sets:3,reps:"15"}],
+                "Donnerstag": [],
+                "Freitag": [{name:"Kniebeuge (Langhantel)",sets:4,reps:"5 (Ramp-up)"},{name:"Kniebeuge (Langhantel)",sets:1,reps:"3 (Top Set)"},{name:"Bankdrücken (Langhantel)",sets:4,reps:"5"},{name:"Bankdrücken (Langhantel)",sets:1,reps:"3"},{name:"Langhantelrudern (Vorgebeugt)",sets:4,reps:"5"},{name:"Langhantelrudern (Vorgebeugt)",sets:1,reps:"3"}],
+                "Samstag": [],
+                "Sonntag": []
+            }
+        },
+        , // Hier ist das Komma nach dem letzten Plan (Madcow)
+        {
+            name: "Hybrid Athlete (3x Gym, 2x Run, 1x Bike)", tags: "Hybrid | 6 Tage | Ausdauer & Kraft", desc: "Perfekt für Läufer & Radfahrer. 3x Ganzkörper (angepasstes Volumen) + 3x Cardio.",
+            plan: {
+                "Montag": [{name:"Kniebeuge (Langhantel)",sets:3,reps:"5-8"},{name:"Bankdrücken (Langhantel)",sets:3,reps:"8-10"},{name:"Langhantelrudern (Vorgebeugt)",sets:3,reps:"8-10"},{name:"Plank (Unterarmstütz)",sets:3,reps:"1 Min"}],
+                "Dienstag": [{name:"Laufen (Joggen Zone 2)",sets:1,reps:"45 Min"}],
+                "Mittwoch": [{name:"Kreuzheben (Klassisch)",sets:3,reps:"5"},{name:"Schulterdrücken (Military Press)",sets:3,reps:"8-10"},{name:"Klimmzüge (Obergriff)",sets:3,reps:"Max"},{name:"Crunches",sets:3,reps:"20"}],
+                "Donnerstag": [{name:"Laufen (Intervalle/Sprints)",sets:1,reps:"30 Min"}],
+                "Freitag": [{name:"Beinpresse (45 Grad)",sets:3,reps:"10-12"},{name:"Schrägbankdrücken (Kurzhantel)",sets:3,reps:"10-12"},{name:"Kabelrudern (Sitzend)",sets:3,reps:"10-12"},{name:"Seitheben (Kurzhantel)",sets:3,reps:"15"}],
+                "Samstag": [{name:"Fahrrad fahren (Outdoor/Indoor)",sets:1,reps:"60-90 Min"}],
+                "Sonntag": []
+            }
+        },
+        {
+            name: "Strength & Cardio Split (OK/UK/GK)", tags: "Hybrid | 6 Tage | Balance", desc: "Oberkörper, Unterkörper, Ganzkörper kombiniert mit Joggen und 2x Radfahren am Wochenende.",
+            plan: {
+                "Montag": [{name:"Bankdrücken (Langhantel)",sets:4,reps:"6-8"},{name:"Klimmzüge (Obergriff)",sets:4,reps:"6-8"},{name:"Schulterdrücken Kurzhantel",sets:3,reps:"10"},{name:"Bizepscurls (SZ-Stange)",sets:3,reps:"12"},{name:"Trizepsdrücken (Kabelzug)",sets:3,reps:"12"}],
+                "Dienstag": [{name:"Laufen (Joggen)",sets:1,reps:"40 Min"}],
+                "Mittwoch": [{name:"Kniebeuge (Langhantel)",sets:4,reps:"6-8"},{name:"Rumänisches Kreuzheben",sets:4,reps:"8-10"},{name:"Wadenheben (Stehend)",sets:4,reps:"15"},{name:"Beinheben (Hängend)",sets:3,reps:"15"}],
+                "Donnerstag": [{name:"Laufen (Joggen)",sets:1,reps:"40 Min"}],
+                "Freitag": [{name:"Frontkniebeuge",sets:3,reps:"8"},{name:"Schrägbankdrücken (Kurzhantel)",sets:3,reps:"10"},{name:"Latzug (Breit zur Brust)",sets:3,reps:"10"},{name:"Face Pulls",sets:3,reps:"15"}],
+                "Samstag": [{name:"Fahrrad fahren (Intensiv/Hügel)",sets:1,reps:"60 Min"}],
+                "Sonntag": [{name:"Fahrrad fahren (Recovery)",sets:1,reps:"45 Min"}]
+            }
+        },
+        {
+            name: "Endurance Saver (Beine schonen)", tags: "Cardio Fokus | 6 Tage | Oberkörper", desc: "Da du viel läufst und radelst, fokussiert sich das Gym primär auf Oberkörper & Rumpf, um die Beine nicht zu überlasten.",
+            plan: {
+                "Montag": [{name:"Schrägbankdrücken (Langhantel)",sets:3,reps:"8-10"},{name:"Kurzhantelrudern (Einarmig)",sets:3,reps:"10"},{name:"Seitheben (Kurzhantel)",sets:3,reps:"15"},{name:"Russian Twists",sets:3,reps:"20"}],
+                "Dienstag": [{name:"Laufen (Joggen)",sets:1,reps:"45 Min"}],
+                "Mittwoch": [{name:"Kreuzheben (Klassisch)",sets:3,reps:"5 (Schwer)"},{name:"Leg Curls (Beinbeuger)",sets:2,reps:"12 (Prehab)"},{name:"Plank (Unterarmstütz)",sets:3,reps:"1 Min"}],
+                "Donnerstag": [{name:"Laufen (Joggen)",sets:1,reps:"45 Min"}],
+                "Freitag": [{name:"Dips (Barren)",sets:3,reps:"8-10"},{name:"Klimmzüge (Untergriff / Chin-Ups)",sets:3,reps:"8-10"},{name:"Arnold Press",sets:3,reps:"10"},{name:"Ab-Wheel Rollouts",sets:3,reps:"12"}],
+                "Samstag": [{name:"Fahrrad fahren (Long Ride)",sets:1,reps:"120 Min"}],
+                "Sonntag": [{name:"Fahrrad fahren (Recovery)",sets:1,reps:"60 Min"}]
+            }
         }
     ];
 
@@ -4663,9 +5085,9 @@ function search3DExercise(query) {
         const list = document.getElementById('gym-templates-list');
         list.innerHTML = '';
         
-        // Button zum Speichern eigener Pläne
+        // NEU: Button zum Starten des Plan-Editors
         list.innerHTML += `
-            <button class="btn-action" style="background: var(--success); color: white; margin-bottom: 20px; font-size:12px; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);" onclick="saveCurrentWeekAsTemplate()">💾 AKTUELLEN WOCHENPLAN SPEICHERN</button>
+            <button class="btn-action" style="background: var(--success); color: white; margin-bottom: 20px; font-size:12px; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);" onclick="openTemplateEditor()">➕ EIGENEN PLAN ERSTELLEN</button>
         `;
         
         // Eigene Pläne anzeigen
@@ -4674,10 +5096,13 @@ function search3DExercise(query) {
             db.customGymTemplates.forEach(tpl => {
                 list.innerHTML += `
                     <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 16px; padding: 15px; margin-bottom: 15px; position: relative;">
-                        <div style="position:absolute; top:15px; right:15px; color:var(--danger); cursor:pointer; font-size:18px; font-weight:bold; background:rgba(239, 68, 68, 0.2); width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:8px;" onclick="deleteCustomTemplate('${tpl.id}')">✖</div>
-                        <div style="font-size: 15px; font-weight: 900; color: white; margin-bottom: 4px; padding-right:40px;">${tpl.name}</div>
+                        <div style="position:absolute; top:15px; right:15px; display:flex; gap:8px;">
+                            <div style="color:var(--day-glow); cursor:pointer; font-size:14px; background:rgba(79, 172, 254, 0.2); width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:8px;" onclick="openTemplateEditor('${tpl.id}')">✏️</div>
+                            <div style="color:var(--danger); cursor:pointer; font-size:14px; font-weight:bold; background:rgba(239, 68, 68, 0.2); width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:8px;" onclick="deleteCustomTemplate('${tpl.id}')">✖</div>
+                        </div>
+                        <div style="font-size: 15px; font-weight: 900; color: white; margin-bottom: 4px; padding-right:75px;">${tpl.name}</div>
                         <div style="font-size: 10px; font-weight: 800; color: var(--success); text-transform: uppercase; margin-bottom: 15px;">${tpl.tags}</div>
-                        <button class="btn-action" style="background: var(--success); margin: 0; padding: 10px; font-size: 12px;" onclick="applyCustomTemplate('${tpl.id}')">⬇️ EIGENEN PLAN LADEN</button>
+                        <button class="btn-action" style="background: var(--success); margin: 0; padding: 10px; font-size: 12px;" onclick="applyCustomTemplate('${tpl.id}')">⬇️ PLAN LADEN</button>
                     </div>
                 `;
             });
@@ -4688,8 +5113,11 @@ function search3DExercise(query) {
         
         gymTemplatesDB.forEach((tpl, idx) => {
             list.innerHTML += `
-                <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 16px; padding: 15px; margin-bottom: 15px;">
-                    <div style="font-size: 15px; font-weight: 900; color: white; margin-bottom: 4px;">${tpl.name}</div>
+                <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 16px; padding: 15px; margin-bottom: 15px; position: relative;">
+                    <div style="position:absolute; top:15px; right:15px;">
+                        <div style="color:var(--day-glow); cursor:pointer; font-size:14px; background:rgba(79, 172, 254, 0.2); width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:8px;" onclick="editSystemTemplate(${idx})">✏️</div>
+                    </div>
+                    <div style="font-size: 15px; font-weight: 900; color: white; margin-bottom: 4px; padding-right: 40px;">${tpl.name}</div>
                     <div style="font-size: 10px; font-weight: 800; color: var(--accent); text-transform: uppercase; margin-bottom: 8px;">${tpl.tags}</div>
                     <div style="font-size: 12px; color: #cbd5e1; line-height: 1.4; margin-bottom: 15px;">${tpl.desc}</div>
                     <button class="btn-action" style="background: var(--day-glow); margin: 0; padding: 10px; font-size: 12px;" onclick="applyGymTemplate(${idx})">⬇️ DIESEN PLAN LADEN</button>
@@ -4700,53 +5128,19 @@ function search3DExercise(query) {
         document.getElementById('gym-templates-modal').style.display = 'flex';
     }
 
-    function closeGymTemplates() {
-        document.getElementById('gym-templates-modal').style.display = 'none';
-    }
+    function closeGymTemplates() { document.getElementById('gym-templates-modal').style.display = 'none'; }
 
     function applyGymTemplate(index) {
         showConfirm("Achtung: Dein kompletter aktueller Wochentag-Plan wird überschrieben. Fortfahren?", function(res) {
             if(res) {
                 const tpl = gymTemplatesDB[index];
                 const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
-                days.forEach(d => {
-                    db.gym.plans[d] = tpl.plan[d] ? JSON.parse(JSON.stringify(tpl.plan[d])) : [];
-                });
-                save();
-                closeGymTemplates();
-                renderGymPlaner();
-                renderGymToday();
+                days.forEach(d => { db.gym.plans[d] = tpl.plan[d] ? JSON.parse(JSON.stringify(tpl.plan[d])) : []; });
+                save(); closeGymTemplates(); renderGymPlaner(); renderGymToday();
                 if(typeof vBuz === 'function') vBuz([100, 50, 100, 50, 300]);
-                showAlert(`"${tpl.name}" wurde erfolgreich als dein neuer Trainingsplan geladen!`, "Plan geladen 🚀");
+                showAlert(`"${tpl.name}" wurde erfolgreich geladen!`, "Plan geladen 🚀");
             }
         }, "Plan überschreiben?", "JA, PLAN LADEN");
-    }
-
-    // NEU: Funktionen für eigene Pläne
-    function saveCurrentWeekAsTemplate() {
-        showPrompt("Name für deinen eigenen Trainingsplan:", "Mein Sommer Split", function(name) {
-            if(name && name.trim() !== "") {
-                if(!db.customGymTemplates) db.customGymTemplates = [];
-                
-                // Wir kopieren nur die nackten Wochentage (ohne Datums-Overrides)
-                let weekPlan = {};
-                const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
-                days.forEach(d => {
-                    weekPlan[d] = db.gym.plans[d] ? JSON.parse(JSON.stringify(db.gym.plans[d])) : [];
-                });
-                
-                db.customGymTemplates.push({
-                    id: 'ctpl_' + Date.now(),
-                    name: name.trim(),
-                    tags: "Eigener Plan | Custom",
-                    desc: "Dein selbst erstellter, individueller Master-Plan.",
-                    plan: weekPlan
-                });
-                save();
-                openGymTemplates(); // Modal direkt aktualisieren
-                showAlert("Dein eigener Plan wurde erfolgreich gespeichert!", "Erfolg");
-            }
-        }, "Als Vorlage speichern");
     }
 
     function applyCustomTemplate(id) {
@@ -4755,13 +5149,8 @@ function search3DExercise(query) {
                 const tpl = db.customGymTemplates.find(t => t.id === id);
                 if(!tpl) return;
                 const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
-                days.forEach(d => {
-                    db.gym.plans[d] = tpl.plan[d] ? JSON.parse(JSON.stringify(tpl.plan[d])) : [];
-                });
-                save();
-                closeGymTemplates();
-                renderGymPlaner();
-                renderGymToday();
+                days.forEach(d => { db.gym.plans[d] = tpl.plan[d] ? JSON.parse(JSON.stringify(tpl.plan[d])) : []; });
+                save(); closeGymTemplates(); renderGymPlaner(); renderGymToday();
                 if(typeof vBuz === 'function') vBuz([100, 50, 100, 50, 300]);
                 showAlert(`Dein eigener Plan "${tpl.name}" wurde geladen!`, "Plan geladen 🚀");
             }
@@ -4772,53 +5161,354 @@ function search3DExercise(query) {
         showConfirm("Möchtest du diesen eigenen Plan wirklich löschen?", function(res) {
             if(res) {
                 db.customGymTemplates = db.customGymTemplates.filter(t => t.id !== id);
-                save();
-                openGymTemplates(); // Modal direkt aktualisieren
+                save(); openGymTemplates(); 
             }
         });
     }
 
-    // NEU: Einzelnen Tag kopieren/verschieben
-    function moveCurrentDay() {
-        const sourceDay = getGymPlannerTarget();
+    // NEU: Zieht einen Systemplan als Kopie direkt in den Editor
+    function editSystemTemplate(idx) {
+        const sysTpl = gymTemplatesDB[idx];
+        draftTemplate = {
+            id: 'ctpl_' + Date.now(),
+            name: sysTpl.name + " (Kopie)",
+            tags: "Eigener Plan | Custom",
+            desc: "Basierend auf: " + sysTpl.name,
+            plan: JSON.parse(JSON.stringify(sysTpl.plan)) // Tiefe Kopie, damit Original unangetastet bleibt
+        };
         
-        // Verhindern, dass leere Tage verschoben werden
-        if(!db.gym.plans[sourceDay] || db.gym.plans[sourceDay].length === 0) {
-            showAlert("Dieser Tag ist komplett leer. Es gibt nichts zu verschieben.", "Leer");
+        const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+        days.forEach(d => { if(!draftTemplate.plan[d]) draftTemplate.plan[d] = []; });
+
+        document.getElementById('tpl-edit-title').innerText = "System-Plan anpassen 🛠️";
+        document.getElementById('tpl-edit-name').value = draftTemplate.name;
+        
+        document.getElementById('gym-templates-modal').style.display = 'none';
+        document.getElementById('template-editor-modal').style.display = 'flex';
+        setTplFlexDay('Montag');
+    }
+
+    // --- NEU: VOLLUMFÄNGLICHER PLAN-EDITOR LOGIK ---
+    let draftTemplate = null;
+    let draftCurrentDay = 'Montag';
+
+    function openTemplateEditor(id = null) {
+        const tplInput = document.getElementById('tpl-add-name');
+        const tplAutoList = document.getElementById('tpl-add-autocomplete');
+        tplInput.oninput = function() {
+            let val = this.value.toLowerCase();
+            tplAutoList.innerHTML = '';
+            if (!val) { tplAutoList.style.display = 'none'; return; }
+            let matches = gymExercises.filter(ex => ex.toLowerCase().includes(val)).slice(0, 8);
+            if(matches.length > 0) {
+                tplAutoList.style.display = 'block';
+                matches.forEach(ex => {
+                    let itemDiv = document.createElement("div");
+                    itemDiv.className = "autocomplete-item";
+                    itemDiv.innerText = ex;
+                    itemDiv.onclick = function() {
+                        tplInput.value = ex;
+                        tplAutoList.style.display = 'none';
+                    };
+                    tplAutoList.appendChild(itemDiv);
+                });
+            } else { tplAutoList.style.display = 'none'; }
+        };
+
+        if (id) {
+            const existing = db.customGymTemplates.find(t => t.id === id);
+            draftTemplate = JSON.parse(JSON.stringify(existing));
+            document.getElementById('tpl-edit-title').innerText = "Plan bearbeiten ✏️";
+        } else {
+            draftTemplate = {
+                id: 'ctpl_' + Date.now(),
+                name: '',
+                tags: "Eigener Plan | Custom",
+                desc: "Dein individuell erstellter Trainingsplan.",
+                plan: { 'Montag':[], 'Dienstag':[], 'Mittwoch':[], 'Donnerstag':[], 'Freitag':[], 'Samstag':[], 'Sonntag':[] }
+            };
+            document.getElementById('tpl-edit-title').innerText = "Neuer Master-Plan 🛠️";
+        }
+
+        document.getElementById('tpl-edit-name').value = draftTemplate.name;
+        setTplFlexDay('Montag'); 
+        
+        document.getElementById('gym-templates-modal').style.display = 'none'; 
+        document.getElementById('template-editor-modal').style.display = 'flex';
+    }
+
+    function closeTemplateEditor() {
+        document.getElementById('template-editor-modal').style.display = 'none';
+        openGymTemplates(); 
+    }
+
+    function setTplFlexDay(day) {
+        draftCurrentDay = day;
+        const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+        days.forEach(d => {
+            const el = document.getElementById('ted-' + d);
+            if(el) el.classList.remove('active');
+        });
+        document.getElementById('ted-' + day).classList.add('active');
+        renderTemplateEditor();
+    }
+
+    function renderTemplateEditor() {
+        const list = document.getElementById('tpl-ex-list');
+        list.innerHTML = '';
+        const dayPlan = draftTemplate.plan[draftCurrentDay] || [];
+
+        if(dayPlan.length === 0) {
+            list.innerHTML = `<div style="text-align:center; opacity:0.5; font-size:12px; padding:20px 0;">Keine Übungen an diesem Tag.<br>Füge unten welche hinzu!</div>`;
             return;
         }
 
-        showPrompt(`Wohin soll der Plan von "${sourceDay}" verschoben werden?\n(Bitte den Ziel-Wochentag eingeben, z.B. Mittwoch)`, "", function(targetDay) {
-            if(!targetDay) return;
-            
-            targetDay = targetDay.trim();
-            // Automatisch ersten Buchstaben groß machen, den Rest klein (für exaktes Matching)
-            targetDay = targetDay.charAt(0).toUpperCase() + targetDay.slice(1).toLowerCase();
-            
-            const validDays = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
-            
-            if(validDays.includes(targetDay)) {
-                if(sourceDay === targetDay) return; // Nichts tun, wenn gleicher Tag
-                
-                // 1. Plan auf den neuen Tag kopieren
-                db.gym.plans[targetDay] = JSON.parse(JSON.stringify(db.gym.plans[sourceDay]));
-                
-                // 2. Alten Tag komplett leeren
-                db.gym.plans[sourceDay] = [];
-                
-                save();
-                
-                // 3. UI aktualisieren: Dropdown auf den neuen Tag springen lassen
-                const selectEl = document.getElementById('gym-day-select');
-                if(selectEl) selectEl.value = targetDay;
-                gymPlannerTargetChanged();
-                
-                if(typeof vBuz === 'function') vBuz([50, 50, 50]);
-                showAlert(`Plan wurde erfolgreich von ${sourceDay} nach ${targetDay} verschoben!`, "Verschoben 🔄");
-            } else {
-                showAlert("Ungültiger Tag! Bitte gib einen korrekten Wochentag ein (z.B. Montag, Dienstag...).", "Fehler");
+        dayPlan.forEach((ex, idx) => {
+            let targetW = (ex.weight && ex.weight > 0) ? ` | ${ex.weight} kg` : '';
+            list.innerHTML += `
+                <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 8px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <span style="color:white; font-weight:800; font-size:13px; display:block;">${ex.name}</span>
+                        <span style="color:var(--day-glow); font-weight:700; font-size:11px;">${ex.sets} Sätze x ${ex.reps}${targetW}</span>
+                    </div>
+                    <button style="background:rgba(239, 68, 68, 0.2); color:var(--danger); border:none; border-radius:8px; padding:8px 12px; font-weight:bold; cursor:pointer;" onclick="removeExFromTemplateDraft(${idx})">✖</button>
+                </div>
+            `;
+        });
+    }
+
+    function addExToTemplateDraft() {
+        const nameInput = document.getElementById('tpl-add-name');
+        const setsInput = document.getElementById('tpl-add-sets');
+        const repsInput = document.getElementById('tpl-add-reps');
+        const weightInput = document.getElementById('tpl-add-weight');
+
+        const name = nameInput.value.trim();
+        const sets = parseInt(setsInput.value);
+        const reps = repsInput.value.trim();
+        const weight = parseFloat(weightInput.value) || 0;
+
+        if(!name || !sets || !reps) {
+            showAlert("Bitte fülle Übungsname, Sätze und Wiederholungen aus.");
+            return;
+        }
+
+        if(!draftTemplate.plan[draftCurrentDay]) draftTemplate.plan[draftCurrentDay] = [];
+        draftTemplate.plan[draftCurrentDay].push({ name, sets, reps, weight });
+        
+        nameInput.value = '';
+        weightInput.value = '';
+        document.getElementById('tpl-add-autocomplete').style.display = 'none';
+
+        if(typeof vBuz === 'function') vBuz(15);
+        renderTemplateEditor();
+    }
+
+    function removeExFromTemplateDraft(idx) {
+        draftTemplate.plan[draftCurrentDay].splice(idx, 1);
+        if(typeof vBuz === 'function') vBuz(15);
+        renderTemplateEditor();
+    }
+
+    function saveTemplateDraft() {
+        const planName = document.getElementById('tpl-edit-name').value.trim();
+        if(!planName) {
+            showAlert("Bitte gib dem Plan oben einen Namen!");
+            return;
+        }
+
+        draftTemplate.name = planName;
+        if(!db.customGymTemplates) db.customGymTemplates = [];
+
+        const existingIdx = db.customGymTemplates.findIndex(t => t.id === draftTemplate.id);
+        if (existingIdx !== -1) {
+            db.customGymTemplates[existingIdx] = draftTemplate;
+        } else {
+            db.customGymTemplates.push(draftTemplate);
+        }
+
+        save();
+        if(typeof vBuz === 'function') vBuz([30, 50, 30]);
+        showAlert(`Plan "${planName}" erfolgreich gespeichert!`, "Erfolg");
+        closeTemplateEditor(); 
+    }
+
+    // --- NEU: LOGIK FÜR DAS "TAGE UMLEGEN" MODAL (FÜR AKTIV & TEMPLATE) ---
+    let currentShiftMode = 'active'; // Erkennt, ob wir im Dashboard oder im Editor sind
+
+    // Startet das Modal vom Dashboard aus
+    function moveCurrentDay() {
+        currentShiftMode = 'active';
+        const sourceDay = getGymPlannerTarget();
+        if(sourceDay === 'DATE') {
+            showAlert("Bitte wähle einen regulären Wochentag (Montag - Sonntag) aus dem Dropdown, um diese Funktion zu nutzen.");
+            return;
+        }
+        
+        document.getElementById('shift-from-day').value = sourceDay;
+        
+        const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+        let nextIdx = (days.indexOf(sourceDay) + 1) % 7;
+        document.getElementById('shift-to-day').value = days[nextIdx];
+        
+        document.getElementById('day-shift-modal').style.display = 'flex';
+    }
+
+    // Startet das Modal aus dem Plan-Editor heraus
+    function openTemplateDayShift() {
+        currentShiftMode = 'template';
+        const sourceDay = draftCurrentDay; // Der Tag, den wir im Editor gerade angewählt haben
+        
+        document.getElementById('shift-from-day').value = sourceDay;
+        
+        const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+        let nextIdx = (days.indexOf(sourceDay) + 1) % 7;
+        document.getElementById('shift-to-day').value = days[nextIdx];
+        
+        document.getElementById('day-shift-modal').style.display = 'flex';
+    }
+
+    function closeDayShiftModal() {
+        document.getElementById('day-shift-modal').style.display = 'none';
+    }
+
+    // Führt die Verschiebung / Kopie durch (Universell)
+    function executeDayShift() {
+        const from = document.getElementById('shift-from-day').value;
+        const to = document.getElementById('shift-to-day').value;
+        const action = document.getElementById('shift-action').value;
+
+        if (from === to) {
+            showAlert("Quell- und Zieltag müssen unterschiedlich sein!");
+            return;
+        }
+
+        // Entscheiden, welches Plan-Objekt bearbeitet wird (Dashboard oder Editor-Entwurf)
+        let targetPlanObj = currentShiftMode === 'active' ? db.gym.plans : draftTemplate.plan;
+
+        let planFrom = targetPlanObj[from] ? JSON.parse(JSON.stringify(targetPlanObj[from])) : [];
+        let planTo = targetPlanObj[to] ? JSON.parse(JSON.stringify(targetPlanObj[to])) : [];
+
+        if (action === 'move') {
+            targetPlanObj[to] = planFrom;
+            targetPlanObj[from] = []; 
+            showAlert(`Training von ${from} wurde erfolgreich auf ${to} verschoben!`, "Verschoben ➡️");
+        } else if (action === 'swap') {
+            targetPlanObj[to] = planFrom;
+            targetPlanObj[from] = planTo; 
+            showAlert(`Die Trainings von ${from} und ${to} wurden erfolgreich getauscht!`, "Getäuscht 🔄");
+        } else if (action === 'copy') {
+            targetPlanObj[to] = planFrom; 
+            showAlert(`Training von ${from} wurde nach ${to} kopiert!`, "Kopiert 📄");
+        }
+
+        closeDayShiftModal();
+        if(typeof vBuz === 'function') vBuz([30, 50, 30]);
+
+        if (currentShiftMode === 'active') {
+            // Dashboard-Modus: Sofort speichern und UI aktualisieren
+            save();
+            const selectEl = document.getElementById('gym-day-select');
+            if(selectEl) selectEl.value = to;
+            gymPlannerTargetChanged();
+        } else {
+            // Editor-Modus: Wir speichern noch nicht in die DB, sondern wechseln nur den Tab, um das Ergebnis zu zeigen
+            setTplFlexDay(to);
+        }
+    }
+
+    // --- HEALTH CONNECT / APPLE HEALTH SYNC ---
+   async function syncHealthData(silent = false) {
+        if (!window.Capacitor || !window.Capacitor.Plugins.Health) {
+            if(!silent) showAlert("Health Sync ist nur in der App verfügbar.", "Hinweis");
+            return;
+        }
+        const Health = window.Capacitor.Plugins.Health;
+        try {
+            const status = await Health.isAvailable();
+            if (!status.available) {
+                if(!silent) showAlert("Bitte installiere 'Health Connect' aus dem Play Store.", "Google Health");
+                return;
             }
-        }, "Tag verschieben");
+
+            // NUR DIE SICHEREN BASIS-TYPEN (Kein Yazio/Nutrition mehr)
+            await Health.requestAuthorization({
+                read: ['steps', 'weight', 'heartRate', 'sleep', 'calories'], 
+                write: []
+            });
+
+            db.healthSyncActive = true; 
+            
+            const now = new Date();
+            const yesterday = new Date(now.getTime() - (24 * 60 * 60 * 1000));
+            const dateDisplay = now.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit'});
+            const dateStr = now.toISOString().split('T')[0];
+
+            async function safeRead(type) {
+                try { return await Health.readSamples({ dataType: type, startDate: yesterday.toISOString(), endDate: now.toISOString() }); } 
+                catch(e) { return { samples: [] }; }
+            }
+
+            // 1. SCHRITTE
+            const stepRes = await safeRead('steps');
+            let tSteps = 0; 
+            if(stepRes.samples) stepRes.samples.forEach(s => tSteps += s.value);
+            db.analytics.steps = Math.round(tSteps); 
+
+            // 2. GEWICHT 
+            try {
+                const wRes = await Health.readSamples({ dataType: 'weight', startDate: yesterday.toISOString(), endDate: now.toISOString(), limit: 1 });
+                if (wRes.samples && wRes.samples.length > 0) {
+                    const lWeight = wRes.samples[0].value.toFixed(1);
+                    db.personal.weight = lWeight;
+                    db.weightData = db.weightData.filter(d => d.isoDate !== dateStr);
+                    db.weightData.push({ date: dateDisplay, isoDate: dateStr, val: parseFloat(lWeight) });
+                }
+            } catch(e) {}
+
+            // 3. HERZFREQUENZ 
+            const hrRes = await safeRead('heartRate');
+            let hrSum = 0; 
+            if(hrRes.samples && hrRes.samples.length > 0) {
+                hrRes.samples.forEach(s => hrSum += s.value);
+                db.analytics.heartRate = Math.round(hrSum / hrRes.samples.length);
+            } else {
+                db.analytics.heartRate = 0; 
+            }
+
+            // 4. SCHLAF 
+            const sleepRes = await safeRead('sleep');
+            let sleepMs = 0; 
+            if(sleepRes.samples) {
+                sleepRes.samples.forEach(s => sleepMs += (new Date(s.endDate).getTime() - new Date(s.startDate).getTime()));
+            }
+            if(sleepMs > 0) {
+                const h = Math.floor(sleepMs / 3600000); 
+                const m = Math.floor((sleepMs % 3600000) / 60000);
+                db.analytics.sleepStr = `${h}h ${m}m`;
+            } else {
+                db.analytics.sleepStr = "0h 0m"; 
+            }
+
+            // 5. KALORIEN (Aktivkalorien)
+            const kcalRes = await safeRead('calories');
+            let tKcal = 0;
+            if(kcalRes.samples) kcalRes.samples.forEach(s => tKcal += s.value);
+            if(tKcal > 0) db.analytics.activeCal = Math.round(tKcal);
+
+            save();
+            updateBodySummary(); 
+            if(typeof initChart === 'function') initChart(); 
+            if(typeof calcBMI === 'function' && db.personal.height) calcBMI(); 
+            
+            if(!silent) {
+                if(typeof vBuz === 'function') vBuz([50, 100, 50]);
+                showAlert("Erfolgreich synchronisiert!\n\nSchritte, Puls, Schlaf und Gewicht sind verbunden.", "Health Connect");
+            }
+        } catch (err) {
+            console.error(err);
+            if(!silent) showAlert("Verbindung fehlgeschlagen.\nGrund: " + (err.message || "Blockiert vom System."), "Fehler");
+        }
     }
 
     if ('serviceWorker' in navigator) {
