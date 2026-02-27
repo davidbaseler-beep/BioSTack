@@ -455,10 +455,53 @@ input, textarea, select {
     .bio-3d-panel { background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 16px; padding: 15px; margin-top: 15px; text-align: left;}
     .bio-3d-ex { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size:13px; }
     .bio-3d-ex:last-child { border: none; }
-    </style>
+
+        /* --- AUTO-REST TIMER --- */
+            #rest-timer-widget {
+                position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%) translateY(150px);
+                background: rgba(9, 9, 11, 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+                border: 1px solid var(--accent); border-radius: 30px; padding: 10px 20px;
+                display: flex; align-items: center; gap: 15px; z-index: 9999; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+                transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            }
+            #rest-timer-widget.active { transform: translateX(-50%) translateY(0); }
+            .rest-timer-text { color: white; font-size: 16px; font-weight: 900; letter-spacing: 1px; min-width: 50px; text-align: center; }
+            .rest-timer-btn { background: rgba(255,255,255,0.1); border: none; color: #cbd5e1; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+            .rest-timer-btn:active { background: var(--accent); color: black; }
+
+        /* --- KATALOG UI FIX --- */
+        #plan-col-katalog .collapse-content {
+            padding: 15px 0 0 0 !important;
+        }
+        #plan-col-katalog .supp-card {
+            flex-wrap: nowrap !important;
+            gap: 10px;
+        }
+        #plan-col-katalog .supp-meta {
+            flex: 1 1 auto;
+            min-width: 0;
+            margin-right: 0;
+        }
+        .btn-add-katalog {
+        flex-shrink: 0 !important;
+        padding: 10px 12px !important;
+        font-size: 11px !important;
+    }
+
+    /* --- MIND & LIFESTYLE (HABITS & JOURNAL) --- */
+    .habit-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 5px; }
+    .habit-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px 5px; text-align: center; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+    .habit-btn.active { background: var(--labor-glow); border-color: var(--labor-glow); box-shadow: 0 0 10px rgba(168, 85, 247, 0.4); }
+    .habit-icon { font-size: 22px; transition: transform 0.2s; }
+    .habit-btn:active .habit-icon { transform: scale(0.8); }
+    .habit-label { font-size: 9px; font-weight: 800; color: #cbd5e1; text-transform: uppercase; }
+    .habit-btn.active .habit-label { color: white; }
+    .journal-input { width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.2); border: 1px dashed rgba(255,255,255,0.2); padding: 12px; border-radius: 12px; color: white; font-size: 13px; font-family: inherit; resize: vertical; min-height: 70px; transition: 0.3s; }
+    .journal-input:focus { border-color: var(--labor-glow); outline: none; background: rgba(0,0,0,0.4); }
     </style>
-</head>
-<body>
+        </style>
+    </head>
+    <body>
 
     <div id="app-lock-screen">
     <div id="pin-close-btn" style="position:absolute; top:30px; right:30px; font-size:24px; color:var(--danger); font-weight:900; cursor:pointer; display:none;" onclick="cancelPinSetup()">✕</div>
@@ -530,6 +573,24 @@ input, textarea, select {
 <div id="prompt-modal" class="custom-modal-overlay"><div class="custom-modal-box"><div class="custom-modal-title" id="prompt-title">Eingabe</div><div class="custom-modal-text" id="prompt-text"></div><div class="autocomplete-wrapper"><input type="text" id="prompt-input" class="custom-modal-input" autocomplete="off"><div id="exercise-autocomplete-list" class="autocomplete-items"></div></div><div class="modal-btn-row"><button class="modal-btn btn-cancel" onclick="closePrompt()">Abbrechen</button><button class="modal-btn btn-confirm" onclick="promptConfirm()">Speichern</button></div></div></div>
 
 <div id="cycle-modal" class="custom-modal-overlay"><div class="custom-modal-box"><div class="custom-modal-title">Pause einplanen ⏸</div><div class="custom-modal-text">Wie viele Tage soll dieses Supplement pausiert werden?</div><input type="number" id="pause-days-input" class="custom-modal-input" value="7"><div class="modal-btn-row"><button class="modal-btn btn-cancel" onclick="closeCycleModal()">Abbruch</button><button class="modal-btn btn-confirm" onclick="confirmCyclePause()">Pause Start</button></div></div></div>
+
+<div id="habit-edit-modal" class="custom-modal-overlay">
+    <div class="custom-modal-box">
+        <div class="custom-modal-title">Habits anpassen ✨</div>
+        <div class="custom-modal-text">Füge neue Gewohnheiten hinzu oder lösche alte.</div>
+        
+        <div id="habit-edit-list" style="margin-bottom: 15px; max-height: 200px; overflow-y: auto; text-align: left;"></div>
+        
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <input type="text" id="new-habit-icon" class="custom-modal-input" placeholder="Icon (z.B. 📖)" style="width: 30%; margin-bottom:0; font-size:14px; padding:10px;">
+            <input type="text" id="new-habit-label" class="custom-modal-input" placeholder="Name (kurz)" style="flex:1; margin-bottom:0; font-size:14px; padding:10px;">
+        </div>
+        <button class="btn-action" style="background: var(--accent); padding: 10px; font-size: 12px; margin-top: 0;" onclick="addCustomHabit()">+ NEUES HABIT</button>
+        
+        <button class="modal-btn btn-confirm" style="width:100%; margin-top:15px;" onclick="closeHabitEditor()">SCHLIEßEN</button>
+    </div>
+</div>
+
 <div id="gym-add-modal" class="custom-modal-overlay">
     <div class="custom-modal-box">
         <div class="custom-modal-title">Neue Übung 🏋️</div>
@@ -688,6 +749,13 @@ input, textarea, select {
 
         <button class="modal-btn btn-confirm" style="margin-top:15px;" onclick="closeWiki()">Schließen</button>
     </div>
+</div>
+
+<div id="rest-timer-widget">
+    <span style="font-size:18px; animation: pulseGold 2s infinite;">⏱️</span>
+    <div class="rest-timer-text" id="rest-timer-display">01:30</div>
+    <button class="rest-timer-btn" onclick="addRestTime()">+30s</button>
+    <button class="rest-timer-btn" style="color:var(--danger)" onclick="cancelRestTimer()">✖</button>
 </div>
 
 <div class="nav">
@@ -885,7 +953,30 @@ input, textarea, select {
         </div>
     </div>
 
-    <div id="plan-content"></div>
+    <div class="chart-container" id="plan-col-mind" style="display:none; margin-bottom: 15px; border: 1px solid rgba(168, 85, 247, 0.3); background: linear-gradient(135deg, rgba(168, 85, 247, 0.05), rgba(0,0,0,0));">
+        <div class="collapse-header" onclick="tglCollapse('plan-col-mind')">
+            <h3 style="margin:0; color:var(--labor-glow); font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">🧠 Mind & Lifestyle</h3>
+        </div>
+        <div class="collapse-content" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+            
+            <div id="habit-section">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <div style="font-size:11px; color:#94a3b8; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Daily Habits</div>
+                    <button style="background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); color:#cbd5e1; font-size:9px; font-weight:bold; padding:4px 8px; border-radius:6px; cursor:pointer;" onclick="openHabitEditor()">⚙️ BEARBEITEN</button>
+                </div>
+                <div class="habit-grid" id="habit-container"></div>
+            </div>
+
+            <div id="journal-section">
+                <div style="font-size:11px; color:#94a3b8; font-weight:800; margin-bottom:10px; margin-top:15px; text-transform:uppercase; letter-spacing:1px;">Tages-Notiz / Log</div>
+                <textarea id="journal-text" class="journal-input" placeholder="Wie war dein Fokus? Nebenwirkungen? Testberichte?" oninput="debouncedSaveJournal()"></textarea>
+                <div id="journal-saved-msg" style="font-size:10px; color:var(--success); text-align:right; height:12px; margin-top:6px; font-weight:bold;"></div>
+            </div>
+
+            </div>
+        </div>
+
+        <div id="plan-content"></div>
     <div class="chart-container" style="padding-bottom:10px;"><button onclick="tglSum()" style="width:100%; background: linear-gradient(135deg, rgba(255,140,0,0.1), rgba(255,140,0,0.02)); border: 1px solid rgba(255,140,0,0.3); color: var(--accent); font-weight: 800; cursor: pointer; letter-spacing: 2px; padding: 15px; border-radius: 16px; text-transform: uppercase; font-size: 12px; display:flex; align-items:center; justify-content:center; gap:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.2s ease;">🧬 STACK METRICS</button><div id="sum-details" style="display:none; margin-top:20px;"></div></div>
     
     <div class="chart-container" id="plan-col-katalog" style="margin-top: 15px; border: 1px solid rgba(255, 140, 0, 0.3);">
@@ -1087,6 +1178,8 @@ input, textarea, select {
                     <summary style="font-size:12px; font-weight:bold; color:var(--day-glow); cursor:pointer; outline:none; list-style:none;">📋 Plan & Allgemein ▾</summary>
                     <div style="margin-top:10px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:10px;">
                         <label class="checkbox-row"><input type="checkbox" id="chk-show-fasting"> Fasten-Tracker anzeigen</label>
+                        <label class="checkbox-row"><input type="checkbox" id="chk-show-habits"> Daily Habits (Gewohnheiten) anzeigen</label>
+                        <label class="checkbox-row"><input type="checkbox" id="chk-show-journal"> Tagebuch/Notizen anzeigen</label>
                         <label class="checkbox-row"><input type="checkbox" id="chk-show-top-level"> Level-Badge oben dauerhaft anzeigen</label>
                         <label class="checkbox-row"><input type="checkbox" id="chk-haptic"> Haptisches Feedback (Vibration)</label>
                         <label class="checkbox-row"><input type="checkbox" id="chk-show-confetti"> Konfetti bei Level-Up</label>
@@ -2414,6 +2507,9 @@ input, textarea, select {
             
             vBuz([50, 100, 50]);
             
+            // NEU: Auto-Rest Timer starten (Standard: 90 Sekunden)
+            startRestTimer(60);
+            
             // Auto-Collapse prüfen: Sind alle Sätze dieser Übung jetzt fertig?
             const specificPlan = db.gym.plans[dateStr];
             const isOverride = (day === getGermanDay() && specificPlan && specificPlan.length > 0);
@@ -2939,6 +3035,8 @@ function manualRefill(id, current) {
         const dayDate = dObj.toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit'});
         document.getElementById('date-display').innerHTML = `${dayName}, ${dayDate}<br><span style="font-size:10px; opacity:0.6; font-weight:400;">${dayOffset === 0 ? 'HEUTE' : (dayOffset === -1 ? 'GESTERN' : '')}</span>`;
 
+        renderMindWidget(); // NEU: Lädt das Habits/Journal Widget
+
         if(!db.history[viewDate]) db.history[viewDate] = [];
         const start = new Date(db.startDate).getTime(); const current = new Date(viewDate).getTime(); const diff = current - start; const dayCount = Math.ceil(diff / (1000 * 60 * 60 * 24)) + 1; 
         document.getElementById('f-counter').innerText = dayCount > 0 ? `🔥 Tag ${dayCount}` : `⏳ Bald`;
@@ -3011,6 +3109,7 @@ function manualRefill(id, current) {
     function calculateInsights() { const days = Object.keys(db.history); if (days.length < 3) return ""; let correlations = { energy: {}, focus: {}, sleep: {} }; days.forEach(date => { const taken = db.history[date]; const fb = db.feedback && db.feedback[date]; if (fb && taken && taken.length > 0) { taken.forEach(id => { ['energy', 'focus', 'sleep'].forEach(key => { if (!correlations[key][id]) correlations[key][id] = []; correlations[key][id].push(parseInt(fb[key])); }); }); } }); let html = ""; const fullCat = getFullCatalog(); let foundAny = false; Object.keys(correlations).forEach(key => { for (let id in correlations[key]) { const arr = correlations[key][id]; if(arr.length < 2) continue; const avg = arr.reduce((a, b) => a + b, 0) / arr.length; if (avg > 70) { const s = fullCat.find(x => x.id === id); if (s) { html += `<span class="insight-tag">⚡️ ${s.name} ➔ ${key.toUpperCase()}: ${avg.toFixed(0)}%</span> `; foundAny = true; } } } }); if(foundAny) return `<div class="gsb-card" style="margin-top:10px;"><div style="font-size:12px;font-weight:800;color:#64748b;margin-bottom:10px;text-transform:uppercase;">Bio-Insights (Beta)</div>${html}</div>`; return ""; }
     function renderSum(nutriData, dailyCost) { const s = document.getElementById('sum-details'); const monthlyCost = dailyCost * 30.44; let html = `<div class="gsb-card"><div class="gsb-row"><span class="gsb-label">Tageskosten (Aktiv)</span><span class="price-tag">${dailyCost.toFixed(2)} €</span></div><div class="gsb-row"><span class="gsb-label">Monatsprognose (Ø)</span><span class="gsb-value">${monthlyCost.toFixed(2)} €</span></div></div>`; let timingHtml = ""; db.activeSupps.forEach(as => { if(!(as.paused || false)) { const k = kineticData[as.id]; if(k) { const supp = getFullCatalog().find(x => x.id === as.id); if(supp) { timingHtml += `<div class="gsb-row"><span class="gsb-label">${supp.name}</span><span class="gsb-value" style="font-size:12px">Peak: ${k.peak} / ${k.duration}</span></div>`; } } } }); if(timingHtml) { html += `<div class="gsb-card" style="margin-top:10px;"><div style="font-size:12px;font-weight:800;color:#64748b;margin-bottom:10px;text-transform:uppercase;">Wirkungs-Timing</div>${timingHtml}</div>`; } html += calculateInsights(); html += `<div class="gsb-card" style="margin-top:10px;">`; for(let [k,v] of Object.entries(nutriData)) { html += `<div class="gsb-row"><span class="gsb-label">${k}</span><span class="gsb-value">${v.toFixed(1)}</span></div>`; } html += `</div>`; s.innerHTML = html; }
     function tglSum() { const e=document.getElementById('sum-details'); e.style.display=e.style.display==='block'?'none':'block'; }
+
     function renderHistory() {
         const hList = document.getElementById('history-list');
         if (!hList) return;
@@ -3052,12 +3151,20 @@ function manualRefill(id, current) {
                     const countTaken = takenIds.filter(id => totalSupps.some(as => as.id === id)).length;
                     const fb = db.feedback && db.feedback[d] ? db.feedback[d] : null;
                     const fbHtml = fb ? `<div class="fb-tags">⚡️${fb.energy}% &nbsp; 🧠${fb.focus}% &nbsp; 💤${fb.sleep}%</div>` : '';
+                    
+                    // NEU: Journal Notiz für diesen Tag abrufen
+                    const journalText = db.journalData && db.journalData[d] ? db.journalData[d] : '';
+                    const journalHtml = journalText ? `<div style="margin-top:10px; padding-top:10px; border-top:1px dashed rgba(255,255,255,0.1); font-size:11px; color:#cbd5e1; font-style:italic; line-height:1.4;">📝 "${journalText}"</div>` : '';
+
                     let listHtml = "";
                     
                     totalSupps.forEach(as => {
                         const s = fullCat.find(x => x.id === as.id), isTaken = takenIds.includes(as.id);
                         listHtml += `<div class="hist-list-item ${isTaken ? 'hist-status-ok' : 'hist-status-fail'}">${isTaken ? '✓' : '✕'} ${s ? s.name : 'Unbekannt'}</div>`;
                     });
+
+                    // NEU: Notiz unten an die Supplement-Liste anhängen
+                    listHtml += journalHtml;
                     
                     yearHtml += `
                     <div class="history-item" onclick="tglHist('${d}')" style="margin-bottom:8px; background:rgba(0,0,0,0.2);">
@@ -3404,6 +3511,8 @@ function initChart() {
         document.getElementById('pal-sport').value = db.personal.pal.sport;
         
         document.getElementById('chk-show-fasting').checked = db.analytics.showFasting;
+        document.getElementById('chk-show-habits').checked = db.analytics.showHabits !== false;
+        document.getElementById('chk-show-journal').checked = db.analytics.showJournal !== false;
         document.getElementById('chk-show-masse').checked = db.analytics.showMasse;
         document.getElementById('chk-show-gewicht').checked = db.analytics.showGewicht;
         document.getElementById('chk-show-labor').checked = db.analytics.showLabor;
@@ -3452,6 +3561,8 @@ function initChart() {
         db.personal.pal.sport = parseFloat(document.getElementById('pal-sport').value) || 0;
         
         db.analytics.showFasting = document.getElementById('chk-show-fasting').checked;
+        db.analytics.showHabits = document.getElementById('chk-show-habits').checked;
+        db.analytics.showJournal = document.getElementById('chk-show-journal').checked;
         db.analytics.showMasse = document.getElementById('chk-show-masse').checked;
         db.analytics.showGewicht = document.getElementById('chk-show-gewicht').checked;
         db.analytics.showLabor = document.getElementById('chk-show-labor').checked;
@@ -3877,9 +3988,9 @@ function initChart() {
     setTimeout(() => {
         loadStartTabSetting(); // Lädt deine Einstellung ins Dropdown
         updateDashboardView(); // FIX: Versteckt den Fasten-Timer direkt beim Start, falls deaktiviert!
-        if(db.startTab && db.startTab !== 'plan') {
-            showPage(db.startTab); // Springt magisch zum gewählten Tab!
-        }
+        
+        // FIX: Zwingt die App, den Start-Tab (oder standardmäßig den Plan) sofort komplett zu laden
+        showPage(db.startTab || 'plan'); 
     }, 100);
 
     // --- PIN-LOGIK (Subtil & Clean) ---
@@ -5568,6 +5679,181 @@ function search3DExercise(query) {
             console.error(err);
             if(!silent) showAlert("Verbindung fehlgeschlagen.\nGrund: " + (err.message || "Blockiert vom System."), "Fehler");
         }
+    }
+
+// --- MIND & LIFESTYLE LOGIK ---
+    function getHabitsList() {
+        if (!db.customHabits || db.customHabits.length === 0) {
+            // Standard-Werte beim allerersten Start
+            db.customHabits = [
+                { id: 'h_ice', icon: '🚿', label: 'Eisbad' },
+                { id: 'h_med', icon: '🧘‍♂️', label: 'Meditat.' },
+                { id: 'h_sun', icon: '☀️', label: 'Sonne' },
+                { id: 'h_h2o', icon: '💧', label: '3L H2O' }
+            ];
+            save();
+        }
+        return db.customHabits;
+    }
+
+    function renderMindWidget() {
+        const widget = document.getElementById('plan-col-mind');
+        if(!widget) return;
+
+        if(db.analytics.showHabits === undefined) db.analytics.showHabits = true;
+        if(db.analytics.showJournal === undefined) db.analytics.showJournal = true;
+        if(!db.habitsData) db.habitsData = {};
+        if(!db.journalData) db.journalData = {};
+
+        const hSec = document.getElementById('habit-section');
+        const jSec = document.getElementById('journal-section');
+
+        if(!db.analytics.showHabits && !db.analytics.showJournal) {
+            widget.style.display = 'none';
+            return;
+        }
+        
+        widget.style.display = 'block';
+        hSec.style.display = db.analytics.showHabits ? 'block' : 'none';
+        jSec.style.display = db.analytics.showJournal ? 'block' : 'none';
+
+        const viewDate = getViewDate();
+
+        if(db.analytics.showHabits) {
+            const hCont = document.getElementById('habit-container');
+            const todayHabits = db.habitsData[viewDate] || {};
+            let hHtml = "";
+            getHabitsList().forEach(h => {
+                const isActive = todayHabits[h.id] ? 'active' : '';
+                hHtml += `<div class="habit-btn ${isActive}" onclick="toggleHabit('${h.id}')">
+                    <span class="habit-icon">${h.icon}</span>
+                    <span class="habit-label">${h.label}</span>
+                </div>`;
+            });
+            hCont.innerHTML = hHtml;
+        }
+
+        if(db.analytics.showJournal) {
+            document.getElementById('journal-text').value = db.journalData[viewDate] || "";
+            document.getElementById('journal-saved-msg').innerText = ""; 
+        }
+    }
+
+    // --- HABIT EDITOR FUNKTIONEN ---
+    function openHabitEditor() {
+        renderHabitEditList();
+        document.getElementById('habit-edit-modal').style.display = 'flex';
+    }
+
+    function closeHabitEditor() {
+        document.getElementById('habit-edit-modal').style.display = 'none';
+    }
+
+    function renderHabitEditList() {
+        const list = document.getElementById('habit-edit-list');
+        list.innerHTML = "";
+        getHabitsList().forEach(h => {
+            list.innerHTML += `
+                <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.2); padding:10px; border-radius:8px; margin-bottom:5px; border:1px solid var(--glass-border);">
+                    <div style="color:white; font-size:14px; font-weight:bold;">${h.icon} ${h.label}</div>
+                    <button style="background:rgba(239, 68, 68, 0.2); color:var(--danger); border:none; border-radius:6px; padding:6px 10px; font-weight:bold; cursor:pointer;" onclick="deleteCustomHabit('${h.id}')">✖</button>
+                </div>
+            `;
+        });
+    }
+
+    function addCustomHabit() {
+        const icon = document.getElementById('new-habit-icon').value.trim() || '📌';
+        const label = document.getElementById('new-habit-label').value.trim();
+        if(!label) { showAlert("Bitte gib einen Namen für das Habit ein!"); return; }
+        
+        const newId = 'h_' + Date.now();
+        db.customHabits.push({ id: newId, icon: icon, label: label });
+        save();
+        
+        document.getElementById('new-habit-icon').value = '';
+        document.getElementById('new-habit-label').value = '';
+        
+        renderHabitEditList();
+        renderMindWidget();
+        if(typeof vBuz === 'function') vBuz(15);
+    }
+
+    function deleteCustomHabit(id) {
+        db.customHabits = db.customHabits.filter(h => h.id !== id);
+        save();
+        renderHabitEditList();
+        renderMindWidget();
+        if(typeof vBuz === 'function') vBuz([30, 30]);
+    }
+
+    function toggleHabit(hId) {
+        const viewDate = getViewDate();
+        if(!db.habitsData[viewDate]) db.habitsData[viewDate] = {};
+        db.habitsData[viewDate][hId] = !db.habitsData[viewDate][hId];
+        save();
+        renderMindWidget();
+        if(typeof vBuz === 'function') vBuz(db.habitsData[viewDate][hId] ? [50, 50] : 30);
+    }
+
+    let journalTimeout;
+    function debouncedSaveJournal() {
+        clearTimeout(journalTimeout);
+        const msg = document.getElementById('journal-saved-msg');
+        msg.innerText = "Tippen...";
+        msg.style.color = "#cbd5e1";
+        
+        journalTimeout = setTimeout(() => {
+            const viewDate = getViewDate();
+            const text = document.getElementById('journal-text').value;
+            db.journalData[viewDate] = text;
+            save();
+            msg.innerText = "✓ Gesichert";
+            msg.style.color = "var(--success)";
+            if(typeof vBuz === 'function') vBuz(15);
+            setTimeout(() => msg.innerText = "", 2000);
+        }, 800); // Speichert 0.8 Sek nach dem letzten Tastenanschlag automatisch
+    }
+
+    // --- AUTO-REST TIMER LOGIK ---
+    let restTimerInt = null;
+    let restEndTime = 0;
+
+    function startRestTimer(seconds = 60) {
+        const widget = document.getElementById('rest-timer-widget');
+        const display = document.getElementById('rest-timer-display');
+        
+        if(!widget || !display) return;
+        
+        restEndTime = Date.now() + (seconds * 1000);
+        widget.classList.add('active'); // Fährt das Widget ins Bild
+        
+        clearInterval(restTimerInt);
+        restTimerInt = setInterval(() => {
+            let remaining = Math.ceil((restEndTime - Date.now()) / 1000);
+            if(remaining <= 0) {
+                clearInterval(restTimerInt);
+                display.innerText = "00:00";
+                widget.classList.remove('active'); // Fährt das Widget wieder weg
+                if(typeof vBuz === 'function') vBuz([200, 100, 200, 100, 500]); // Aggressive Alarm-Vibration
+            } else {
+                let m = Math.floor(remaining / 60);
+                let s = remaining % 60;
+                display.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            }
+        }, 1000);
+    }
+
+    function addRestTime() {
+        restEndTime += 30000; // 30 Sekunden extra
+        if(typeof vBuz === 'function') vBuz(15);
+    }
+
+    function cancelRestTimer() {
+        clearInterval(restTimerInt);
+        const widget = document.getElementById('rest-timer-widget');
+        if(widget) widget.classList.remove('active');
+        if(typeof vBuz === 'function') vBuz(15);
     }
 
     if ('serviceWorker' in navigator) {
