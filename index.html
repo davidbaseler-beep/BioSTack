@@ -2430,8 +2430,8 @@ input, textarea, select {
                     <div style="display: flex; gap: 10px; margin-top: 10px;">
                         <button class="btn-action" style="flex:1; background: rgba(255, 140, 0, 0.1); border: 1px dashed rgba(255, 140, 0, 0.3); padding: 8px; font-size: 11px; margin-bottom: 0; color: var(--accent); box-shadow: none;" onclick="addWarmupSets('${day}', ${exIdx}, '${dateStr}', ${ex.sets})">🔥 WARM-UP</button>
                         <button class="btn-action" style="flex:1; background: rgba(255,255,255,0.05); border: 1px dashed rgba(255,255,255,0.1); padding: 8px; font-size: 11px; margin-bottom: 0; color: #cbd5e1; box-shadow: none;" onclick="addExtraGymSet('${day}', ${exIdx}, '${dateStr}')">➕ SATZ</button>
-                        <button class="btn-action" style="flex:1; background: rgba(239, 68, 68, 0.05); border: 1px dashed rgba(239, 68, 68, 0.2); padding: 8px; font-size: 11px; margin-bottom: 0; color: #ef4444; box-shadow: none;" onclick="('${day}', ${exIdx}, '${dateStr}', '${ex.name.replace(/'/g, "\\'")}', ${ex.sets})">➖ SATZ</button>
-                    </div>removeExtraGymSet
+                        <button class="btn-action" style="flex:1; background: rgba(239, 68, 68, 0.05); border: 1px dashed rgba(239, 68, 68, 0.2); padding: 8px; font-size: 11px; margin-bottom: 0; color: #ef4444; box-shadow: none;" onclick="removeExtraGymSet('${day}', ${exIdx}, '${dateStr}', '${ex.name.replace(/'/g, "\\'")}', ${ex.sets})">➖ SATZ</button>
+                    </div>
                 </div>
             </div>`;
         });
