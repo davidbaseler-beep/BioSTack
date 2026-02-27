@@ -370,7 +370,7 @@ input, textarea, select {
     /* --- PREMIUM UI UPGRADES (DETAILS) --- */
     
     /* 1. Deine Idee: Goldene Umrandung & Premium-Look für Katalog-Items */
-    #page-market .supp-card {
+    #plan-col-katalog .supp-card {
         border: 1px solid rgba(255, 140, 0, 0.25) !important;
         background: linear-gradient(145deg, rgba(24, 24, 27, 0.7), rgba(9, 9, 11, 0.9)) !important;
         box-shadow: 0 10px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255, 140, 0, 0.1) !important;
@@ -696,7 +696,6 @@ input, textarea, select {
     </div>
 
     <button onclick="showPage('plan')" id="n-plan">Plan</button>
-    <button onclick="showPage('market')" id="n-market">Katalog</button>
     <button onclick="showPage('gym')" id="n-gym">Gym</button>
     <button onclick="showPage('weight')" id="n-weight">Body</button>
     <button onclick="showPage('profile')" id="n-profile">Cloud</button>
@@ -888,6 +887,31 @@ input, textarea, select {
 
     <div id="plan-content"></div>
     <div class="chart-container" style="padding-bottom:10px;"><button onclick="tglSum()" style="width:100%; background: linear-gradient(135deg, rgba(255,140,0,0.1), rgba(255,140,0,0.02)); border: 1px solid rgba(255,140,0,0.3); color: var(--accent); font-weight: 800; cursor: pointer; letter-spacing: 2px; padding: 15px; border-radius: 16px; text-transform: uppercase; font-size: 12px; display:flex; align-items:center; justify-content:center; gap:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.2s ease;">🧬 STACK METRICS</button><div id="sum-details" style="display:none; margin-top:20px;"></div></div>
+    
+    <div class="chart-container" id="plan-col-katalog" style="margin-top: 15px; border: 1px solid rgba(255, 140, 0, 0.3);">
+        <div class="collapse-header" onclick="tglCollapse('plan-col-katalog')">
+            <h3 style="margin:0; color:var(--accent); font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">🛒 Katalog & Hinzufügen</h3>
+        </div>
+        <div class="collapse-content" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+            <button class="btn-action" style="background: rgba(255,255,255,0.05); border: 1px solid #64748b; color: #94a3b8; font-size: 12px; padding: 10px;" onclick="openWiki()">📚 GUIDE: WAS BRAUCHE ICH?</button>
+            <button class="btn-action" style="background: #1e293b; border: 1px solid var(--accent); color: var(--accent); margin-bottom: 20px;" onclick="tglAddForm()">+ NEUES SUPPLEMENT</button>
+            
+            <div id="add-supp-form" class="add-supp-form">
+                <input type="text" id="new-icon" placeholder="Symbol (Emoji nutzen 💊, 🌿, 🧠)">
+                <input type="text" id="new-brand" placeholder="Marke">
+                <input type="text" id="new-name" placeholder="Name">
+                <input type="text" id="new-unit" placeholder="Einheit (z.B. Caps, ml, g)">
+                <div style="display:flex; gap:10px;">
+                    <input type="number" id="new-stock" placeholder="Aktueller Bestand" style="flex:1.2">
+                    <input type="number" id="new-restock-qty" placeholder="Std-Kaufmenge" style="flex:1">
+                    <input type="number" id="new-price" step="0.01" placeholder="Preis (€)" style="flex:2">
+                </div>
+                <textarea id="new-nutri" placeholder="Nährstoffe (Einer pro Zeile, z.B.&#10;Zink: 25 mg&#10;Magnesium: 100 mg)" rows="3"></textarea>
+                <button id="btn-save-supp" class="btn-action" style="background: var(--accent); margin-top: 10px;" onclick="saveNewSupp()">IM KATALOG SPEICHERN</button>
+            </div>
+            <div id="market-list"></div>
+        </div>
+    </div>
 </div>
 
 <div id="page-weight" class="page">
@@ -1012,26 +1036,6 @@ input, textarea, select {
 
 </div>
 
-<div id="page-market" class="page">
-    <h2>Katalog</h2>
-    <button class="btn-action" style="background: rgba(255,255,255,0.05); border: 1px solid #64748b; color: #94a3b8; font-size: 12px; padding: 10px;" onclick="openWiki()">📚 GUIDE: WAS BRAUCHE ICH?</button>
-    <button class="btn-action" style="background: #1e293b; border: 1px solid var(--accent); color: var(--accent); margin-bottom: 20px;" onclick="tglAddForm()">+ NEUES SUPPLEMENT</button>
-    <div id="add-supp-form" class="add-supp-form">
-        <input type="text" id="new-icon" placeholder="Symbol (Emoji nutzen 💊, 🌿, 🧠)">
-        <input type="text" id="new-brand" placeholder="Marke">
-        <input type="text" id="new-name" placeholder="Name">
-        <input type="text" id="new-unit" placeholder="Einheit (z.B. Caps, ml, g)">
-        <div style="display:flex; gap:10px;">
-    <input type="number" id="new-stock" placeholder="Aktueller Bestand" style="flex:1.2">
-    <input type="number" id="new-restock-qty" placeholder="Std-Kaufmenge" style="flex:1">
-    <input type="number" id="new-price" step="0.01" placeholder="Preis (€)" style="flex:2">
-</div>
-        <textarea id="new-nutri" placeholder="Nährstoffe (Einer pro Zeile, z.B.&#10;Zink: 25 mg&#10;Magnesium: 100 mg)" rows="3"></textarea>
-        <button id="btn-save-supp" class="btn-action" style="background: var(--accent); margin-top: 10px;" onclick="saveNewSupp()">IM KATALOG SPEICHERN</button>
-    </div>
-    <div id="market-list"></div>
-</div>
-
 <div id="page-profile" class="page">
     <h2>Cloud & Historie</h2>
 
@@ -1067,7 +1071,6 @@ input, textarea, select {
             <label style="font-size:11px; color:#94a3b8; font-weight:800; display:block; margin-bottom:8px; text-transform:uppercase;">🚀 Start-Tab (beim Öffnen)</label>
             <select id="setting-start-tab" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #334155; color: white; padding: 10px; border-radius: 8px; font-size: 14px; outline: none; font-weight:bold; cursor:pointer;" onchange="saveStartTab()">
                 <option value="plan" style="color:black;">Plan (Standard)</option>
-                <option value="market" style="color:black;">Katalog</option>
                 <option value="gym" style="color:black;">Gym</option>
                 <option value="weight" style="color:black;">Body</option>
                 <option value="profile" style="color:black;">Cloud & Historie</option>
@@ -1704,7 +1707,7 @@ input, textarea, select {
         setTimeout(() => { swpActiveCard = null; window.isCardSwiping = false; }, 50);
     }
 
-    const pageOrder = ['plan', 'market', 'gym', 'weight', 'profile'];
+    const pageOrder = ['plan', 'gym', 'weight', 'profile'];
     let touchStartX = 0; let touchStartY = 0;
     
     const startScreen = document.getElementById('start-screen');
@@ -2259,10 +2262,8 @@ input, textarea, select {
         const dateStr = getTodayDate();
         const cont = document.getElementById('gym-today-content');
         
-        // Prüfen ob es für HEUTE ein spezielles Datum-Override gibt, ansonsten den normalen Wochentag nehmen
         const specificPlan = db.gym.plans[dateStr];
         const weeklyPlan = db.gym.plans[day];
-        // Override gilt nur, wenn der FlexDay auch wirklich dem heutigen Tag entspricht
         const isOverride = (day === getGermanDay() && specificPlan && specificPlan.length > 0);
         const todayPlan = isOverride ? specificPlan : weeklyPlan;
         
@@ -2278,6 +2279,16 @@ input, textarea, select {
             let setsHtml = '';
             let allDone = true;
 
+            const pastLogs = db.gym.logs.filter(l => l.ex === ex.name && l.date !== dateStr).sort((a,b) => b.date.localeCompare(a.date));
+            let lastStatsSummary = "";
+            let lastSessionLogs = [];
+            if(pastLogs.length > 0) {
+                const lastDate = pastLogs[0].date;
+                lastSessionLogs = pastLogs.filter(l => l.date === lastDate).sort((a,b) => a.set - b.set);
+                let summaries = lastSessionLogs.map(l => `<b style="color:var(--accent);">${l.w}kg</b> x ${l.r}`);
+                lastStatsSummary = `<div style="font-size:11px; color:#cbd5e1; margin-bottom:10px; padding:8px; background:rgba(0,0,0,0.3); border-radius:8px; border:1px solid rgba(255,255,255,0.05); text-align:center;">🕒 Letztes Mal: ${summaries.join(' | ')}</div>`;
+            }
+
             for(let s=1; s<=ex.sets; s++) {
                 const log = db.gym.logs.find(l => l.date === dateStr && l.ex === ex.name && l.set === s && (l.planDay === day || !l.planDay));
                 const isDone = !!log;
@@ -2286,18 +2297,23 @@ input, textarea, select {
                 const weightVal = log ? log.w : '';
                 const repsVal = log ? log.r : '';
                 
+                let wPlaceholder = "kg";
+                let rPlaceholder = "Wdh";
+                if (!isDone && lastSessionLogs[s-1]) {
+                    wPlaceholder = `${lastSessionLogs[s-1].w}`;
+                    rPlaceholder = `${lastSessionLogs[s-1].r}`;
+                }
+                
                 setsHtml += `
                 <div class="gym-set-row">
                     <span style="width:25px; color:#94a3b8; font-size:14px; font-weight:bold; text-align:center;">${s}</span>
-                    <input type="number" step="0.5" id="g-w-${exIdx}-${s}" class="gym-set-input" placeholder="kg" value="${weightVal}" ${isDone ? 'disabled' : ''}>
-                    <input type="number" id="g-r-${exIdx}-${s}" class="gym-set-input" placeholder="Wdh" value="${repsVal}" ${isDone ? 'disabled' : ''}>
-                    <button class="gym-set-btn ${isDone?'done':'open'}" onclick="toggleGymSet('${ex.name}', ${s}, ${exIdx}, this)">${isDone?'✓':'OK'}</button>
+                    <input type="number" step="any" id="g-w-${exIdx}-${s}" class="gym-set-input" placeholder="${wPlaceholder}" value="${weightVal}" ${isDone ? 'disabled' : ''}>
+                    <input type="number" id="g-r-${exIdx}-${s}" class="gym-set-input" placeholder="${rPlaceholder}" value="${repsVal}" ${isDone ? 'disabled' : ''}>
+                    <button class="gym-set-btn ${isDone?'done':'open'}" onclick="toggleGymSet('${ex.name.replace(/'/g, "\\'")}', ${s}, ${exIdx}, this)">${isDone?'✓':'OK'}</button>
                 </div>`;
             }
 
             let targetW = (ex.weight && ex.weight > 0) ? ` | ${ex.weight} kg` : '';
-            
-            // Wenn alles fertig ist, klappen wir es direkt zu
             let displayState = allDone ? 'none' : 'block';
             let rotateState = allDone ? '0deg' : '180deg';
 
@@ -2311,11 +2327,54 @@ input, textarea, select {
                     <span id="gym-ex-icon-${exIdx}" style="color:var(--accent); transition:0.3s; transform:rotate(${rotateState}); font-size:20px;">▾</span>
                 </div>
                 <div id="gym-ex-content-${exIdx}" style="display:${displayState}; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
+                    ${lastStatsSummary}
                     ${setsHtml}
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn-action" style="flex:1; background: rgba(255,255,255,0.05); border: 1px dashed rgba(255,255,255,0.1); padding: 8px; font-size: 11px; margin-bottom: 0; color: #cbd5e1; box-shadow: none;" onclick="addExtraGymSet('${day}', ${exIdx}, '${dateStr}')">➕ SATZ</button>
+                        <button class="btn-action" style="flex:1; background: rgba(239, 68, 68, 0.05); border: 1px dashed rgba(239, 68, 68, 0.2); padding: 8px; font-size: 11px; margin-bottom: 0; color: #ef4444; box-shadow: none;" onclick="removeExtraGymSet('${day}', ${exIdx}, '${dateStr}', '${ex.name.replace(/'/g, "\\'")}', ${ex.sets})">➖ SATZ</button>
+                    </div>
                 </div>
             </div>`;
         });
         cont.innerHTML = html;
+    }
+
+    function addExtraGymSet(day, exIdx, dateStr) {
+        const specificPlan = db.gym.plans[dateStr];
+        const isOverride = (day === getGermanDay() && specificPlan && specificPlan.length > 0);
+        let planArr = isOverride ? db.gym.plans[dateStr] : db.gym.plans[day];
+
+        if(planArr && planArr[exIdx]) {
+            planArr[exIdx].sets += 1;
+            save();
+            renderGymToday();
+            if(typeof vBuz === 'function') vBuz(15);
+        }
+    }
+
+    function removeExtraGymSet(day, exIdx, dateStr, exName, currentSets) {
+        if (currentSets <= 1) {
+            showAlert("Du musst mindestens einen Satz behalten.");
+            return;
+        }
+        
+        showConfirm(`Möchtest du Satz ${currentSets} wirklich löschen?`, function(res) {
+            if (res) {
+                const specificPlan = db.gym.plans[dateStr];
+                const isOverride = (day === getGermanDay() && specificPlan && specificPlan.length > 0);
+                let planArr = isOverride ? db.gym.plans[dateStr] : db.gym.plans[day];
+
+                if(planArr && planArr[exIdx]) {
+                    planArr[exIdx].sets -= 1; 
+                    // Falls für diesen Satz schon ein Eintrag gespeichert wurde, diesen entfernen:
+                    db.gym.logs = db.gym.logs.filter(l => !(l.date === dateStr && l.ex === exName && l.set === currentSets));
+                    save();
+                    renderGymToday();
+                    if(typeof updateGymChart === 'function') updateGymChart();
+                    if(typeof vBuz === 'function') vBuz([30, 50, 30]);
+                }
+            }
+        });
     }
 
     function toggleGymSet(exName, setNum, exIdx, btn) {
@@ -2928,6 +2987,7 @@ function manualRefill(id, current) {
             }
         });
         renderSum(totalNutri, totalDailyCost);
+        renderMarket();
     }
     
     function tglNutri(id) { const e = document.getElementById('nutri-'+id); e.style.display = e.style.display==='block'?'none':'block'; }
@@ -3205,7 +3265,6 @@ function initChart() {
         document.getElementById('page-'+p).classList.add('active'); 
         document.getElementById('n-'+p).classList.add('active'); 
         if(p==='plan') renderPlan(); 
-        if(p==='market') renderMarket(); 
         if(p==='gym') {
             document.getElementById('gym-day-select').value = getGermanDay();
             document.getElementById('gym-date-select').style.display = 'none';
