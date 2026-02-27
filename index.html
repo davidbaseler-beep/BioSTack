@@ -498,6 +498,10 @@ input, textarea, select {
     .habit-btn.active .habit-label { color: white; }
     .journal-input { width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.2); border: 1px dashed rgba(255,255,255,0.2); padding: 12px; border-radius: 12px; color: white; font-size: 13px; font-family: inherit; resize: vertical; min-height: 70px; transition: 0.3s; }
     .journal-input:focus { border-color: var(--labor-glow); outline: none; background: rgba(0,0,0,0.4); }
+    /* --- AMOLED PURE BLACK MODE --- */
+    body.amoled { background: #000000 !important; }
+    body.amoled .chart-container, body.amoled .custom-modal-box, body.amoled .nav, body.amoled .history-item { background: #000000 !important; border-color: rgba(255,255,255,0.15) !important; }
+    body.amoled .supp-card { background: rgba(15,15,15,0.9) !important; }
     </style>
         </style>
     </head>
@@ -1180,9 +1184,10 @@ input, textarea, select {
                         <label class="checkbox-row"><input type="checkbox" id="chk-show-fasting"> Fasten-Tracker anzeigen</label>
                         <label class="checkbox-row"><input type="checkbox" id="chk-show-habits"> Daily Habits (Gewohnheiten) anzeigen</label>
                         <label class="checkbox-row"><input type="checkbox" id="chk-show-journal"> Tagebuch/Notizen anzeigen</label>
-                        <label class="checkbox-row"><input type="checkbox" id="chk-show-top-level"> Level-Badge oben dauerhaft anzeigen</label>
+                       <label class="checkbox-row"><input type="checkbox" id="chk-show-top-level"> Level-Badge oben dauerhaft anzeigen</label>
                         <label class="checkbox-row"><input type="checkbox" id="chk-haptic"> Haptisches Feedback (Vibration)</label>
                         <label class="checkbox-row"><input type="checkbox" id="chk-show-confetti"> Konfetti bei Level-Up</label>
+                        <label class="checkbox-row"><input type="checkbox" id="chk-amoled"> 🌑 AMOLED Pure Black Modus</label>
                     </div>
                 </details>
 
@@ -2423,9 +2428,10 @@ input, textarea, select {
                     ${lastStatsSummary}
                     ${setsHtml}
                     <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn-action" style="flex:1; background: rgba(255, 140, 0, 0.1); border: 1px dashed rgba(255, 140, 0, 0.3); padding: 8px; font-size: 11px; margin-bottom: 0; color: var(--accent); box-shadow: none;" onclick="addWarmupSets('${day}', ${exIdx}, '${dateStr}', ${ex.sets})">🔥 WARM-UP</button>
                         <button class="btn-action" style="flex:1; background: rgba(255,255,255,0.05); border: 1px dashed rgba(255,255,255,0.1); padding: 8px; font-size: 11px; margin-bottom: 0; color: #cbd5e1; box-shadow: none;" onclick="addExtraGymSet('${day}', ${exIdx}, '${dateStr}')">➕ SATZ</button>
-                        <button class="btn-action" style="flex:1; background: rgba(239, 68, 68, 0.05); border: 1px dashed rgba(239, 68, 68, 0.2); padding: 8px; font-size: 11px; margin-bottom: 0; color: #ef4444; box-shadow: none;" onclick="removeExtraGymSet('${day}', ${exIdx}, '${dateStr}', '${ex.name.replace(/'/g, "\\'")}', ${ex.sets})">➖ SATZ</button>
-                    </div>
+                        <button class="btn-action" style="flex:1; background: rgba(239, 68, 68, 0.05); border: 1px dashed rgba(239, 68, 68, 0.2); padding: 8px; font-size: 11px; margin-bottom: 0; color: #ef4444; box-shadow: none;" onclick="('${day}', ${exIdx}, '${dateStr}', '${ex.name.replace(/'/g, "\\'")}', ${ex.sets})">➖ SATZ</button>
+                    </div>removeExtraGymSet
                 </div>
             </div>`;
         });
@@ -2468,6 +2474,39 @@ input, textarea, select {
                 }
             }
         });
+    }
+
+    function addWarmupSets(day, exIdx, dateStr, currentSets) {
+        showPrompt("Dein Zielgewicht (Arbeitsgewicht) in kg:", "", function(val) {
+            let targetWeight = parseFloat(val);
+            if(!targetWeight || targetWeight <= 0) return;
+            
+            const specificPlan = db.gym.plans[dateStr];
+            const isOverride = (day === getGermanDay() && specificPlan && specificPlan.length > 0);
+            let planArr = isOverride ? db.gym.plans[dateStr] : db.gym.plans[day];
+
+            if(planArr && planArr[exIdx]) {
+                planArr[exIdx].sets += 3; // Fügt 3 Sätze hinzu
+                save();
+                renderGymToday();
+                
+                // Trägt die berechneten Werte (50%, 70%, 85%) automatisch in die neu erstellten Inputs ein
+                setTimeout(() => {
+                    const w1 = document.getElementById(`g-w-${exIdx}-${currentSets+1}`);
+                    const r1 = document.getElementById(`g-r-${exIdx}-${currentSets+1}`);
+                    const w2 = document.getElementById(`g-w-${exIdx}-${currentSets+2}`);
+                    const r2 = document.getElementById(`g-r-${exIdx}-${currentSets+2}`);
+                    const w3 = document.getElementById(`g-w-${exIdx}-${currentSets+3}`);
+                    const r3 = document.getElementById(`g-r-${exIdx}-${currentSets+3}`);
+                    
+                    if(w1) { w1.value = Math.round(targetWeight * 0.5); r1.value = 10; }
+                    if(w2) { w2.value = Math.round(targetWeight * 0.7); r2.value = 5; }
+                    if(w3) { w3.value = Math.round(targetWeight * 0.85); r3.value = 3; }
+                }, 150);
+                
+                if(typeof vBuz === 'function') vBuz(15);
+            }
+        }, "Warm-Up Rechner");
     }
 
     function toggleGymSet(exName, setNum, exIdx, btn) {
@@ -3508,6 +3547,7 @@ function initChart() {
         document.getElementById('pal-relax').value = db.personal.pal.relax;
         document.getElementById('pal-sit').value = db.personal.pal.sit;
         document.getElementById('pal-stand').value = db.personal.pal.stand;
+        document.getElementById('chk-amoled').checked = db.analytics.amoled || false;
         document.getElementById('pal-sport').value = db.personal.pal.sport;
         
         document.getElementById('chk-show-fasting').checked = db.analytics.showFasting;
@@ -3544,6 +3584,8 @@ function initChart() {
     }
 
     function closeSettingsModal() {
+    db.analytics.amoled = document.getElementById('chk-amoled').checked;
+        if(db.analytics.amoled) document.body.classList.add('amoled'); else document.body.classList.remove('amoled');
         db.startTab = document.getElementById('setting-start-tab').value;
         db.analytics.showBp = document.getElementById('chk-show-bp').checked;
         db.userName = document.getElementById('set-name').value.trim();
@@ -3986,6 +4028,7 @@ function initChart() {
 
     // --- APP-START INITIALISIERUNG ---
     setTimeout(() => {
+    if(db.analytics.amoled) document.body.classList.add('amoled');
         loadStartTabSetting(); // Lädt deine Einstellung ins Dropdown
         updateDashboardView(); // FIX: Versteckt den Fasten-Timer direkt beim Start, falls deaktiviert!
         
