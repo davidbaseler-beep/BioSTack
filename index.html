@@ -342,8 +342,34 @@ input, textarea, select {
         /* --- GYM STYLES --- */
         .gym-ex-card { background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); border-radius: 16px; padding: 15px; margin-bottom: 15px; }
         .gym-set-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
-        .gym-set-input { flex: 1; min-width: 0; box-sizing: border-box; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; padding: 10px 5px; border-radius: 8px; text-align: center; font-size: 14px; font-family: inherit;}
-        .gym-set-input:disabled { opacity: 0.5; color: #cbd5e1; }
+        
+        /* NEU: Eingabefeld (Aktuelle Werte) */
+        .gym-set-input { 
+            flex: 1; min-width: 0; box-sizing: border-box; 
+            background: rgba(255,255,255,0.05); 
+            border: 1px solid var(--glass-border); 
+            color: #4ade80; /* Knalliges, helles Grün für deine Eingabe */
+            font-weight: 900; /* Stark fett, damit es ins Auge springt */
+            padding: 10px 5px; border-radius: 8px; 
+            text-align: center; font-size: 15px; font-family: inherit;
+            transition: all 0.3s ease;
+        }
+        
+        /* NEU: Letztes Training (Placeholder) */
+        .gym-set-input::placeholder { 
+            color: #64748b; /* Dezentes Grau-Blau */
+            font-weight: 500; /* Dünner als die heutige Eingabe */
+            opacity: 1; /* Wichtig für iOS, damit es nicht verwaschen aussieht */
+        }
+        
+        /* NEU: Abgehaktes Feld (Gespeichert) */
+        .gym-set-input:disabled { 
+            opacity: 1; 
+            color: var(--success); /* Bleibt grün */
+            background: rgba(34, 197, 94, 0.1); /* Leichter grüner Hintergrund-Glow */
+            border-color: rgba(34, 197, 94, 0.3); /* Grüner Rand */
+        }
+
         .gym-set-btn { width: 45px; height: 40px; border-radius: 8px; border: none; font-weight: 900; cursor: pointer; transition: 0.2s; font-size: 14px;}
         .gym-set-btn.done { background: var(--success); color: white; box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);}
         .gym-set-btn.open { background: var(--warning); color: black; }
@@ -649,6 +675,11 @@ input, textarea, select {
         
         <input type="text" id="tpl-edit-name" class="weight-input" placeholder="Name des Plans (z.B. Mein Split)" style="margin-bottom: 10px;">
 
+        <div class="gym-day-tabs" style="margin-bottom:10px; display:flex; justify-content:center;">
+            <div class="gym-day-tab active" id="ted-w-tab-1" onclick="setTplFlexWeek(1)" style="flex:1; text-align:center;">Woche 1</div>
+            <div class="gym-day-tab" id="ted-w-tab-2" onclick="setTplFlexWeek(2)" style="flex:1; text-align:center;">Woche 2</div>
+        </div>
+
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
             <div style="font-size:11px; color:#94a3b8; font-weight:700;">WOCHENTAG</div>
             <button style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: #cbd5e1; font-size: 10px; font-weight: bold; padding: 6px 12px; border-radius: 8px; cursor: pointer;" onclick="openTemplateDayShift()">🔄 TAG VERSCHIEBEN</button>
@@ -689,18 +720,26 @@ input, textarea, select {
 <div id="day-shift-modal" class="custom-modal-overlay">
     <div class="custom-modal-box">
         <div class="custom-modal-title">Tag umlegen 🔄</div>
-        <div class="custom-modal-text">Verschiebe, tausche oder kopiere ein Training auf einen anderen Tag.</div>
+        <div class="custom-modal-text">Verschiebe, tausche oder kopiere ein Training auf einen anderen Tag oder in eine andere Woche.</div>
 
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <span style="font-size:12px; color:#94a3b8; font-weight:bold; width:60px; text-align:left;">Von:</span>
-            <select id="shift-from-day" class="weight-input" style="margin-bottom:0; flex:1; padding:10px; font-size:14px; text-align:left;">
+            <span style="font-size:12px; color:#94a3b8; font-weight:bold; width:40px; text-align:left;">Von:</span>
+            <select id="shift-from-week" class="weight-input" style="margin-bottom:0; width:95px; padding:10px; font-size:13px; margin-right:5px; text-align:center;">
+                <option value="1" style="color:black;">Woche 1</option>
+                <option value="2" style="color:black;">Woche 2</option>
+            </select>
+            <select id="shift-from-day" class="weight-input" style="margin-bottom:0; flex:1; padding:10px; font-size:13px; text-align:left;">
                 <option value="Montag" style="color:black;">Montag</option><option value="Dienstag" style="color:black;">Dienstag</option><option value="Mittwoch" style="color:black;">Mittwoch</option><option value="Donnerstag" style="color:black;">Donnerstag</option><option value="Freitag" style="color:black;">Freitag</option><option value="Samstag" style="color:black;">Samstag</option><option value="Sonntag" style="color:black;">Sonntag</option>
             </select>
         </div>
         
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <span style="font-size:12px; color:#94a3b8; font-weight:bold; width:60px; text-align:left;">Nach:</span>
-            <select id="shift-to-day" class="weight-input" style="margin-bottom:0; flex:1; padding:10px; font-size:14px; text-align:left; border-color:var(--day-glow);">
+            <span style="font-size:12px; color:#94a3b8; font-weight:bold; width:40px; text-align:left;">Nach:</span>
+            <select id="shift-to-week" class="weight-input" style="margin-bottom:0; width:95px; padding:10px; font-size:13px; margin-right:5px; text-align:center; border-color:var(--day-glow);">
+                <option value="1" style="color:black;">Woche 1</option>
+                <option value="2" style="color:black;">Woche 2</option>
+            </select>
+            <select id="shift-to-day" class="weight-input" style="margin-bottom:0; flex:1; padding:10px; font-size:13px; text-align:left; border-color:var(--day-glow);">
                 <option value="Montag" style="color:black;">Montag</option><option value="Dienstag" style="color:black;">Dienstag</option><option value="Mittwoch" style="color:black;">Mittwoch</option><option value="Donnerstag" style="color:black;">Donnerstag</option><option value="Freitag" style="color:black;">Freitag</option><option value="Samstag" style="color:black;">Samstag</option><option value="Sonntag" style="color:black;">Sonntag</option>
             </select>
         </div>
@@ -803,6 +842,11 @@ input, textarea, select {
             <h3 style="margin:0; color:var(--day-glow); font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">📝 Trainings-Planer</h3>
         </div>
         <div class="collapse-content" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+            <div class="gym-day-tabs" style="margin-bottom:15px; display:flex; justify-content:center;">
+                <div class="gym-day-tab active" id="w-tab-1" onclick="setPlannerWeek(1)" style="flex:1; text-align:center;">Woche 1</div>
+                <div class="gym-day-tab" id="w-tab-2" onclick="setPlannerWeek(2)" style="flex:1; text-align:center;">Woche 2</div>
+            </div>
+
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
                 <div style="font-size:11px; color:#94a3b8; font-weight:700;">ZIEL-TAG WÄHLEN</div>
                 <button style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: #cbd5e1; font-size: 10px; font-weight: bold; padding: 6px 12px; border-radius: 8px; cursor: pointer;" onclick="moveCurrentDay()">🔄 TAG VERSCHIEBEN</button>
@@ -1464,8 +1508,39 @@ input, textarea, select {
     if(db.analytics.haptic === undefined) db.analytics.haptic = true;
     if(!db.deletedSupps) db.deletedSupps = []; // NEU: Speichert gelöschte Base-Items
     
-    // --- GYM INIT ---
-    if(!db.gym) db.gym = { plans: { 'Montag':[], 'Dienstag':[], 'Mittwoch':[], 'Donnerstag':[], 'Freitag':[], 'Samstag':[], 'Sonntag':[] }, logs: [] };
+    // --- KALENDERWOCHEN HELPER ---
+    function getCalendarWeek(date) {
+        const target = new Date(date.valueOf());
+        const dayNr = (date.getDay() + 6) % 7;
+        target.setDate(target.getDate() - dayNr + 3);
+        const firstThursday = target.valueOf();
+        target.setMonth(0, 1);
+        if (target.getDay() !== 4) target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
+        return 1 + Math.ceil((firstThursday - target) / 604800000);
+    }
+    
+    function getCurrentWeekType() {
+        // Gerade KW = Woche 1 | Ungerade KW = Woche 2
+        return getCalendarWeek(new Date()) % 2 === 0 ? 1 : 2; 
+    }
+
+    let activePlannerWeek = 1; // Steuert, welche Woche im Planer-UI gerade bearbeitet wird
+
+    // --- GYM INIT & MIGRATION ---
+    if(!db.gym) {
+        db.gym = { 
+            week1: { 'Montag':[], 'Dienstag':[], 'Mittwoch':[], 'Donnerstag':[], 'Freitag':[], 'Samstag':[], 'Sonntag':[] }, 
+            week2: { 'Montag':[], 'Dienstag':[], 'Mittwoch':[], 'Donnerstag':[], 'Freitag':[], 'Samstag':[], 'Sonntag':[] }, 
+            logs: [] 
+        };
+    }
+    // Migration: Falls noch das alte System genutzt wird
+    if(db.gym.plans && !db.gym.week1) {
+        db.gym.week1 = db.gym.plans; // Alten Plan zu Woche 1 machen
+        db.gym.week2 = { 'Montag':[], 'Dienstag':[], 'Mittwoch':[], 'Donnerstag':[], 'Freitag':[], 'Samstag':[], 'Sonntag':[] };
+        delete db.gym.plans;
+        save();
+    }
 
     if(!db.labTrackers) db.labTrackers = [
         { id: 'd3', name: 'Vitamin D3', unit: 'ng/ml' },
@@ -2238,8 +2313,8 @@ input, textarea, select {
         const target = getGymPlannerTarget();
         const list = document.getElementById('gym-planer-list');
         list.innerHTML = '';
-        if(!db.gym.plans[target]) db.gym.plans[target] = [];
-        db.gym.plans[target].forEach((ex, idx) => {
+                if(!db.gym['week'+activePlannerWeek][target]) db.gym['week'+activePlannerWeek][target] = [];
+        db.gym['week'+activePlannerWeek][target].forEach((ex, idx) => {
             let targetW = (ex.weight && ex.weight > 0) ? ` | ${ex.weight} kg` : '';
             list.innerHTML += `
                 <div class="gsb-row" style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; margin-bottom: 8px;">
@@ -2319,9 +2394,8 @@ input, textarea, select {
             return;
         }
 
-        if(!db.gym.plans[target]) db.gym.plans[target] = [];
-        
-        db.gym.plans[target].push({
+                    if(!db.gym['week'+activePlannerWeek][target]) db.gym['week'+activePlannerWeek][target] = [];
+            db.gym['week'+activePlannerWeek][target].push({
             name: name, 
             sets: parseInt(sets) || 3, 
             reps: reps,
@@ -2337,7 +2411,7 @@ input, textarea, select {
     }
 
     function removeGymExercise(target, idx) {
-        db.gym.plans[target].splice(idx, 1);
+        db.gym['week'+activePlannerWeek][target].splice(idx, 1);
         save();
         renderGymPlaner();
         renderGymToday();
@@ -2360,12 +2434,15 @@ input, textarea, select {
         const dateStr = getTodayDate();
         const cont = document.getElementById('gym-today-content');
         
-        const specificPlan = db.gym.plans[dateStr];
-        const weeklyPlan = db.gym.plans[day];
+        const currentWk = getCurrentWeekType(); // Auto-Erkennung: 1 oder 2
+        
+        // Prüfen, ob wir ein spezifisches Datum (Override) in der aktuell laufenden Woche haben
+        const specificPlan = db.gym['week'+currentWk][dateStr];
+        const weeklyPlan = db.gym['week'+currentWk][day];
         const isOverride = (day === getGermanDay() && specificPlan && specificPlan.length > 0);
         const todayPlan = isOverride ? specificPlan : weeklyPlan;
         
-        let headerText = isOverride ? `Plan für Heute (${dateStr})` : `Plan für: ${day.toUpperCase()}`;
+        let headerText = isOverride ? `Plan für Heute (${dateStr})` : `Plan für: ${day.toUpperCase()} <span style="font-size:10px; color:#cbd5e1;">(WOCHE ${currentWk})</span>`;
         let html = `<div style="text-align:center; font-size:12px; color:#94a3b8; margin-bottom:15px; font-weight:bold;">${headerText.replace(day.toUpperCase(), `<span style="color:var(--morning-glow);">${day.toUpperCase()}</span>`)}</div>`;
         
         if(!todayPlan || todayPlan.length === 0) {
@@ -2439,9 +2516,10 @@ input, textarea, select {
     }
 
     function addExtraGymSet(day, exIdx, dateStr) {
-        const specificPlan = db.gym.plans[dateStr];
+        const currentWk = getCurrentWeekType();
+        const specificPlan = db.gym['week'+currentWk][dateStr];
         const isOverride = (day === getGermanDay() && specificPlan && specificPlan.length > 0);
-        let planArr = isOverride ? db.gym.plans[dateStr] : db.gym.plans[day];
+        let planArr = isOverride ? db.gym['week'+currentWk][dateStr] : db.gym['week'+currentWk][day];
 
         if(planArr && planArr[exIdx]) {
             planArr[exIdx].sets += 1;
@@ -2459,9 +2537,10 @@ input, textarea, select {
         
         showConfirm(`Möchtest du Satz ${currentSets} wirklich löschen?`, function(res) {
             if (res) {
-                const specificPlan = db.gym.plans[dateStr];
-                const isOverride = (day === getGermanDay() && specificPlan && specificPlan.length > 0);
-                let planArr = isOverride ? db.gym.plans[dateStr] : db.gym.plans[day];
+                const currentWk = getCurrentWeekType();
+        const specificPlan = db.gym['week'+currentWk][dateStr];
+        const isOverride = (day === getGermanDay() && specificPlan && specificPlan.length > 0);
+        let planArr = isOverride ? db.gym['week'+currentWk][dateStr] : db.gym['week'+currentWk][day];
 
                 if(planArr && planArr[exIdx]) {
                     planArr[exIdx].sets -= 1; 
@@ -2481,9 +2560,10 @@ input, textarea, select {
             let targetWeight = parseFloat(val);
             if(!targetWeight || targetWeight <= 0) return;
             
-            const specificPlan = db.gym.plans[dateStr];
-            const isOverride = (day === getGermanDay() && specificPlan && specificPlan.length > 0);
-            let planArr = isOverride ? db.gym.plans[dateStr] : db.gym.plans[day];
+            const currentWk = getCurrentWeekType();
+        const specificPlan = db.gym['week'+currentWk][dateStr];
+        const isOverride = (day === getGermanDay() && specificPlan && specificPlan.length > 0);
+        let planArr = isOverride ? db.gym['week'+currentWk][dateStr] : db.gym['week'+currentWk][day];
 
             if(planArr && planArr[exIdx]) {
                 planArr[exIdx].sets += 3; // Fügt 3 Sätze hinzu
@@ -2550,9 +2630,10 @@ input, textarea, select {
             startRestTimer(60);
             
             // Auto-Collapse prüfen: Sind alle Sätze dieser Übung jetzt fertig?
-            const specificPlan = db.gym.plans[dateStr];
-            const isOverride = (day === getGermanDay() && specificPlan && specificPlan.length > 0);
-            const todayPlan = isOverride ? specificPlan : db.gym.plans[day];
+            const currentWk = getCurrentWeekType();
+        const specificPlan = db.gym['week'+currentWk][dateStr];
+        const isOverride = (day === getGermanDay() && specificPlan && specificPlan.length > 0);
+        let planArr = isOverride ? db.gym['week'+currentWk][dateStr] : db.gym['week'+currentWk][day];
             
             const exObj = todayPlan[exIdx];
             if(exObj) {
@@ -2801,9 +2882,10 @@ function renameGymPlanEx(day, exIdx, oldName, dateStr) {
             if(newName && newName.trim() !== "" && newName !== oldName) {
                 const finalName = newName.trim();
                 // 1. Namen im Trainingsplan aktualisieren
-                if(db.gym.plans[day] && db.gym.plans[day][exIdx]) {
-                    db.gym.plans[day][exIdx].name = finalName;
-                }
+                const currentWk = getCurrentWeekType(); // Holt die aktuelle Woche (1 oder 2)
+                    if(db.gym['week'+currentWk][day] && db.gym['week'+currentWk][day][exIdx]) {
+                        db.gym['week'+currentWk][day][exIdx].name = finalName;
+                    }
                 // 2. Alle heutigen Logs aktualisieren, damit die Häkchen (✓) nicht verschwinden
                 db.gym.logs.forEach(l => {
                     if(l.date === dateStr && l.ex === oldName && l.planDay === day) { 
@@ -5348,7 +5430,10 @@ function search3DExercise(query) {
             if(res) {
                 const tpl = gymTemplatesDB[index];
                 const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
-                days.forEach(d => { db.gym.plans[d] = tpl.plan[d] ? JSON.parse(JSON.stringify(tpl.plan[d])) : []; });
+                                days.forEach(d => { 
+                    db.gym.week1[d] = tpl.plan[d] ? JSON.parse(JSON.stringify(tpl.plan[d])) : []; 
+                    db.gym.week2[d] = tpl.plan[d] ? JSON.parse(JSON.stringify(tpl.plan[d])) : []; 
+                });
                 save(); closeGymTemplates(); renderGymPlaner(); renderGymToday();
                 if(typeof vBuz === 'function') vBuz([100, 50, 100, 50, 300]);
                 showAlert(`"${tpl.name}" wurde erfolgreich geladen!`, "Plan geladen 🚀");
@@ -5362,7 +5447,17 @@ function search3DExercise(query) {
                 const tpl = db.customGymTemplates.find(t => t.id === id);
                 if(!tpl) return;
                 const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
-                days.forEach(d => { db.gym.plans[d] = tpl.plan[d] ? JSON.parse(JSON.stringify(tpl.plan[d])) : []; });
+                                days.forEach(d => { 
+                    // Lädt Woche 1 in Woche 1 und Woche 2 in Woche 2
+                    if(tpl.week1) {
+                        db.gym.week1[d] = tpl.week1[d] ? JSON.parse(JSON.stringify(tpl.week1[d])) : []; 
+                        db.gym.week2[d] = tpl.week2[d] ? JSON.parse(JSON.stringify(tpl.week2[d])) : []; 
+                    } else {
+                        // Fallback für System-Pläne ohne A/B
+                        db.gym.week1[d] = tpl.plan[d] ? JSON.parse(JSON.stringify(tpl.plan[d])) : [];
+                        db.gym.week2[d] = tpl.plan[d] ? JSON.parse(JSON.stringify(tpl.plan[d])) : [];
+                    }
+                });
                 save(); closeGymTemplates(); renderGymPlaner(); renderGymToday();
                 if(typeof vBuz === 'function') vBuz([100, 50, 100, 50, 300]);
                 showAlert(`Dein eigener Plan "${tpl.name}" wurde geladen!`, "Plan geladen 🚀");
@@ -5387,7 +5482,8 @@ function search3DExercise(query) {
             name: sysTpl.name + " (Kopie)",
             tags: "Eigener Plan | Custom",
             desc: "Basierend auf: " + sysTpl.name,
-            plan: JSON.parse(JSON.stringify(sysTpl.plan)) // Tiefe Kopie, damit Original unangetastet bleibt
+            week1: JSON.parse(JSON.stringify(sysTpl.plan)),
+            week2: JSON.parse(JSON.stringify(sysTpl.plan)) // Tiefe Kopie, damit Original unangetastet bleibt
         };
         
         const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
@@ -5404,6 +5500,15 @@ function search3DExercise(query) {
     // --- NEU: VOLLUMFÄNGLICHER PLAN-EDITOR LOGIK ---
     let draftTemplate = null;
     let draftCurrentDay = 'Montag';
+    let draftCurrentWeek = 1; // NEU: Steuert die Editor-Woche
+
+    function setTplFlexWeek(w) {
+        draftCurrentWeek = w;
+        document.getElementById('ted-w-tab-1').classList.remove('active');
+        document.getElementById('ted-w-tab-2').classList.remove('active');
+        document.getElementById('ted-w-tab-' + w).classList.add('active');
+        renderTemplateEditor();
+    }
 
     function openTemplateEditor(id = null) {
         const tplInput = document.getElementById('tpl-add-name');
@@ -5431,6 +5536,14 @@ function search3DExercise(query) {
         if (id) {
             const existing = db.customGymTemplates.find(t => t.id === id);
             draftTemplate = JSON.parse(JSON.stringify(existing));
+            
+            // MIGRATION: Falls das ein altes Template mit nur 1 Woche ist
+            if(!draftTemplate.week1) {
+                draftTemplate.week1 = draftTemplate.plan || { 'Montag':[], 'Dienstag':[], 'Mittwoch':[], 'Donnerstag':[], 'Freitag':[], 'Samstag':[], 'Sonntag':[] };
+                draftTemplate.week2 = JSON.parse(JSON.stringify(draftTemplate.week1)); // Kopiert Woche 1 als Startpunkt in Woche 2
+                delete draftTemplate.plan;
+            }
+            
             document.getElementById('tpl-edit-title').innerText = "Plan bearbeiten ✏️";
         } else {
             draftTemplate = {
@@ -5438,12 +5551,15 @@ function search3DExercise(query) {
                 name: '',
                 tags: "Eigener Plan | Custom",
                 desc: "Dein individuell erstellter Trainingsplan.",
-                plan: { 'Montag':[], 'Dienstag':[], 'Mittwoch':[], 'Donnerstag':[], 'Freitag':[], 'Samstag':[], 'Sonntag':[] }
+                // NEU: Direkt Woche 1 und Woche 2 anlegen
+                week1: { 'Montag':[], 'Dienstag':[], 'Mittwoch':[], 'Donnerstag':[], 'Freitag':[], 'Samstag':[], 'Sonntag':[] },
+                week2: { 'Montag':[], 'Dienstag':[], 'Mittwoch':[], 'Donnerstag':[], 'Freitag':[], 'Samstag':[], 'Sonntag':[] }
             };
             document.getElementById('tpl-edit-title').innerText = "Neuer Master-Plan 🛠️";
         }
 
         document.getElementById('tpl-edit-name').value = draftTemplate.name;
+        setTplFlexWeek(1); // NEU: Reset auf Woche 1
         setTplFlexDay('Montag'); 
         
         document.getElementById('gym-templates-modal').style.display = 'none'; 
@@ -5469,7 +5585,7 @@ function search3DExercise(query) {
     function renderTemplateEditor() {
         const list = document.getElementById('tpl-ex-list');
         list.innerHTML = '';
-        const dayPlan = draftTemplate.plan[draftCurrentDay] || [];
+        const dayPlan = draftTemplate['week'+draftCurrentWeek][draftCurrentDay] || [];
 
         if(dayPlan.length === 0) {
             list.innerHTML = `<div style="text-align:center; opacity:0.5; font-size:12px; padding:20px 0;">Keine Übungen an diesem Tag.<br>Füge unten welche hinzu!</div>`;
@@ -5506,8 +5622,8 @@ function search3DExercise(query) {
             return;
         }
 
-        if(!draftTemplate.plan[draftCurrentDay]) draftTemplate.plan[draftCurrentDay] = [];
-        draftTemplate.plan[draftCurrentDay].push({ name, sets, reps, weight });
+                    if(!draftTemplate['week'+draftCurrentWeek][draftCurrentDay]) draftTemplate['week'+draftCurrentWeek][draftCurrentDay] = [];
+            draftTemplate['week'+draftCurrentWeek][draftCurrentDay].push({ name, sets, reps, weight });
         
         nameInput.value = '';
         weightInput.value = '';
@@ -5518,7 +5634,7 @@ function search3DExercise(query) {
     }
 
     function removeExFromTemplateDraft(idx) {
-        draftTemplate.plan[draftCurrentDay].splice(idx, 1);
+        draftTemplate['week'+draftCurrentWeek][draftCurrentDay].splice(idx, 1);
         if(typeof vBuz === 'function') vBuz(15);
         renderTemplateEditor();
     }
@@ -5550,6 +5666,7 @@ function search3DExercise(query) {
     let currentShiftMode = 'active'; // Erkennt, ob wir im Dashboard oder im Editor sind
 
     // Startet das Modal vom Dashboard aus
+    // Startet das Modal vom Dashboard aus
     function moveCurrentDay() {
         currentShiftMode = 'active';
         const sourceDay = getGymPlannerTarget();
@@ -5559,10 +5676,28 @@ function search3DExercise(query) {
         }
         
         document.getElementById('shift-from-day').value = sourceDay;
+        document.getElementById('shift-from-week').value = activePlannerWeek; // NEU
         
         const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
         let nextIdx = (days.indexOf(sourceDay) + 1) % 7;
         document.getElementById('shift-to-day').value = days[nextIdx];
+        document.getElementById('shift-to-week').value = activePlannerWeek; // NEU
+        
+        document.getElementById('day-shift-modal').style.display = 'flex';
+    }
+
+    // Startet das Modal aus dem Plan-Editor heraus
+    function openTemplateDayShift() {
+        currentShiftMode = 'template';
+        const sourceDay = draftCurrentDay; 
+        
+        document.getElementById('shift-from-day').value = sourceDay;
+        document.getElementById('shift-from-week').value = draftCurrentWeek; // NEU
+        
+        const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+        let nextIdx = (days.indexOf(sourceDay) + 1) % 7;
+        document.getElementById('shift-to-day').value = days[nextIdx];
+        document.getElementById('shift-to-week').value = draftCurrentWeek; // NEU
         
         document.getElementById('day-shift-modal').style.display = 'flex';
     }
@@ -5585,53 +5720,68 @@ function search3DExercise(query) {
         document.getElementById('day-shift-modal').style.display = 'none';
     }
 
-    // Führt die Verschiebung / Kopie durch (Universell)
+    // Führt die Verschiebung / Kopie durch (Universell für Tage UND Wochen)
     function executeDayShift() {
-        const from = document.getElementById('shift-from-day').value;
-        const to = document.getElementById('shift-to-day').value;
+        const fromDay = document.getElementById('shift-from-day').value;
+        const toDay = document.getElementById('shift-to-day').value;
+        const fromWeek = document.getElementById('shift-from-week').value;
+        const toWeek = document.getElementById('shift-to-week').value;
         const action = document.getElementById('shift-action').value;
 
-        if (from === to) {
-            showAlert("Quell- und Zieltag müssen unterschiedlich sein!");
+        if (fromDay === toDay && fromWeek === toWeek) {
+            showAlert("Quell- und Zieltag müssen sich unterscheiden (Tag oder Woche)!");
             return;
         }
 
-        // Entscheiden, welches Plan-Objekt bearbeitet wird (Dashboard oder Editor-Entwurf)
-        let targetPlanObj = currentShiftMode === 'active' ? db.gym.plans : draftTemplate.plan;
+        // Entscheiden, welches Haupt-Objekt bearbeitet wird (Dashboard oder Editor)
+        let rootObj = currentShiftMode === 'active' ? db.gym : draftTemplate;
 
-        let planFrom = targetPlanObj[from] ? JSON.parse(JSON.stringify(targetPlanObj[from])) : [];
-        let planTo = targetPlanObj[to] ? JSON.parse(JSON.stringify(targetPlanObj[to])) : [];
+        // Hole die exakten Objekte der gewählten Wochen
+        let planFromWeekObj = rootObj['week' + fromWeek];
+        let planToWeekObj = rootObj['week' + toWeek];
+
+        let planFrom = planFromWeekObj[fromDay] ? JSON.parse(JSON.stringify(planFromWeekObj[fromDay])) : [];
+        let planTo = planToWeekObj[toDay] ? JSON.parse(JSON.stringify(planToWeekObj[toDay])) : [];
 
         if (action === 'move') {
-            targetPlanObj[to] = planFrom;
-            targetPlanObj[from] = []; 
-            showAlert(`Training von ${from} wurde erfolgreich auf ${to} verschoben!`, "Verschoben ➡️");
+            planToWeekObj[toDay] = planFrom;
+            planFromWeekObj[fromDay] = []; 
+            showAlert(`Training verschoben nach ${toDay} (Woche ${toWeek})!`, "Verschoben ➡️");
         } else if (action === 'swap') {
-            targetPlanObj[to] = planFrom;
-            targetPlanObj[from] = planTo; 
-            showAlert(`Die Trainings von ${from} und ${to} wurden erfolgreich getauscht!`, "Getäuscht 🔄");
+            planToWeekObj[toDay] = planFrom;
+            planFromWeekObj[fromDay] = planTo; 
+            showAlert(`Trainings erfolgreich getauscht!`, "Getäuscht 🔄");
         } else if (action === 'copy') {
-            targetPlanObj[to] = planFrom; 
-            showAlert(`Training von ${from} wurde nach ${to} kopiert!`, "Kopiert 📄");
+            planToWeekObj[toDay] = planFrom; 
+            showAlert(`Training kopiert nach ${toDay} (Woche ${toWeek})!`, "Kopiert 📄");
         }
 
         closeDayShiftModal();
         if(typeof vBuz === 'function') vBuz([30, 50, 30]);
 
         if (currentShiftMode === 'active') {
-            // Dashboard-Modus: Sofort speichern und UI aktualisieren
+            // Dashboard-Modus
             save();
             const selectEl = document.getElementById('gym-day-select');
-            if(selectEl) selectEl.value = to;
-            gymPlannerTargetChanged();
+            if(selectEl) selectEl.value = toDay;
+            setPlannerWeek(parseInt(toWeek)); // Springt automatisch zur Ziel-Woche!
         } else {
-            // Editor-Modus: Wir speichern noch nicht in die DB, sondern wechseln nur den Tab, um das Ergebnis zu zeigen
-            setTplFlexDay(to);
+            // Editor-Modus
+            setTplFlexWeek(parseInt(toWeek)); // Springt automatisch zur Ziel-Woche im Editor!
+            setTplFlexDay(toDay); // Markiert den neuen Tag
         }
     }
 
-    // --- HEALTH CONNECT / APPLE HEALTH SYNC ---
-   async function syncHealthData(silent = false) {
+        function setPlannerWeek(w) {
+            activePlannerWeek = w;
+            document.getElementById('w-tab-1').classList.remove('active');
+            document.getElementById('w-tab-2').classList.remove('active');
+            document.getElementById('w-tab-' + w).classList.add('active');
+            renderGymPlaner();
+        }
+
+        // --- HEALTH CONNECT / APPLE HEALTH SYNC ---
+        async function syncHealthData(silent = false) {
         if (!window.Capacitor || !window.Capacitor.Plugins.Health) {
             if(!silent) showAlert("Health Sync ist nur in der App verfügbar.", "Hinweis");
             return;
