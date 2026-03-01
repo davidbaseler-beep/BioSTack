@@ -824,6 +824,13 @@ input, textarea, select {
             <h3 style="margin:0; color:var(--morning-glow); font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">🔥 Heute Tracken</h3>
         </div>
         <div class="collapse-content" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+            <div id="active-plan-name-heute" style="text-align:center; color:var(--success); font-size:11px; font-weight:900; margin-bottom:15px; text-transform:uppercase; letter-spacing:1px; background:rgba(34,197,94,0.1); padding:8px; border-radius:8px;"></div>
+            
+            <div class="gym-day-tabs" style="margin-bottom:15px; display:flex; justify-content:center;">
+                <div class="gym-day-tab active" id="t-tab-1" onclick="setTrackWeek(1)" style="flex:1; text-align:center;">Woche 1</div>
+                <div class="gym-day-tab" id="t-tab-2" onclick="setTrackWeek(2)" style="flex:1; text-align:center;">Woche 2</div>
+            </div>
+
             <div class="gym-day-tabs" id="gym-flex-tabs">
                 <div class="gym-day-tab" id="ftab-Montag" onclick="setFlexDay('Montag')">Mo</div>
                 <div class="gym-day-tab" id="ftab-Dienstag" onclick="setFlexDay('Dienstag')">Di</div>
@@ -842,6 +849,8 @@ input, textarea, select {
             <h3 style="margin:0; color:var(--day-glow); font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">📝 Trainings-Planer</h3>
         </div>
         <div class="collapse-content" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+            <div id="active-plan-name-planer" style="text-align:center; color:var(--day-glow); font-size:11px; font-weight:900; margin-bottom:15px; text-transform:uppercase; letter-spacing:1px; background:rgba(79,172,254,0.1); padding:8px; border-radius:8px;"></div>
+
             <div class="gym-day-tabs" style="margin-bottom:15px; display:flex; justify-content:center;">
                 <div class="gym-day-tab active" id="w-tab-1" onclick="setPlannerWeek(1)" style="flex:1; text-align:center;">Woche 1</div>
                 <div class="gym-day-tab" id="w-tab-2" onclick="setPlannerWeek(2)" style="flex:1; text-align:center;">Woche 2</div>
@@ -1406,6 +1415,75 @@ input, textarea, select {
             </div>
         </div>
 
+<div class="chart-container" style="padding: 0; background: transparent; border: none; margin: 0 0 15px 0;" id="set-col-help">
+            <div class="collapse-header" onclick="tglCollapse('set-col-help')" style="background: var(--glass); padding: 12px 15px; border-radius: 12px; border: 1px solid var(--morning-glow);">
+                <h3 style="color:var(--morning-glow); font-size: 14px; margin: 0;">📖 Das BioStack Handbuch</h3>
+            </div>
+            <div class="collapse-content" style="padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; margin-top: 5px; color: #cbd5e1; font-size: 12px; line-height: 1.6;">
+                
+                <div style="text-align:center; font-size:18px; font-weight:900; color:white; margin-bottom:15px; letter-spacing:1px;">Willkommen bei BioStack!</div>
+                <p>Diese App ist dein persönliches Cockpit für deinen Körper, dein Training und deine Gesundheit. <br><br><b>💡 Der wichtigste Tipp vorab:</b> BioStack passt sich <i>dir</i> an! Wenn du eine Funktion (wie den Blutdruck-Messer oder den Zyklus-Tracker) nicht brauchst, kannst du sie hier in den Einstellungen unter <b>"Dashboard Anzeige"</b> einfach abhaken. Sie verschwindet dann spurlos, damit deine App immer aufgeräumt bleibt.</p>
+
+                <h4 style="color:var(--morning-glow); text-transform:uppercase; margin-top:25px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;">💊 Tab 1: PLAN (Dein Tag)</h4>
+                <p style="margin-bottom:10px;">Hier steuerst du alles, was du <b>heute</b> tun oder einnehmen möchtest.</p>
+                <ul style="padding-left:15px; margin-top:5px;">
+                    <li style="margin-bottom:8px;"><b>⏱️ Fasten-Tracker:</b> Wie eine Stoppuhr für deinen Bauch. Stell ein, wie viele Stunden du nichts essen möchtest (z.B. 16h). Klicke auf "START" und der Ring zeigt dir genau, wann du wieder essen darfst. Nach Ablauf vibriert dein Handy leicht!</li>
+                    <li style="margin-bottom:8px;"><b>🌸 Zyklus & Rhythmus:</b> (Nur wenn aktiviert) Zeigt dir tagesaktuell an, in welcher deiner 4 Phasen du dich befindest. Klicke auf "Deep Dive", um zu lernen, warum du heute vielleicht mehr Hunger hast oder welches Training jetzt perfekt ist.</li>
+                    <li style="margin-bottom:8px;"><b>🧠 Daily Habits (Gewohnheiten):</b> Das sind deine täglichen Ziele (z.B. Eisbad, Meditation, 3 Liter Wasser). Tippe sie an, wenn du sie geschafft hast. Sie leuchten dann auf! Du kannst über "Bearbeiten" eigene Habits erfinden.</li>
+                    <li style="margin-bottom:8px;"><b>📝 Tages-Notiz / Log:</b> Dein kleines Tagebuch. Schreib kurz auf, ob du Muskelkater hast oder dich super fühlst. Es speichert sich beim Tippen von ganz allein.</li>
+                    <li style="margin-bottom:8px;"><b>🌞 Dein Stack (Morgen/Mittag/Abend):</b> Hier siehst du deine Kapseln, Tropfen oder Pulver. Klicke auf das kleine Kästchen rechts, wenn du es eingenommen hast (es erscheint ein grünes ✓).
+                        <br><span style="color:var(--accent);"><i>Tipp 1:</i></span> Halte eine Karte gedrückt, um sie in eine andere Tageszeit zu verschieben!
+                        <br><span style="color:var(--accent);"><i>Tipp 2:</i></span> <b>Wische eine Karte nach rechts!</b> Dort kannst du das Supplement für ein paar Tage <b>Pausieren</b> (die App erinnert dich dann wieder) oder ganz aus dem heutigen Plan <b>Löschen</b>.
+                        <br><span style="color:var(--accent);"><i>Tipp 3:</i></span> Das kleine Schild auf der Karte zeigt deinen <b>Lagerbestand</b>. Wird es gelb oder rot, geht dein Supplement bald leer. Klick drauf, um aufzufüllen!
+                    </li>
+                    <li style="margin-bottom:8px;"><b>🧬 Stack Metrics:</b> Die App rechnet mit. Hier siehst du, wie viel dein Tages-Stack in Euro kostet, wann die Vitamine im Blut pieken (Wirkungs-Timing) und wie sie deine Energie beeinflussen.</li>
+                    <li style="margin-bottom:8px;"><b>🛒 Katalog & Hinzufügen:</b> Dein Supermarkt. Lege eigene Supplements an. Wenn du auf ein bestehendes Supplement auf der Liste <b>drückst und kurz hältst</b> (Long Press), kannst du es komplett aus der Datenbank löschen.</li>
+                </ul>
+
+                <h4 style="color:var(--accent); text-transform:uppercase; margin-top:25px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;">🏋️ Tab 2: GYM (Dein Training)</h4>
+                <p style="margin-bottom:10px;">Das intelligenteste Trainings-System für deinen Muskelaufbau.</p>
+                <ul style="padding-left:15px; margin-top:5px;">
+                    <li style="margin-bottom:8px;"><b>🔥 Heute Tracken:</b> Das ist dein Trainingszettel. 
+                        <br><i>Das Farbsystem:</i> In den Feldern siehst du in feinem Grau deine Gewichte vom letzten Training (wie ein Geist). Sobald du dein heutiges Gewicht eintippst, leuchtet es knallig grün. Klickst du auf "✓", ist der Satz gespeichert.
+                        <br><i>Auto-Timer:</i> Sobald du einen Satz abhakst, poppt unten automatisch ein Pausen-Timer auf, damit du genau weißt, wann der nächste Satz beginnt.
+                        <br><i>Warm-Up & Sätze:</i> Mit den Knöpfen unter der Übung kannst du Sätze hinzufügen, löschen oder dir von der App deine perfekten Aufwärm-Sätze berechnen lassen.
+                    </li>
+                    <li style="margin-bottom:8px;"><b>📅 Das 14-Tage System (Woche 1 / Woche 2):</b> 
+                        <br>Manchmal trainiert man nicht jede Woche gleich (z.B. A/B Splits). Die App schaut im Hintergrund auf den echten Kalender! Haben wir eine gerade Kalenderwoche (z.B. KW 12), lädt sie für dein Training automatisch "Woche 1". Bei KW 13 lädt sie "Woche 2". Du musst nie wieder manuell umstellen! Du kannst im Dashboard über die Switch-Buttons schauen, was nächste Woche ansteht. Dein echter, heutiger Tag leuchtet grün mit <span style="color:var(--success)">(AKTUELL)</span>.</li>
+                    <li style="margin-bottom:8px;"><b>📝 Trainings-Planer & Master-Pläne:</b> Hier baust du deinen Plan. Lade fertige Profi-Pläne oder baue dir über "Eigenen Plan erstellen" dein Meisterwerk. 
+                        <br><i>Genial:</i> Mit dem Button "🔄 TAG VERSCHIEBEN" kannst du ganze Trainingstage super schnell kopieren, verschieben oder zwischen Woche 1 und Woche 2 austauschen!
+                    </li>
+                    <li style="margin-bottom:8px;"><b>🧍‍♂️ 3D Muskel-Map:</b> Drehe die 3D-Figur und tippe auf einen Muskel. Die App zeigt dir sofort alle passenden Übungen an. Mit dem Button "+ PLAN" schickst du die Übung direkt in dein heutiges Training.</li>
+                    <li style="margin-bottom:8px;"><b>📈 Fortschritt (Max):</b> Wähle eine Übung aus. Die App berechnet dein errechnetes Maximalgewicht (1RM) und zeichnet eine schöne Leistungskurve der letzten Monate.</li>
+                </ul>
+
+                <h4 style="color:var(--day-glow); text-transform:uppercase; margin-top:25px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;">🦾 Tab 3: BODY (Deine Körper-Daten)</h4>
+                <p style="margin-bottom:10px;">Mache deine Erfolge sichtbar und messbar.</p>
+                <ul style="padding-left:15px; margin-top:5px;">
+                    <li style="margin-bottom:8px;"><b>✦ Pro Analytics (Smartwatch):</b> Wenn du "Health Connect" in den Einstellungen verbindest, zieht sich die App automatisch deine echten Schritte, deinen Schlaf, deine Aktiv-Kalorien und deinen Puls von deiner Smartwatch.</li>
+                    <li style="margin-bottom:8px;"><b>🫀 Blutdruck & Puls:</b> Miss deinen Blutdruck. Egal ob einmal oder dreimal am Tag – tippe es ein. Die App bündelt die Werte automatisch, rechnet den gesunden Tagesdurchschnitt (Ø) aus und warnt dich bei zu hohen Werten farblich.</li>
+                    <li style="margin-bottom:8px;"><b>🦾 Gewicht:</b> Trag dein Gewicht ein. Der Graph zeigt nicht nur die täglichen Sprünge, sondern zieht eine schlaue "Trend-Linie", damit du siehst, ob du langfristig wirklich abnimmst oder es nur Wasserschwankungen sind.</li>
+                    <li style="margin-bottom:8px;"><b>📏 Körperumfang:</b> Das Maßband lügt nicht. Trag ein, wie dick z.B. dein Bizeps oder Bauch ist. Beim Speichern siehst du in der Historie sofort, wo du zu- oder abgenommen hast.</li>
+                    <li style="margin-bottom:8px;"><b>🩸 Laborwerte:</b> Warst du beim Blutabnehmen? Lege hier Tracker für Eisen, Vitamin D oder Testosteron an, um die Werte über Jahre zu vergleichen.</li>
+                    <li style="margin-bottom:8px;"><b>⚡ Bio-Feedback & 🕸️ Radar:</b> Wie voll ist dein "Akku" heute? Schieb die Regler für Energie, Fokus und Schlaf. Daraus entsteht unten das Spinnennetz-Diagramm. So siehst du auf einen Blick, ob es dir gerade super geht oder ob du Erholung brauchst.</li>
+                </ul>
+
+                <h4 style="color:white; text-transform:uppercase; margin-top:25px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;">☁️ Tab 4: CLOUD (Profil & Archiv)</h4>
+                <p style="margin-bottom:10px;">Dein Spielerprofil und die Datensicherung.</p>
+                <ul style="padding-left:15px; margin-top:5px;">
+                    <li style="margin-bottom:8px;"><b>🏆 BioHacker Ränge (Level-System):</b> Tracken macht Spaß! Jedes Mal, wenn du trainierst, Vitamine abhakst oder dein Gewicht einträgst, sammelst du Erfahrungspunkte (XP). Sammle genug und du steigst im Level auf – vom "Starter" bis zum "BioHacker Master"!</li>
+                    <li style="margin-bottom:8px;"><b>🌍 Reise-Tracker:</b> Fährst du in den Urlaub? Tippe ein (z.B. "14 Tage") und die App rechnet dir auf die Kapsel genau aus, wie viele Supplements du in deinen Kulturbeutel packen musst.</li>
+                    <li style="margin-bottom:8px;"><b>🗂️ Verlauf:</b> Ein riesiges Archiv. Hier kannst du Jahre in die Vergangenheit reisen und sehen, was du wann trainiert oder eingenommen hast – inklusive deiner Notizen von damals.</li>
+                    <li style="margin-bottom:8px;"><b>🔒 Sicherheit (Einstellungen):</b> Richte eine 4-stellige PIN ein. Beim Öffnen der App musst du dann erst den Code eingeben (niemand kann heimlich deine Daten lesen).</li>
+                    <li style="margin-bottom:8px;"><b>☁️ Cloud & Backup (Einstellungen):</b> <b>EXTREM WICHTIG!</b> Deine Daten gehören dir und liegen nur auf deinem Handy. Klicke auf "Über Google anmelden" und danach auf "Zu Drive Speichern". Mache das regelmäßig! So ist dein kompletter Fortschritt für immer in deiner Cloud gesichert, selbst wenn dein Handy kaputtgeht.</li>
+                </ul>
+                
+                <div style="margin-top: 25px; text-align:center; font-weight:bold; color:var(--success); border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px;">
+                    Viel Erfolg bei deiner Transformation! 🚀
+                </div>
+            </div>
+        </div>
+
         <div class="chart-container" style="padding: 0; background: transparent; border: none; margin: 0 0 15px 0;" id="set-col-security">
             <div class="collapse-header" onclick="tglCollapse('set-col-security')" style="background: var(--glass); padding: 12px 15px; border-radius: 12px; border: 1px solid var(--glass-border);">
                 <h3 style="color:var(--day-glow); font-size: 14px; margin: 0;">🔒 Sicherheit</h3>
@@ -1525,6 +1603,16 @@ input, textarea, select {
     }
 
     let activePlannerWeek = 1; // Steuert, welche Woche im Planer-UI gerade bearbeitet wird
+    let activeTrackWeek = getCurrentWeekType(); // NEU: Steuert, welche Woche man bei "Heute Tracken" sieht
+
+    // NEU: Die Funktion für den Switch-Button bei Heute Tracken
+    function setTrackWeek(w) {
+        activeTrackWeek = w;
+        document.getElementById('t-tab-1').classList.remove('active');
+        document.getElementById('t-tab-2').classList.remove('active');
+        document.getElementById('t-tab-' + w).classList.add('active');
+        renderGymToday();
+    }
 
     // --- GYM INIT & MIGRATION ---
     if(!db.gym) {
@@ -2310,9 +2398,14 @@ input, textarea, select {
     }
 
     function renderGymPlaner() {
-        const target = getGymPlannerTarget();
-        const list = document.getElementById('gym-planer-list');
-        list.innerHTML = '';
+    // NEU: Anzeige des aktiven Plans
+    const planName = db.gym.activePlanName || "Eigenes Setup / Kein Masterplan";
+    const planerPlanLabel = document.getElementById('active-plan-name-planer');
+    if(planerPlanLabel) planerPlanLabel.innerText = "Aktiver Plan: " + planName;
+
+    const target = getGymPlannerTarget();
+    const list = document.getElementById('gym-planer-list');
+    list.innerHTML = '';
                 if(!db.gym['week'+activePlannerWeek][target]) db.gym['week'+activePlannerWeek][target] = [];
         db.gym['week'+activePlannerWeek][target].forEach((ex, idx) => {
             let targetW = (ex.weight && ex.weight > 0) ? ` | ${ex.weight} kg` : '';
@@ -2434,15 +2527,24 @@ input, textarea, select {
         const dateStr = getTodayDate();
         const cont = document.getElementById('gym-today-content');
         
-        const currentWk = getCurrentWeekType(); // Auto-Erkennung: 1 oder 2
+        // NEU: Anzeige des aktiven Plans
+        const planName = db.gym.activePlanName || "Eigenes Setup / Kein Masterplan";
+        const heutePlanLabel = document.getElementById('active-plan-name-heute');
+        if(heutePlanLabel) heutePlanLabel.innerText = "Aktiver Plan: " + planName;
         
-        // Prüfen, ob wir ein spezifisches Datum (Override) in der aktuell laufenden Woche haben
+        // Nutze jetzt den Wert, den du über die Tabs ausgewählt hast
+        const currentWk = activeTrackWeek; 
+        
+        // Prüfen, ob wir ein spezifisches Datum...
         const specificPlan = db.gym['week'+currentWk][dateStr];
         const weeklyPlan = db.gym['week'+currentWk][day];
         const isOverride = (day === getGermanDay() && specificPlan && specificPlan.length > 0);
         const todayPlan = isOverride ? specificPlan : weeklyPlan;
         
         let headerText = isOverride ? `Plan für Heute (${dateStr})` : `Plan für: ${day.toUpperCase()} <span style="font-size:10px; color:#cbd5e1;">(WOCHE ${currentWk})</span>`;
+        if (currentWk === getCurrentWeekType()) {
+             headerText += ' <span style="color:var(--success); font-size:10px;">(AKTUELL)</span>';
+        }
         let html = `<div style="text-align:center; font-size:12px; color:#94a3b8; margin-bottom:15px; font-weight:bold;">${headerText.replace(day.toUpperCase(), `<span style="color:var(--morning-glow);">${day.toUpperCase()}</span>`)}</div>`;
         
         if(!todayPlan || todayPlan.length === 0) {
@@ -2516,7 +2618,7 @@ input, textarea, select {
     }
 
     function addExtraGymSet(day, exIdx, dateStr) {
-        const currentWk = getCurrentWeekType();
+        const currentWk = activeTrackWeek; 
         const specificPlan = db.gym['week'+currentWk][dateStr];
         const isOverride = (day === getGermanDay() && specificPlan && specificPlan.length > 0);
         let planArr = isOverride ? db.gym['week'+currentWk][dateStr] : db.gym['week'+currentWk][day];
@@ -2537,8 +2639,8 @@ input, textarea, select {
         
         showConfirm(`Möchtest du Satz ${currentSets} wirklich löschen?`, function(res) {
             if (res) {
-                const currentWk = getCurrentWeekType();
-        const specificPlan = db.gym['week'+currentWk][dateStr];
+                const currentWk = activeTrackWeek; 
+                const specificPlan = db.gym['week'+currentWk][dateStr];
         const isOverride = (day === getGermanDay() && specificPlan && specificPlan.length > 0);
         let planArr = isOverride ? db.gym['week'+currentWk][dateStr] : db.gym['week'+currentWk][day];
 
@@ -2560,8 +2662,8 @@ input, textarea, select {
             let targetWeight = parseFloat(val);
             if(!targetWeight || targetWeight <= 0) return;
             
-            const currentWk = getCurrentWeekType();
-        const specificPlan = db.gym['week'+currentWk][dateStr];
+            const currentWk = activeTrackWeek; 
+            const specificPlan = db.gym['week'+currentWk][dateStr];
         const isOverride = (day === getGermanDay() && specificPlan && specificPlan.length > 0);
         let planArr = isOverride ? db.gym['week'+currentWk][dateStr] : db.gym['week'+currentWk][day];
 
@@ -2630,8 +2732,8 @@ input, textarea, select {
             startRestTimer(60);
             
             // Auto-Collapse prüfen: Sind alle Sätze dieser Übung jetzt fertig?
-            const currentWk = getCurrentWeekType();
-        const specificPlan = db.gym['week'+currentWk][dateStr];
+            const currentWk = activeTrackWeek; 
+            const specificPlan = db.gym['week'+currentWk][dateStr];
         const isOverride = (day === getGermanDay() && specificPlan && specificPlan.length > 0);
         let planArr = isOverride ? db.gym['week'+currentWk][dateStr] : db.gym['week'+currentWk][day];
             
@@ -2882,7 +2984,7 @@ function renameGymPlanEx(day, exIdx, oldName, dateStr) {
             if(newName && newName.trim() !== "" && newName !== oldName) {
                 const finalName = newName.trim();
                 // 1. Namen im Trainingsplan aktualisieren
-                const currentWk = getCurrentWeekType(); // Holt die aktuelle Woche (1 oder 2)
+                const currentWk = activeTrackWeek; 
                     if(db.gym['week'+currentWk][day] && db.gym['week'+currentWk][day][exIdx]) {
                         db.gym['week'+currentWk][day][exIdx].name = finalName;
                     }
@@ -3494,6 +3596,12 @@ function initChart() {
         document.getElementById('n-'+p).classList.add('active'); 
         if(p==='plan') renderPlan(); 
         if(p==='gym') {
+            activeTrackWeek = getCurrentWeekType(); // Setzt es auf die echte KW zurück
+            document.getElementById('t-tab-1').classList.remove('active');
+            document.getElementById('t-tab-2').classList.remove('active');
+            const tabEl = document.getElementById('t-tab-' + activeTrackWeek);
+            if(tabEl) tabEl.classList.add('active');
+
             document.getElementById('gym-day-select').value = getGermanDay();
             document.getElementById('gym-date-select').style.display = 'none';
             renderGymPlaner();
@@ -5425,15 +5533,17 @@ function search3DExercise(query) {
 
     function closeGymTemplates() { document.getElementById('gym-templates-modal').style.display = 'none'; }
 
+    // Nachher:
     function applyGymTemplate(index) {
         showConfirm("Achtung: Dein kompletter aktueller Wochentag-Plan wird überschrieben. Fortfahren?", function(res) {
             if(res) {
                 const tpl = gymTemplatesDB[index];
                 const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
-                                days.forEach(d => { 
+                days.forEach(d => { 
                     db.gym.week1[d] = tpl.plan[d] ? JSON.parse(JSON.stringify(tpl.plan[d])) : []; 
                     db.gym.week2[d] = tpl.plan[d] ? JSON.parse(JSON.stringify(tpl.plan[d])) : []; 
                 });
+                db.gym.activePlanName = tpl.name; // NEU
                 save(); closeGymTemplates(); renderGymPlaner(); renderGymToday();
                 if(typeof vBuz === 'function') vBuz([100, 50, 100, 50, 300]);
                 showAlert(`"${tpl.name}" wurde erfolgreich geladen!`, "Plan geladen 🚀");
@@ -5441,23 +5551,23 @@ function search3DExercise(query) {
         }, "Plan überschreiben?", "JA, PLAN LADEN");
     }
 
+    // Nachher:
     function applyCustomTemplate(id) {
         showConfirm("Achtung: Dein kompletter aktueller Wochentag-Plan wird überschrieben. Fortfahren?", function(res) {
             if(res) {
                 const tpl = db.customGymTemplates.find(t => t.id === id);
                 if(!tpl) return;
                 const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
-                                days.forEach(d => { 
-                    // Lädt Woche 1 in Woche 1 und Woche 2 in Woche 2
+                days.forEach(d => { 
                     if(tpl.week1) {
                         db.gym.week1[d] = tpl.week1[d] ? JSON.parse(JSON.stringify(tpl.week1[d])) : []; 
                         db.gym.week2[d] = tpl.week2[d] ? JSON.parse(JSON.stringify(tpl.week2[d])) : []; 
                     } else {
-                        // Fallback für System-Pläne ohne A/B
                         db.gym.week1[d] = tpl.plan[d] ? JSON.parse(JSON.stringify(tpl.plan[d])) : [];
                         db.gym.week2[d] = tpl.plan[d] ? JSON.parse(JSON.stringify(tpl.plan[d])) : [];
                     }
                 });
+                db.gym.activePlanName = tpl.name; // NEU
                 save(); closeGymTemplates(); renderGymPlaner(); renderGymToday();
                 if(typeof vBuz === 'function') vBuz([100, 50, 100, 50, 300]);
                 showAlert(`Dein eigener Plan "${tpl.name}" wurde geladen!`, "Plan geladen 🚀");
